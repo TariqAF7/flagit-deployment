@@ -1,0 +1,225 @@
+.platform-list-screen {
+  padding: 16px 20px 24px 20px; /* <-- The 24px here is the magic padding that lifts the button! */
+  color: white;
+  background-color: #0a1a2f;
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  position: relative;
+}
+
+.header {
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  text-align: left;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  justify-content: flex-start;
+}
+
+.logo-box {
+  width: 95px;
+  height: 95px;
+  background: #1a2f45;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.logo-box img {
+  width: 75px;
+  height: 75px;
+  object-fit: contain;
+  display: block;
+}
+
+.logo-text {
+  text-align: left;
+}
+
+.logo-text h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  line-height: 1.2;
+}
+
+.logo-text p {
+  margin: 4px 0 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.6); 
+  font-weight: 400;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  text-align: center;
+  position: relative;
+  z-index: 2;
+  padding: 0 10px;
+  margin-top: 25px; /* Reduced to lift the shield and text higher */
+}
+
+.shield-container {
+  margin: 0 0 5px 0; /* Keeps the bottom edge close to the icons */
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.shield-container h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 auto 5px auto;
+  color: #22D3EE; /* Brighter Cyan */
+  letter-spacing: 1.5px;
+  /* Keep your other existing properties here */
+}
+
+.shield-icon {
+  font-size: 80px;
+  margin-bottom: 16px;
+  color: #F97316;
+  filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.3));
+}
+
+.shield-icon {
+  font-size: 80px;
+  margin-bottom: 16px;
+  color: #F97316;
+  /* Apply the smooth glowing animation */
+  animation: shieldGlow 2s infinite ease-in-out; 
+}
+
+/* Custom animation for the forcefield glow */
+@keyframes shieldGlow {
+  0% {
+    filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.3));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 35px rgba(249, 115, 22, 0.9));
+    transform: scale(1.05); /* Slight heartbeat expansion */
+  }
+  100% {
+    filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.3));
+    transform: scale(1);
+  }
+}
+
+.status-text {
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.7); /* Soft white instead of dark teal */
+  /* Keep your other existing properties here */
+}
+
+.feature-icons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+  margin: 10px 0 20px 0; /* 10px top pulls icons to text, 20px bottom pulls button up */
+}
+
+.feature-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  padding: 12px 4px; /* Reduced side padding */
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  flex: 1; /* <-- MAGIC LINE: Forces all badges to share the row equally! */
+  max-width: 80px; /* Stops the Telegram badge from getting massive when alone */
+}
+
+.feature-item svg {
+  font-size: 24px; 
+  color: #F97316;
+}
+
+.feature-item span {
+  font-size: 11px; 
+  color: rgba(255, 255, 255, 0.7);
+  font-weight: 400;
+  text-align: center;
+}
+
+.actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: white;
+  border: 1px solid #F97316;
+  padding: 14px 24px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.btn-secondary:hover {
+  background: rgba(249, 115, 22, 0.1);
+  border-color: #F97316;
+  color: #F97316;
+  transform: scale(1.02);
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
+}
+
+/* Background decorations */
+.platform-list-screen::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -20%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(45, 212, 191, 0.05) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 1;
+}
+
+.platform-list-screen::after {
+  content: '';
+  position: absolute;
+  bottom: -20%;
+  left: -20%;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(249, 115, 22, 0.05) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: 1;
+}

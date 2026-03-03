@@ -5,10 +5,12 @@
   min-height: 100%;
   display: flex;
   flex-direction: column;
+  height: 100%; /* Matches the popup height exactly */
+  width: 100%;
+  overflow: hidden; /* This hides the scrollbar */
   box-sizing: border-box;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   position: relative;
-  overflow-y: auto; /* Allow scrolling if needed */
 }
 
 .header {
@@ -61,9 +63,8 @@
 .logo-text p {
   margin: 4px 0 0;
   font-size: 12px;
-  opacity: 0.9;
-  color: #F97316;
-  font-weight: 500;
+  color: rgba(255, 255, 255, 0.6); /* Soft whitish-blue */
+  font-weight: 400;
 }
 
 .main-content {
@@ -76,17 +77,21 @@
   position: relative;
   z-index: 2;
   padding: 0 10px;
-  margin-top: 20px;
+  margin-top: 15px; /* <-- Reduced from 35px to pull the radar up */
 }
 
-.radar-container {
-  margin: 0 0 20px 0;
+.radar-container h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 auto 5px auto;
+  color: #22D3EE; /* Brighter, glowing cyan for better contrast */
   position: relative;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  z-index: 2;
+  letter-spacing: 1.5px; /* Slightly wider for a cleaner look */
+  text-transform: uppercase;
+  line-height: 1.3;
+  max-width: 280px;
+  text-align: center;
 }
 
 .radar-icon {
@@ -95,6 +100,24 @@
   position: relative;
   z-index: 2;
   color: #F97316;
+  /* Apply the smooth glowing animation */
+  animation: radarGlow 2s infinite ease-in-out;
+}
+
+/* Custom animation for the dish glow */
+@keyframes radarGlow {
+  0% {
+    filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.3));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 35px rgba(249, 115, 22, 0.9));
+    transform: scale(1.05); /* Slight heartbeat expansion */
+  }
+  100% {
+    filter: drop-shadow(0 0 10px rgba(249, 115, 22, 0.3));
+    transform: scale(1);
+  }
 }
 
 .radar-container h2 {
@@ -144,8 +167,8 @@
 
 .platforms {
   display: flex;
-  gap: 40px;
-  margin: 10px 0 25px 0;
+  gap: 25px;
+  margin: 20px 0 15px 0; /* <-- Reduced bottom margin from 35px to 15px */
   justify-content: center;
   width: 100%;
 }
@@ -211,7 +234,7 @@
 .btn-secondary {
   background: transparent;
   color: white;
-  border: 1px solid #3a5a7a;
+  border: 1px solid rgba(34, 211, 238, 0.4); /* Matches the new cyan text */
   padding: 12px 24px;
   border-radius: 12px;
   font-size: 15px;

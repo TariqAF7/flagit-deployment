@@ -1,7 +1,7 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGoogle, faTelegram, faMicrosoft } from '@fortawesome/free-brands-svg-icons';
-import { faSatelliteDish } from '@fortawesome/free-solid-svg-icons';
+import { faSatelliteDish, faEnvelope } from '@fortawesome/free-solid-svg-icons';
 import './StartScreen.css';
 
 export default function StartScreen({ setScreen }) {
@@ -27,7 +27,7 @@ export default function StartScreen({ setScreen }) {
       <div className="main-content">
         <div className="radar-container">
           <div className="radar-icon">
-            <FontAwesomeIcon icon={faSatelliteDish} spin style={{ color: "#F97316" }} />
+            <FontAwesomeIcon icon={faSatelliteDish} style={{ color: "#F97316" }} />
           </div>
           <h2>Start Fishing for Phishes</h2>
           <div className="radar-pulse"></div>
@@ -38,6 +38,10 @@ export default function StartScreen({ setScreen }) {
           <div className="platform-icon">
             <FontAwesomeIcon icon={faGoogle} />
             <span>Gmail</span>
+          </div>
+          <div className="platform-icon">
+            <FontAwesomeIcon icon={faEnvelope} />
+            <span>Outlook</span>
           </div>
           <div className="platform-icon">
             <FontAwesomeIcon icon={faTelegram} />

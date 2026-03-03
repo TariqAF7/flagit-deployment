@@ -18,20 +18,22 @@
     "scripting"
   ],
   "host_permissions": [
-    "https://mail.google.com/*",
-    "https://web.telegram.org/*",
-    "https://teams.microsoft.com/*",
-    "https://outlook.live.com/*",
-    "https://outlook.office.com/*"
+    "*://*.google.com/*",
+    "*://*.telegram.org/*",
+    "*://*.microsoft.com/*",
+    "*://*.office.com/*",
+    "*://*.live.com/*",
+    "*://*.cloud.microsoft/*"
   ],
   "content_scripts": [
     {
       "matches": [
-        "https://mail.google.com/*",
-        "https://web.telegram.org/*",
-        "https://teams.microsoft.com/*",
-        "https://outlook.live.com/*",
-        "https://outlook.office.com/*"
+        "*://*.google.com/*",
+        "*://*.telegram.org/*",
+        "*://*.microsoft.com/*",
+        "*://*.office.com/*",
+        "*://*.live.com/*",
+        "*://*.cloud.microsoft/*"
       ],
       "js": ["content.js"],
       "run_at": "document_idle"

@@ -5,19 +5,23 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   console.log("📨 Background received:", request);
   
   if (request.type === "EMAIL_OPENED") {
-    console.log(`📧 Email opened: "${request.subject}" with ID: ${request.emailId}`);
+    console.log(`💬 Message/Email opened: "${request.subject}" on platform: ${request.platform} with ID: ${request.emailId}`);
     
-    // Store email info INCLUDING the email ID and reset scanning state
+    // Store message info INCLUDING the ID and reset scanning state
     chrome.storage.local.set({ 
       popupReason: 'email_open',
       platform: request.platform,
       subject: request.subject,
       emailId: request.emailId,
       currentEmailId: request.emailId,
-      scanningState: 'scanning', // ← ADD THIS - Reset to scanning for new email
+      scanningState: 'scanning', 
       timestamp: Date.now()
     }, () => {
-      console.log("✅ Storage set complete. Email ID:", request.emailId, "State: scanning");
+      console.log(`✅ Storage set complete for ${request.platform}. ID:`, request.emailId, "State: scanning");
+      
+      // CRITICAL FIX: Tell the content script we successfully received and saved the data.
+      // This closes the communication channel properly and stops the error!
+      sendResponse({ status: "success" }); 
     });
     
     console.log("🔍 Attempting to open popup...");
@@ -33,7 +37,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     } catch (err) {
       console.log("❌ openPopup exception:", err);
     }
+    
+    // We return true here to keep the channel open *just* long enough 
+    // for the chrome.storage callback above to run sendResponse()
+    return true; 
   }
-  
-  return true;
 });
