@@ -262,6 +262,28 @@
     padding: 1.5rem 0;
     display: flex;
     flex-direction: column;
+    transition: width 0.3s ease;
+}
+
+.sidebar.collapsed {
+    width: 80px;
+}
+
+.sidebar.collapsed .sidebar-text {
+    display: none;
+}
+
+.sidebar.collapsed .sidebar-link {
+    justify-content: center;
+    gap: 0;
+}
+
+.sidebar.collapsed .sidebar-link svg {
+    margin-right: 0;
+}
+
+.sidebar.collapsed .sidebar-link span {
+    display: none;
 }
 
 @media (max-width: 767px) {
@@ -308,6 +330,47 @@
 .sidebar-bottom {
     margin-top: auto;
     padding: 1.5rem;
+}
+
+.sidebar-brand {
+    padding: 0 1.5rem;
+    margin-bottom: 2rem;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.sidebar-logo {
+    background-color: white;
+    border-radius: 50%;
+    padding: 0.25rem;
+    flex-shrink: 0;
+}
+
+.sidebar-brand-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.brand-title {
+    font-weight: bold;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: white;
+}
+
+.brand-subtitle {
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.7);
+}
+
+.sidebar.collapsed .sidebar-brand-text {
+    display: none;
+}
+
+.sidebar.collapsed .sidebar-brand {
+    justify-content: center;
 }
 
 /* Progress bar */

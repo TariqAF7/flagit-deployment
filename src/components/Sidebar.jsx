@@ -24,19 +24,23 @@ const Sidebar = ({ isOpen, close }) => {
 
     return (
         <>
-            <div className={`sidebar ${isOpen ? 'open' : ''}`} style={{ backgroundColor: 'var(--primary-teal)' }}>
-                <div style={{ padding: '0 1.5rem', marginBottom: '2rem', marginTop: '1rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                    <div style={{ backgroundColor: 'white', borderRadius: '50%', padding: '0.25rem' }}>
-                        <svg viewBox="0 0 24 24" width="24" height="24">
-                            <path fill="var(--deep-navy)" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                            <circle cx="12" cy="10" r="3" fill="var(--primary-teal)" />
-                        </svg>
+            <div className={`sidebar ${isOpen ? 'open' : 'collapsed'}`} style={{ backgroundColor: 'var(--primary-teal)' }}>
+                
+                    <div className="sidebar-brand">
+
+                        <div className="sidebar-logo">
+                            <svg viewBox="0 0 24 24" width="24" height="24">
+                                <path fill="var(--deep-navy)" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                                <circle cx="12" cy="10" r="3" fill="var(--primary-teal)" />
+                            </svg>
+                        </div>
+
+                        <div className="sidebar-brand-text">
+                            <div className="brand-title">FlagIt</div>
+                            <div className="brand-subtitle">Security Training</div>
+                        </div>
+
                     </div>
-                    <div>
-                        <div style={{ fontWeight: 'bold', fontSize: '1.25rem', lineHeight: '1', color: 'white' }}>FlagIt</div>
-                        <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.7)' }}>Security Training</div>
-                    </div>
-                </div>
 
                 <nav className="sidebar-nav" style={{ flex: 1 }}>
                     {menuItems.map((item) => (
@@ -57,7 +61,7 @@ const Sidebar = ({ isOpen, close }) => {
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     {item.icon.split(' M').map((d, i) => <path key={i} d={i === 0 ? d : `M${d}`} />)}
                                 </svg>
-                                {item.name}
+                                <span className="sidebar-text">{item.name}</span>
                             </NavLink>
                         )
                     ))}
@@ -93,12 +97,11 @@ const Sidebar = ({ isOpen, close }) => {
                 </div>
             </div>
 
-            {isOpen && (
+            {isOpen && window.innerWidth < 768 && (
                 <div
                     className="modal-overlay"
                     style={{ zIndex: 30 }}
                     onClick={close}
-                    aria-hidden="true"
                 ></div>
             )}
         </>
