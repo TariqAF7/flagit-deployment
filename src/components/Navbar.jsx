@@ -22,12 +22,30 @@ const Navbar = ({ toggleSidebar }) => {
                         <line x1="3" y1="18" x2="21" y2="18"></line>
                     </svg>
                 </button>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <div style={{ backgroundColor: 'white', border: '2px solid var(--accent-orange)', borderRadius: '50%', padding: '4px', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyItems: 'center' }}>
-                        <svg viewBox="0 0 24 24" fill="var(--deep-navy)" width="20" height="20">
-                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                            <circle cx="12" cy="10" r="3" fill="var(--primary-teal)" />
-                        </svg>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <div style={{ 
+                        backgroundColor: 'white', 
+                        border: '2px solid #F97316', 
+                        borderRadius: '50%', 
+                        width: '48px', 
+                        height: '48px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        flexShrink: 0
+                    }}>
+                        <img 
+                            src="/icons/flagit-logo.png" 
+                            alt="FlagIt" 
+                            style={{ 
+                                width: '42px', 
+                                height: '42px',
+                                objectFit: 'contain',
+                                objectPosition: 'center',
+                                transform: 'translate(0px, 5.5px)',
+                                display: 'block'
+                            }} 
+                        />
                     </div>
                     <div>
                         <div style={{ fontWeight: 'bold', fontSize: '1.125rem', lineHeight: '1' }}>FlagIt</div>
@@ -48,7 +66,7 @@ const Navbar = ({ toggleSidebar }) => {
                 {isLoggedIn ? (
                     <div className="user-pill flex items-center gap-2">
                         <span style={{ fontSize: '0.875rem' }}>Welcome back, <span style={{ fontWeight: 'bold' }}>{user.name.split(' ')[0]}!</span></span>
-                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'var(--accent-orange)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
+                        <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: '#F97316', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold' }}>
                             {user.name.charAt(0)}
                         </div>
                         <button onClick={logout} className="btn btn-white" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem', borderRadius: '4px', marginLeft: '0.5rem', display: 'none' }}>

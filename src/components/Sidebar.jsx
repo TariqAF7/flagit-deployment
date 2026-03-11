@@ -26,21 +26,37 @@ const Sidebar = ({ isOpen, close }) => {
         <>
             <div className={`sidebar ${isOpen ? 'open' : 'collapsed'}`} style={{ backgroundColor: 'var(--primary-teal)' }}>
                 
-                    <div className="sidebar-brand">
-
-                        <div className="sidebar-logo">
-                            <svg viewBox="0 0 24 24" width="24" height="24">
-                                <path fill="var(--deep-navy)" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                                <circle cx="12" cy="10" r="3" fill="var(--primary-teal)" />
-                            </svg>
-                        </div>
-
-                        <div className="sidebar-brand-text">
-                            <div className="brand-title">FlagIt</div>
-                            <div className="brand-subtitle">Security Training</div>
-                        </div>
-
+                <div className="sidebar-brand" style={{ display: 'flex', alignItems: 'center', padding: '1.5rem 1rem' }}>
+                    <div style={{ 
+                        backgroundColor: 'white', 
+                        border: '2px solid #F97316', 
+                        borderRadius: '50%', 
+                        width: '48px', 
+                        height: '48px', 
+                        display: 'flex', 
+                        alignItems: 'center', 
+                        justifyContent: 'center',
+                        flexShrink: 0,
+                        marginRight: '12px'
+                    }}>
+                        <img 
+                            src="/icons/flagit-logo.png" 
+                            alt="FlagIt" 
+                            style={{ 
+                                width: '42px', 
+                                height: '42px',
+                                objectFit: 'contain',
+                                objectPosition: 'center',
+                                transform: 'translate(0px, 5.5px)',
+                                display: 'block'
+                            }} 
+                        />
                     </div>
+                    <div className="sidebar-brand-text">
+                        <div className="brand-title" style={{ fontWeight: 'bold', fontSize: '1.1rem', lineHeight: '1.2' }}>FlagIt</div>
+                        <div className="brand-subtitle" style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase' }}>Security Training</div>
+                    </div>
+                </div>
 
                 <nav className="sidebar-nav" style={{ flex: 1 }}>
                     {menuItems.map((item) => (
