@@ -91,15 +91,22 @@ const Dashboard = () => {
 
                 <main className="main-content">
                     <div className="dashboard-main-grid">
+                        {/* Current Status Card - Option 3 Style with orange borders on top, bottom, and left */}
                         <div className="card" style={{ 
-                            backgroundColor: 'white', 
+                            backgroundColor: '#132B44',
                             padding: '2rem',
                             display: 'flex',
                             flexDirection: 'column',
                             alignItems: 'center',
                             justifyContent: 'center',
                             position: 'relative',
-                            minHeight: '500px'
+                            minHeight: '500px',
+                            borderRadius: '1rem',
+                            borderTop: '1px solid #F97316',
+                            borderBottom: '1px solid #F97316',
+                            borderLeft: '4px solid #F97316',
+                            borderRight: 'none',
+                            boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)'
                         }}>
                             <div style={{
                                 display: 'flex',
@@ -117,7 +124,7 @@ const Dashboard = () => {
                                 <span style={{
                                     fontSize: '1rem',
                                     fontWeight: '600',
-                                    color: 'var(--text-muted)',
+                                    color: 'rgba(255,255,255,0.7)',
                                     letterSpacing: '0.5px'
                                 }}>
                                     CURRENT STATUS
@@ -137,13 +144,14 @@ const Dashboard = () => {
                                     stroke={12}
                                     progress={resilienceScore}
                                     label=""
+                                    textColor="white"
                                 />
                             </div>
 
                             <div style={{
                                 fontSize: '3rem',
                                 fontWeight: '700',
-                                color: 'var(--deep-navy)',
+                                color: 'white',
                                 lineHeight: '1',
                                 marginBottom: '1rem'
                             }}>
@@ -151,7 +159,7 @@ const Dashboard = () => {
                                 <span style={{
                                     fontSize: '1rem',
                                     fontWeight: '400',
-                                    color: 'var(--text-muted)',
+                                    color: 'rgba(255,255,255,0.5)',
                                     marginLeft: '4px'
                                 }}>
                                     /100
@@ -162,14 +170,14 @@ const Dashboard = () => {
                                 fontSize: '1.5rem', 
                                 fontWeight: '700', 
                                 marginBottom: '0.75rem',
-                                color: 'var(--deep-navy)',
+                                color: 'white',
                                 textAlign: 'center'
                             }}>
                                 {resilienceMessage.title}
                             </h2>
                             
                             <p style={{ 
-                                color: 'var(--text-muted)',
+                                color: 'rgba(255,255,255,0.6)',
                                 fontSize: '0.95rem',
                                 lineHeight: '1.6',
                                 textAlign: 'center',
@@ -195,6 +203,7 @@ const Dashboard = () => {
                             </div>
                         </div>
 
+                        {/* Stat Cards - Will use Option 3 from StatCard component */}
                         <div className="stats-grid">
                             <StatCard
                                 title="Simulations Completed"
@@ -306,111 +315,109 @@ const Dashboard = () => {
                             </div>
                         </div>
 
-                       {/* Featured module card - centered content */}
-<div style={{
-    maxWidth: '1000px',
-    margin: '0 auto 3rem auto',
-    backgroundColor: 'rgba(255,255,255,0.02)',
-    borderRadius: '1.5rem',
-    padding: '2rem',
-    border: '1px solid rgba(255,255,255,0.05)',
-    backdropFilter: 'blur(10px)'
-}}>
-    <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        gap: '3rem'
-    }}>
-        {/* Left content - vertically centered */}
-        <div style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center'
-        }}>
-            <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '1rem',
-                marginBottom: '0.75rem'
-            }}>
-                <span style={{
-                    background: 'linear-gradient(135deg, #F97316, #2DD4BF)',
-                    color: 'white',
-                    padding: '0.25rem 1rem',
-                    borderRadius: '2rem',
-                    fontSize: '0.75rem',
-                    fontWeight: '600',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                }}>
-                    Featured Module
-                </span>
-                <span style={{
-    color: 'rgba(255,255,255,0.7)',  // Changed from 0.4 to 0.7 for better visibility
-    fontSize: '0.85rem',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.25rem'
-}}>
-    <span style={{ fontSize: '1rem', color: 'white' }}>🔥</span>
-    <span style={{ color: 'white' }}>Most popular this week</span>
-</span>
-            </div>
-            <h3 style={{
-                fontSize: '1.5rem',
-                fontWeight: '700',
-                color: 'white',
-                marginBottom: '0.5rem',
-                lineHeight: '1.3'
-            }}>
-                Advanced Social Engineering Tactics
-            </h3>
-            <p style={{
-                color: 'rgba(255,255,255,0.6)',
-                fontSize: '1rem',
-                lineHeight: '1.6',
-                margin: 0
-            }}>
-                Learn to identify sophisticated manipulation techniques used in modern phishing attacks
-            </p>
-        </div>
+                        {/* Featured module card - centered content */}
+                        <div style={{
+                            maxWidth: '1000px',
+                            margin: '0 auto 3rem auto',
+                            backgroundColor: 'rgba(255,255,255,0.02)',
+                            borderRadius: '1.5rem',
+                            padding: '2rem',
+                            border: '1px solid rgba(255,255,255,0.05)',
+                            backdropFilter: 'blur(10px)'
+                        }}>
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                gap: '3rem'
+                            }}>
+                                <div style={{
+                                    flex: 1,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    justifyContent: 'center'
+                                }}>
+                                    <div style={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '1rem',
+                                        marginBottom: '0.75rem'
+                                    }}>
+                                        <span style={{
+                                            background: 'linear-gradient(135deg, #F97316, #2DD4BF)',
+                                            color: 'white',
+                                            padding: '0.25rem 1rem',
+                                            borderRadius: '2rem',
+                                            fontSize: '0.75rem',
+                                            fontWeight: '600',
+                                            textTransform: 'uppercase',
+                                            letterSpacing: '0.5px'
+                                        }}>
+                                            Featured Module
+                                        </span>
+                                        <span style={{
+                                            color: 'rgba(255,255,255,0.7)',
+                                            fontSize: '0.85rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.25rem'
+                                        }}>
+                                            <span style={{ fontSize: '1rem', color: 'white' }}>🔥</span>
+                                            <span style={{ color: 'white' }}>Most popular this week</span>
+                                        </span>
+                                    </div>
+                                    <h3 style={{
+                                        fontSize: '1.5rem',
+                                        fontWeight: '700',
+                                        color: 'white',
+                                        marginBottom: '0.5rem',
+                                        lineHeight: '1.3'
+                                    }}>
+                                        Advanced Social Engineering Tactics
+                                    </h3>
+                                    <p style={{
+                                        color: 'rgba(255,255,255,0.6)',
+                                        fontSize: '1rem',
+                                        lineHeight: '1.6',
+                                        margin: 0
+                                    }}>
+                                        Learn to identify sophisticated manipulation techniques used in modern phishing attacks
+                                    </p>
+                                </div>
 
-        {/* Right button - vertically centered */}
-        <button
-            style={{
-                backgroundColor: '#F97316',
-                color: 'white',
-                border: 'none',
-                padding: '0.9rem 2.5rem',
-                borderRadius: '2.5rem',
-                fontSize: '1rem',
-                fontWeight: '600',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '0.75rem',
-                whiteSpace: 'nowrap',
-                boxShadow: '0 10px 20px -5px rgba(249, 115, 22, 0.3)',
-                transition: 'all 0.2s',
-                height: 'fit-content'
-            }}
-            onClick={() => navigate('/simulations/featured')}
-            onMouseEnter={(e) => {
-                e.target.style.transform = 'scale(1.02)';
-                e.target.style.boxShadow = '0 15px 25px -5px rgba(249, 115, 22, 0.4)';
-            }}
-            onMouseLeave={(e) => {
-                e.target.style.transform = 'scale(1)';
-                e.target.style.boxShadow = '0 10px 20px -5px rgba(249, 115, 22, 0.3)';
-            }}
-        >
-            Start Learning
-            <FontAwesomeIcon icon={faArrowRight} />
-        </button>
-    </div>
-</div>
+                                <button
+                                    style={{
+                                        backgroundColor: '#F97316',
+                                        color: 'white',
+                                        border: 'none',
+                                        padding: '0.9rem 2.5rem',
+                                        borderRadius: '2.5rem',
+                                        fontSize: '1rem',
+                                        fontWeight: '600',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.75rem',
+                                        whiteSpace: 'nowrap',
+                                        boxShadow: '0 10px 20px -5px rgba(249, 115, 22, 0.3)',
+                                        transition: 'all 0.2s',
+                                        height: 'fit-content'
+                                    }}
+                                    onClick={() => navigate('/simulations/featured')}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.transform = 'scale(1.02)';
+                                        e.target.style.boxShadow = '0 15px 25px -5px rgba(249, 115, 22, 0.4)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.transform = 'scale(1)';
+                                        e.target.style.boxShadow = '0 10px 20px -5px rgba(249, 115, 22, 0.3)';
+                                    }}
+                                >
+                                    Start Learning
+                                    <FontAwesomeIcon icon={faArrowRight} />
+                                </button>
+                            </div>
+                        </div>
 
                         <div style={{
                             display: 'grid',

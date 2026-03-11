@@ -42,11 +42,12 @@ const Analytics = () => {
                         <div className="card text-center flex-col items-center" style={{ backgroundColor: 'white', padding: '2rem' }}>
                             <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', marginBottom: '2.5rem' }}>Overall Resilience Score</h2>
                             <ProgressRing
-                                radius={80}
-                                stroke={10}
-                                progress={resilienceScore}
-                                label="Resilience"
-                            />
+    radius={80}
+    stroke={10}
+    progress={resilienceScore}
+    label="Resilience"
+    textColor="var(--deep-navy)"  // or "#132B44" or any dark color
+/>
 
                             <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginTop: '2.5rem' }}>
                                 <div style={{ textAlign: 'center' }}>

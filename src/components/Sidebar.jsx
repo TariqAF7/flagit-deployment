@@ -24,9 +24,20 @@ const Sidebar = ({ isOpen, close }) => {
 
     return (
         <>
-            <div className={`sidebar ${isOpen ? 'open' : 'collapsed'}`} style={{ backgroundColor: 'var(--primary-teal)' }}>
+            <div className={`sidebar ${isOpen ? 'open' : 'collapsed'}`} style={{ 
+    backgroundColor: 'var(--primary-teal)',
+    alignSelf: 'stretch',
+    position: 'relative'
+}}>
                 
-                <div className="sidebar-brand" style={{ display: 'flex', alignItems: 'center', padding: '1.5rem 1rem' }}>
+                <div className="sidebar-brand" style={{ 
+                    display: 'flex', 
+                    flexDirection: isOpen ? 'row' : 'column',
+                    alignItems: 'center', 
+                    justifyContent: isOpen ? 'flex-start' : 'center',
+                    padding: '1.5rem 1rem',
+                    gap: isOpen ? '0' : '0.5rem'
+                }}>
                     <div style={{ 
                         backgroundColor: 'white', 
                         border: '2px solid #F97316', 
@@ -37,7 +48,7 @@ const Sidebar = ({ isOpen, close }) => {
                         alignItems: 'center', 
                         justifyContent: 'center',
                         flexShrink: 0,
-                        marginRight: '12px'
+                        marginRight: isOpen ? '12px' : '0'
                     }}>
                         <img 
                             src="/icons/flagit-logo.png" 
@@ -52,10 +63,28 @@ const Sidebar = ({ isOpen, close }) => {
                             }} 
                         />
                     </div>
-                    <div className="sidebar-brand-text">
-                        <div className="brand-title" style={{ fontWeight: 'bold', fontSize: '1.1rem', lineHeight: '1.2' }}>FlagIt</div>
-                        <div className="brand-subtitle" style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase' }}>Security Training</div>
-                    </div>
+                    
+
+                    {!isOpen && (
+                        <div style={{
+                            fontSize: '0.7rem',
+                            fontWeight: '600',
+                            color: 'white',
+                            textAlign: 'center',
+                            letterSpacing: '0.5px',
+                            textTransform: 'uppercase'
+                        }}>
+                            FlagIt
+                        </div>
+                    )}
+                    
+                    {/* Brand text - ONLY shows when maximized (unchanged) */}
+                    {isOpen && (
+                        <div className="sidebar-brand-text">
+                            <div className="brand-title" style={{ fontWeight: 'bold', fontSize: '1.1rem', lineHeight: '1.2' }}>FlagIt</div>
+                            <div className="brand-subtitle" style={{ fontSize: '0.6rem', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase' }}>Security Training</div>
+                        </div>
+                    )}
                 </div>
 
                 <nav className="sidebar-nav" style={{ flex: 1 }}>
@@ -65,7 +94,7 @@ const Sidebar = ({ isOpen, close }) => {
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     {item.icon.split(' M').map((d, i) => <path key={i} d={i === 0 ? d : `M${d}`} />)}
                                 </svg>
-                                {item.name}
+                                {isOpen && <span style={{ marginLeft: '12px' }}>{item.name}</span>}
                             </div>
                         ) : (
                             <NavLink
@@ -73,44 +102,48 @@ const Sidebar = ({ isOpen, close }) => {
                                 to={item.path}
                                 className={`sidebar-link ${(location.pathname === item.path || (item.base && location.pathname.startsWith(item.base))) ? 'active' : ''}`}
                                 onClick={handleLinkClick}
+                                style={{ display: 'flex', alignItems: 'center', padding: '0.75rem 1rem' }}
                             >
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     {item.icon.split(' M').map((d, i) => <path key={i} d={i === 0 ? d : `M${d}`} />)}
                                 </svg>
-                                <span className="sidebar-text">{item.name}</span>
+                                {isOpen && <span className="sidebar-text" style={{ marginLeft: '12px' }}>{item.name}</span>}
                             </NavLink>
                         )
                     ))}
                 </nav>
 
-                <div className="sidebar-bottom">
-                    <button
-                        type="button"
-                        onClick={() => { logout(); handleLinkClick(); }}
-                        className="btn btn-primary"
-                        style={{ width: '100%', marginBottom: '1.5rem', backgroundColor: '#3b82f6', color: 'white' }}
-                    >
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                            <polyline points="16 17 21 12 16 7"></polyline>
-                            <line x1="21" y1="12" x2="9" y2="12"></line>
-                        </svg>
-                        Logout
-                    </button>
+                {/* Bottom section - Only show when sidebar is open */}
+                {isOpen && (
+                    <div className="sidebar-bottom">
+                        <button
+                            type="button"
+                            onClick={() => { logout(); handleLinkClick(); }}
+                            className="btn btn-primary"
+                            style={{ width: '100%', marginBottom: '1.5rem', backgroundColor: '#3b82f6', color: 'white' }}
+                        >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            Logout
+                        </button>
 
-                    <div style={{ backgroundColor: 'rgba(0,0,0,0.1)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
-                        <div className="flex items-center gap-2 text-sm text-white mb-2" style={{ fontWeight: 'bold', color: 'var(--accent-orange)' }}>
-                            <span>Training Progress</span>
-                        </div>
-                        <div className="flex justify-between text-xs text-white mb-1" style={{ opacity: 0.8 }}>
-                            <span>Email Security:</span>
-                            <span>78%</span>
-                        </div>
-                        <div className="progress-container">
-                            <div className="progress-bar" style={{ width: '78%' }}></div>
+                        <div style={{ backgroundColor: 'rgba(0,0,0,0.1)', padding: '1rem', borderRadius: 'var(--radius-md)' }}>
+                            <div className="flex items-center gap-2 text-sm text-white mb-2" style={{ fontWeight: 'bold', color: 'var(--accent-orange)' }}>
+                                <span>Training Progress</span>
+                            </div>
+                            <div className="flex justify-between text-xs text-white mb-1" style={{ opacity: 0.8 }}>
+                                <span>Email Security:</span>
+                                <span>78%</span>
+                            </div>
+                            <div className="progress-container">
+                                <div className="progress-bar" style={{ width: '78%' }}></div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                )}
             </div>
 
             {isOpen && window.innerWidth < 768 && (

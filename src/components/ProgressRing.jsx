@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from 'react';
 
-const ProgressRing = ({ radius, stroke, progress, label, labelSub }) => {
+const ProgressRing = ({ radius, stroke, progress, label, labelSub, textColor = 'white' }) => {
     const [offset, setOffset] = useState(0);
     const normalizedRadius = radius - stroke * 2;
     const circumference = normalizedRadius * 2 * Math.PI;
 
     useEffect(() => {
         const strokeDashoffset = circumference - (progress / 100) * circumference;
-        // adding a slight delay for animation effect
         const timeout = setTimeout(() => {
             setOffset(strokeDashoffset);
         }, 100);
@@ -15,10 +14,11 @@ const ProgressRing = ({ radius, stroke, progress, label, labelSub }) => {
     }, [progress, circumference]);
 
     return (
-        <div className="score-ring">
+        <div className="score-ring" style={{ position: 'relative', width: radius * 2, height: radius * 2 }}>
             <svg
                 height={radius * 2}
                 width={radius * 2}
+                style={{ position: 'absolute', top: 0, left: 0 }}
             >
                 <circle
                     stroke="#e5e7eb"
@@ -41,11 +41,49 @@ const ProgressRing = ({ radius, stroke, progress, label, labelSub }) => {
                     transform={`rotate(-90 ${radius} ${radius})`}
                 />
             </svg>
-            <div className="score-text">
-                <div className="score-number">{progress}</div>
-                <div className="score-label" style={{ fontSize: '1rem', color: 'var(--deep-navy)', fontWeight: 'bold' }}>/ 100</div>
-                <div className="score-label" style={{ marginTop: '4px' }}>{label}</div>
-                {labelSub && <div className="score-label" style={{ fontWeight: 'normal' }}>{labelSub}</div>}
+            <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                textAlign: 'center',
+                width: '100%'
+            }}>
+                <div style={{
+                    fontSize: '2.5rem',
+                    fontWeight: '700',
+                    color: textColor,
+                    lineHeight: '1.2'
+                }}>
+                    {progress}
+                </div>
+                <div style={{
+                    fontSize: '1rem',
+                    color: textColor === 'white' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.5)',
+                    fontWeight: 'bold',
+                    marginTop: '4px'
+                }}>
+                    / 100
+                </div>
+                {label && (
+                    <div style={{
+                        fontSize: '0.9rem',
+                        color: textColor === 'white' ? 'rgba(255,255,255,0.7)' : 'rgba(0,0,0,0.6)',
+                        marginTop: '8px'
+                    }}>
+                        {label}
+                    </div>
+                )}
+                {labelSub && (
+                    <div style={{
+                        fontSize: '0.8rem',
+                        color: textColor === 'white' ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)',
+                        fontWeight: 'normal',
+                        marginTop: '4px'
+                    }}>
+                        {labelSub}
+                    </div>
+                )}
             </div>
         </div>
     );
