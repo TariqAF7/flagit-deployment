@@ -114,4 +114,4 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     return true;
   }
 
-}); // <-- THIS IS THE BRACKET THAT WAS MISSING!
+}); 
