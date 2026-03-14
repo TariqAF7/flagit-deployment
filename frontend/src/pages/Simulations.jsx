@@ -4,153 +4,744 @@ import SimulationCard from '../components/SimulationCard';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+    faBrain, 
+    faGraduationCap, 
+    faClock, 
+    faArrowRight,
+    faShieldHalved,
+    faChartLine,
+    faTrophy,
+    faRocket,
+    faBullseye,
+    faSeedling,
+    faExclamationTriangle,
+    faCheckCircle,
+    faStar
+} from '@fortawesome/free-solid-svg-icons';
 
 const Simulations = () => {
-    const { simulations } = useAppStore();
+    const { simulations, userStats } = useAppStore();
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [filter, setFilter] = useState('all');
+    const [timeRange, setTimeRange] = useState('2weeks');
+
+    // Mock user performance data (will be replaced with real backend data)
+    const userPerformance = {
+        overallScore: 82,
+        completedModules: 7,
+        averageScore: 75,
+        teamAverage: 72,
+        strengths: ['deceptiveLinks', 'urgencyDetection'],
+        weaknesses: ['spearPhishing', 'quishing'],
+        streak: 5,
+        lastWeekImprovement: 12,
+        rank: 'top25'
+    };
+
+    // Dynamic messages based on user performance
+    const getPerformanceMessages = () => {
+        const messages = [];
+        
+        // Recommendation message based on weakest area
+        if (userPerformance.weaknesses.includes('spearPhishing')) {
+            messages.push({
+                type: 'warning',
+                icon: faExclamationTriangle,
+                title: 'Recommended: Complete "Spear Phishing" module',
+                description: 'This will help you spot targeted impersonation attacks - your current weak spot',
+                color: '#F97316',
+                priority: 'high'
+            });
+        } else if (userPerformance.weaknesses.includes('quishing')) {
+            messages.push({
+                type: 'warning',
+                icon: faExclamationTriangle,
+                title: 'Recommended: Complete "Quishing Tactics" module',
+                description: 'QR code attacks are on the rise - strengthen your detection skills',
+                color: '#F97316',
+                priority: 'high'
+            });
+        } else {
+            messages.push({
+                type: 'warning',
+                icon: faExclamationTriangle,
+                title: 'Recommended: Complete "Urgency Tactics" module',
+                description: 'This will help improve your resistance to time-pressure attacks',
+                color: '#F97316',
+                priority: 'high'
+            });
+        }
+
+        // Achievement message based on streak
+        if (userPerformance.streak >= 10) {
+            messages.push({
+                type: 'achievement',
+                icon: faTrophy,
+                title: '🔥 10-Week Streak!',
+                description: 'You\'ve completed simulations for 10 weeks straight - exceptional dedication!',
+                color: '#2DD4BF',
+                badge: 'elite'
+            });
+        } else if (userPerformance.streak >= 5) {
+            messages.push({
+                type: 'achievement',
+                icon: faRocket,
+                title: '⭐ 5-Week Streak',
+                description: 'Consistent progress! Keep the momentum going.',
+                color: '#2DD4BF',
+                badge: 'consistent'
+            });
+        }
+
+        // Performance-based message
+        if (userPerformance.overallScore >= 90) {
+            messages.push({
+                type: 'success',
+                icon: faTrophy,
+                title: '🏆 Elite Defender',
+                description: 'You\'re in the top 5% of all users. Masterful phishing detection!',
+                color: '#2DD4BF',
+                badge: 'elite'
+            });
+        } else if (userPerformance.overallScore >= 75) {
+            messages.push({
+                type: 'success',
+                icon: faShieldHalved,
+                title: '🛡️ Strong Defender',
+                description: `You're performing ${userPerformance.overallScore - userPerformance.teamAverage} points above team average`,
+                color: '#2DD4BF',
+                badge: 'strong'
+            });
+        } else if (userPerformance.overallScore >= 60) {
+            messages.push({
+                type: 'success',
+                icon: faChartLine,
+                title: '📈 On Track',
+                description: `You've improved by ${userPerformance.lastWeekImprovement}% this week - great progress!`,
+                color: '#2DD4BF',
+                badge: 'improving'
+            });
+        } else {
+            messages.push({
+                type: 'success',
+                icon: faSeedling,
+                title: '🌱 Building Foundation',
+                description: 'Every expert was once a beginner. Keep learning!',
+                color: '#2DD4BF',
+                badge: 'beginner'
+            });
+        }
+
+        // Strength-based message
+        if (userPerformance.strengths.includes('deceptiveLinks')) {
+            messages.push({
+                type: 'strength',
+                icon: faCheckCircle,
+                title: '✅ URL Detection Master',
+                description: 'Your ability to spot malicious links is exceptional',
+                color: '#2DD4BF',
+                badge: 'strength'
+            });
+        } else if (userPerformance.strengths.includes('urgencyDetection')) {
+            messages.push({
+                type: 'strength',
+                icon: faCheckCircle,
+                title: '✅ Calm Under Pressure',
+                description: 'You resist urgency tactics better than 85% of users',
+                color: '#2DD4BF',
+                badge: 'strength'
+            });
+        }
+
+        return messages;
+    };
+
+    const performanceMessages = getPerformanceMessages();
 
     return (
-        <div className="dashboard-layout" style={{ backgroundColor: 'white' }}>
+        <div className="dashboard-layout" style={{ backgroundColor: '#167f94' }}>
             <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
             <div className="dashboard-content">
                 <Sidebar isOpen={sidebarOpen} close={() => setSidebarOpen(false)} />
 
-                <main className="main-content" style={{ backgroundColor: '#fcfcfc', flex: 1 }}>
-                    
-                    {/* Completed Training Modules Card - Moved from Analytics */}
+                <main className="main-content" style={{ 
+                    maxWidth: '1400px', 
+                    margin: '0 auto', 
+                    width: '100%',
+                    padding: '2rem'
+                }}>
+                    {/* Centered Header Section */}
+                    <div style={{ 
+                        textAlign: 'center',
+                        marginBottom: '2.5rem'
+                    }}>
+                        <div style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '1rem',
+                            marginBottom: '0.5rem'
+                        }}>
+                            <div style={{
+                                width: '4px',
+                                height: '32px',
+                                background: 'linear-gradient(180deg, #F97316, #2DD4BF)',
+                                borderRadius: '2px'
+                            }} />
+                            <FontAwesomeIcon icon={faBrain} style={{ color: '#F97316', fontSize: '2rem' }} />
+                            <h1 style={{ 
+                                fontSize: '2.2rem', 
+                                fontWeight: '700', 
+                                color: 'white',
+                                margin: 0,
+                                letterSpacing: '-0.02em'
+                            }}>
+                                Simulations
+                            </h1>
+                            <div style={{
+                                width: '4px',
+                                height: '32px',
+                                background: 'linear-gradient(180deg, #2DD4BF, #F97316)',
+                                borderRadius: '2px'
+                            }} />
+                        </div>
+                        <p style={{ 
+                            color: 'rgba(255,255,255,0.7)', 
+                            fontSize: '1rem',
+                            margin: '0 auto 1.5rem auto',
+                            maxWidth: '600px'
+                        }}>
+                            Navigate the Digital Landscape with Confidence
+                        </p>
+
+                        {/* Filters Row - Centered */}
+                        <div style={{
+                            display: 'flex',
+                            justifyContent: 'center',
+                            gap: '1rem',
+                            flexWrap: 'wrap'
+                        }}>
+                            {/* Category Filters */}
+                            <div style={{
+                                display: 'flex',
+                                gap: '0.5rem',
+                                backgroundColor: 'rgba(255,255,255,0.03)',
+                                padding: '0.25rem',
+                                borderRadius: '2rem',
+                                border: '1px solid rgba(255,255,255,0.05)'
+                            }}>
+                                {['All', 'New', 'Popular', 'Recommended'].map((cat, index) => (
+                                    <button
+                                        key={cat}
+                                        onClick={() => setFilter(cat.toLowerCase())}
+                                        style={{
+                                            padding: '0.5rem 1.25rem',
+                                            borderRadius: '2rem',
+                                            fontSize: '0.875rem',
+                                            fontWeight: '500',
+                                            backgroundColor: filter === cat.toLowerCase() ? '#F97316' : 'transparent',
+                                            color: filter === cat.toLowerCase() ? 'white' : 'rgba(255,255,255,0.6)',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (filter !== cat.toLowerCase()) {
+                                                e.target.style.backgroundColor = 'rgba(255,255,255,0.05)';
+                                                e.target.style.color = 'white';
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (filter !== cat.toLowerCase()) {
+                                                e.target.style.backgroundColor = 'transparent';
+                                                e.target.style.color = 'rgba(255,255,255,0.6)';
+                                            }
+                                        }}
+                                    >
+                                        {cat}
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Time Range Selector */}
+                            <div style={{
+                                display: 'flex',
+                                gap: '0.5rem',
+                                backgroundColor: 'rgba(255,255,255,0.03)',
+                                padding: '0.25rem',
+                                borderRadius: '2rem',
+                                border: '1px solid rgba(255,255,255,0.05)'
+                            }}>
+                                {['2 Weeks', '1 Month', 'All Time'].map((range, index) => (
+                                    <button
+                                        key={range}
+                                        onClick={() => setTimeRange(range === '2 Weeks' ? '2weeks' : range === '1 Month' ? 'month' : 'all')}
+                                        style={{
+                                            padding: '0.5rem 1.25rem',
+                                            borderRadius: '2rem',
+                                            fontSize: '0.875rem',
+                                            fontWeight: '500',
+                                            backgroundColor: timeRange === (range === '2 Weeks' ? '2weeks' : range === '1 Month' ? 'month' : 'all') ? '#2DD4BF' : 'transparent',
+                                            color: timeRange === (range === '2 Weeks' ? '2weeks' : range === '1 Month' ? 'month' : 'all') ? 'white' : 'rgba(255,255,255,0.6)',
+                                            border: 'none',
+                                            cursor: 'pointer',
+                                            transition: 'all 0.2s'
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (timeRange !== (range === '2 Weeks' ? '2weeks' : range === '1 Month' ? 'month' : 'all')) {
+                                                e.target.style.backgroundColor = 'rgba(255,255,255,0.05)';
+                                                e.target.style.color = 'white';
+                                            }
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (timeRange !== (range === '2 Weeks' ? '2weeks' : range === '1 Month' ? 'month' : 'all')) {
+                                                e.target.style.backgroundColor = 'transparent';
+                                                e.target.style.color = 'rgba(255,255,255,0.6)';
+                                            }
+                                        }}
+                                    >
+                                        {range}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Stats Overview Row */}
                     <div style={{
-                        backgroundColor: 'white',
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: '1.5rem',
+                        marginBottom: '2.5rem',
+                        maxWidth: '900px',
+                        margin: '0 auto 2.5rem auto'
+                    }}>
+                        <div style={{
+                            backgroundColor: '#132B44',
+                            borderRadius: '1rem',
+                            padding: '1.25rem',
+                            borderTop: '1px solid #F97316',
+                            borderBottom: '1px solid #F97316',
+                            borderLeft: '4px solid #F97316',
+                            borderRight: 'none',
+                            boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)',
+                            textAlign: 'center'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                                <FontAwesomeIcon icon={faShieldHalved} style={{ color: '#F97316' }} />
+                                <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>Total Simulations</span>
+                            </div>
+                            <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white' }}>{simulations?.length || 0}</div>
+                        </div>
+
+                        <div style={{
+                            backgroundColor: '#132B44',
+                            borderRadius: '1rem',
+                            padding: '1.25rem',
+                            borderTop: '1px solid #F97316',
+                            borderBottom: '1px solid #F97316',
+                            borderLeft: '4px solid #F97316',
+                            borderRight: 'none',
+                            boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)',
+                            textAlign: 'center'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                                <FontAwesomeIcon icon={faChartLine} style={{ color: '#F97316' }} />
+                                <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>Avg. Score</span>
+                            </div>
+                            <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white' }}>{userPerformance.overallScore}%</div>
+                        </div>
+
+                        <div style={{
+                            backgroundColor: '#132B44',
+                            borderRadius: '1rem',
+                            padding: '1.25rem',
+                            borderTop: '1px solid #F97316',
+                            borderBottom: '1px solid #F97316',
+                            borderLeft: '4px solid #F97316',
+                            borderRight: 'none',
+                            boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)',
+                            textAlign: 'center'
+                        }}>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.75rem', marginBottom: '0.5rem' }}>
+                                <FontAwesomeIcon icon={faClock} style={{ color: '#F97316' }} />
+                                <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>Time Spent</span>
+                            </div>
+                            <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white' }}>2.4h</div>
+                        </div>
+                    </div>
+
+                    {/* Completed Training Modules Card - Dynamic Messages */}
+                    <div style={{
+                        backgroundColor: '#132B44',
                         borderRadius: '1rem',
                         padding: '1.5rem',
-                        marginBottom: '2rem',
-                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-                        border: '1px solid #e5e7eb'
+                        marginBottom: '2.5rem',
+                        borderTop: '1px solid #F97316',
+                        borderBottom: '1px solid #F97316',
+                        borderLeft: '4px solid #F97316',
+                        borderRight: 'none',
+                        boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)',
+                        maxWidth: '1000px',
+                        margin: '0 auto 2.5rem auto'
                     }}>
-                        <h2 style={{ 
-                            fontSize: '1.25rem', 
-                            fontWeight: 'bold', 
-                            marginBottom: '1.5rem',
-                            color: 'var(--deep-navy)'
-                        }}>
-                            Completed Training Modules
-                        </h2>
-
-                        {/* Warning Card */}
                         <div style={{
-                            backgroundColor: '#fef3c7',
-                            border: '1px solid #fde68a',
-                            borderRadius: '0.5rem',
-                            padding: '1.25rem',
                             display: 'flex',
-                            gap: '1rem',
-                            marginBottom: '1rem'
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            marginBottom: '1.25rem'
                         }}>
-                            <div style={{ color: '#d97706', flexShrink: 0 }}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                                    <line x1="12" y1="9" x2="12" y2="13"></line>
-                                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                                </svg>
-                            </div>
-                            <div>
-                                <div style={{ color: '#92400e', fontWeight: 'bold', fontSize: '0.875rem' }}>
-                                    Recommended: Complete "Urgency Tactics" module
-                                </div>
-                                <div style={{ color: '#b45309', fontSize: '0.75rem', marginTop: '0.25rem', lineHeight: '1.4' }}>
-                                    This will help improve your resistance to time-pressure attacks
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Success Card 1 */}
-                        <div style={{
-                            backgroundColor: '#f0fdf4',
-                            border: '1px solid #bbf7d0',
-                            borderRadius: '0.5rem',
-                            padding: '1.25rem',
-                            display: 'flex',
-                            gap: '1rem',
-                            marginBottom: '1rem',
-                            alignItems: 'center'
-                        }}>
-                            <div style={{ 
-                                color: 'white', 
-                                backgroundColor: '#16a34a', 
-                                borderRadius: '4px', 
-                                padding: '0.25rem', 
-                                flexShrink: 0, 
-                                display: 'flex' 
+                            <div style={{
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.75rem'
                             }}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
+                                <FontAwesomeIcon icon={faGraduationCap} style={{ color: '#F97316', fontSize: '1.25rem' }} />
+                                <h2 style={{ 
+                                    fontSize: '1.1rem', 
+                                    fontWeight: '600', 
+                                    color: 'white',
+                                    margin: 0
+                                }}>
+                                    Your Learning Insights
+                                </h2>
                             </div>
-                            <div>
-                                <div style={{ color: '#166534', fontWeight: 'bold', fontSize: '0.875rem' }}>
-                                    Above Team Average!
-                                </div>
-                                <div style={{ color: '#15803d', fontSize: '0.75rem', marginTop: '0.25rem', lineHeight: '1.4' }}>
-                                    You're performing 10 points above your team's average score
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Success Card 2 */}
-                        <div style={{
-                            backgroundColor: '#f0fdf4',
-                            border: '1px solid #bbf7d0',
-                            borderRadius: '0.5rem',
-                            padding: '1.25rem',
-                            display: 'flex',
-                            gap: '1rem',
-                            alignItems: 'center'
-                        }}>
-                            <div style={{ 
-                                color: 'white', 
-                                backgroundColor: '#16a34a', 
-                                borderRadius: '4px', 
-                                padding: '0.25rem', 
-                                flexShrink: 0, 
-                                display: 'flex' 
+                            <div style={{
+                                backgroundColor: 'rgba(249, 115, 22, 0.15)',
+                                padding: '0.25rem 0.75rem',
+                                borderRadius: '2rem',
+                                fontSize: '0.7rem',
+                                color: '#F97316'
                             }}>
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-                                    <polyline points="20 6 9 17 4 12"></polyline>
-                                </svg>
-                            </div>
-                            <div>
-                                <div style={{ color: '#166534', fontWeight: 'bold', fontSize: '0.875rem' }}>
-                                    Above Team Average!
-                                </div>
-                                <div style={{ color: '#15803d', fontSize: '0.75rem', marginTop: '0.25rem', lineHeight: '1.4' }}>
-                                    Consistent performance in Deceptive Link Detection
-                                </div>
+                                Based on your performance
                             </div>
                         </div>
-                    </div>
 
-                    {/* Original Header */}
-                    <div className="flex justify-between items-start mb-8 block-mobile">
-                        <div>
-                            <h1 style={{ fontSize: '2rem', fontWeight: 'bold', color: 'var(--deep-navy)', marginBottom: '0.25rem' }}>Simulations</h1>
-                            <p style={{ color: 'var(--text-muted)' }}>Navigate the Digital Landscape with Confidence</p>
-                        </div>
-                        <div className="flex gap-4 items-center mt-mobile">
-                            <select className="form-input" style={{ width: 'auto', padding: '0.5rem 1rem', borderRadius: '2rem', fontSize: '0.875rem' }}>
-                                <option>Last 2 weeks</option>
-                                <option>Last month</option>
-                            </select>
-                            <div className="text-right text-xs" style={{ color: 'var(--text-muted)' }}>
-                                <div>Last Updated</div>
-                                <div style={{ fontWeight: 'bold' }}>Today, 3:42 PM</div>
+                        {/* Dynamic Messages - FIXED ALIGNMENT */}
+                        {performanceMessages.map((msg, index) => (
+                            <div key={index} style={{
+                                backgroundColor: msg.type === 'warning' ? 'rgba(249, 115, 22, 0.15)' : 
+                                               msg.type === 'achievement' ? 'rgba(45, 212, 191, 0.15)' :
+                                               msg.type === 'strength' ? 'rgba(45, 212, 191, 0.1)' :
+                                               'rgba(45, 212, 191, 0.1)',
+                                borderRadius: '0.75rem',
+                                padding: '1rem',
+                                display: 'flex',
+                                gap: '1rem',
+                                marginBottom: index !== performanceMessages.length - 1 ? '1rem' : 0,
+                                borderLeft: `3px solid ${msg.color}`,
+                                transition: 'transform 0.2s'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.transform = 'translateX(4px)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = 'translateX(0)';
+                            }}>
+                                <div style={{ 
+                                    color: msg.color, 
+                                    flexShrink: 0,
+                                    fontSize: '1.1rem',
+                                    minWidth: '24px',
+                                    display: 'flex',
+                                    justifyContent: 'center',
+                                    alignItems: 'flex-start',
+                                    paddingTop: '2px'
+                                }}>
+                                    <FontAwesomeIcon icon={msg.icon} />
+                                </div>
+                                <div style={{ 
+                                    flex: 1,
+                                    textAlign: 'left'
+                                }}>
+                                    <div style={{ 
+                                        color: msg.color, 
+                                        fontWeight: '600', 
+                                        fontSize: '0.85rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        marginBottom: '0.25rem',
+                                        textAlign: 'left'
+                                    }}>
+                                        {msg.title}
+                                        {msg.badge && (
+                                            <span style={{
+                                                backgroundColor: msg.color,
+                                                color: '#132B44',
+                                                padding: '0.15rem 0.5rem',
+                                                borderRadius: '1rem',
+                                                fontSize: '0.6rem',
+                                                fontWeight: '600',
+                                                textTransform: 'uppercase'
+                                            }}>
+                                                {msg.badge}
+                                            </span>
+                                        )}
+                                    </div>
+                                    <div style={{ 
+                                        color: 'rgba(255,255,255,0.7)', 
+                                        fontSize: '0.8rem', 
+                                        lineHeight: '1.5',
+                                        textAlign: 'left'
+                                    }}>
+                                        {msg.description}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div className="simulations-grid">
-                        {simulations.map(sim => (
-                            <SimulationCard key={sim.id} {...sim} />
                         ))}
+                    </div>
+
+                    {/* Simulations Grid - Navy Glass Cards */}
+                    <div style={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(3, 1fr)',
+                        gap: '1.5rem',
+                        marginBottom: '3rem'
+                    }}>
+                        {simulations.map((sim, index) => (
+                            <div
+                                key={sim.id}
+                                style={{
+                                    background: '#132B44',
+                                    backdropFilter: 'blur(10px)',
+                                    borderRadius: '1rem',
+                                    padding: '1.5rem',
+                                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                                    transition: 'all 0.3s ease',
+                                    cursor: 'pointer',
+                                    position: 'relative',
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    height: '100%',
+                                    boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(-4px)';
+                                    e.currentTarget.style.borderColor = 'rgba(249, 115, 22, 0.3)';
+                                    e.currentTarget.style.boxShadow = '0 15px 30px -8px rgba(249, 115, 22, 0.3)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.transform = 'translateY(0)';
+                                    e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+                                    e.currentTarget.style.boxShadow = '0 8px 20px -6px rgba(0, 0, 0, 0.4)';
+                                }}
+                                onClick={() => {/* Navigate to simulation detail */}}
+                            >
+                                {/* Badges */}
+                                {index === 0 && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '1rem',
+                                        right: '1rem',
+                                        background: 'linear-gradient(135deg, #F97316, #2DD4BF)',
+                                        color: 'white',
+                                        padding: '0.25rem 0.75rem',
+                                        borderRadius: '2rem',
+                                        fontSize: '0.7rem',
+                                        fontWeight: '600',
+                                        zIndex: 1
+                                    }}>
+                                        NEW
+                                    </div>
+                                )}
+                                {index === 2 && (
+                                    <div style={{
+                                        position: 'absolute',
+                                        top: '1rem',
+                                        right: '1rem',
+                                        backgroundColor: '#2DD4BF',
+                                        color: '#132B44',
+                                        padding: '0.25rem 0.75rem',
+                                        borderRadius: '2rem',
+                                        fontSize: '0.7rem',
+                                        fontWeight: '600',
+                                        zIndex: 1
+                                    }}>
+                                        POPULAR
+                                    </div>
+                                )}
+                                
+                                {/* Icon */}
+                                <div style={{
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    gap: '1rem',
+                                    marginBottom: '1rem'
+                                }}>
+                                    <div style={{
+                                        width: '48px',
+                                        height: '48px',
+                                        borderRadius: '12px',
+                                        background: `linear-gradient(135deg, ${index % 2 === 0 ? '#F97316' : '#2DD4BF'}20, transparent)`,
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center'
+                                    }}>
+                                        <FontAwesomeIcon 
+                                            icon={index === 0 ? faShieldHalved : index === 1 ? faBrain : faChartLine} 
+                                            style={{ 
+                                                fontSize: '1.5rem',
+                                                color: index % 2 === 0 ? '#F97316' : '#2DD4BF'
+                                            }} 
+                                        />
+                                    </div>
+                                    <div>
+                                        <h3 style={{
+                                            fontSize: '1.1rem',
+                                            fontWeight: '600',
+                                            color: 'white',
+                                            margin: 0
+                                        }}>
+                                            {sim.title || `Module ${sim.id}`}
+                                        </h3>
+                                        <p style={{
+                                            color: 'rgba(255,255,255,0.5)',
+                                            fontSize: '0.75rem',
+                                            margin: '0.25rem 0 0 0',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.25rem'
+                                        }}>
+                                            <FontAwesomeIcon icon={faStar} style={{ fontSize: '0.6rem', color: '#F97316' }} />
+                                            {sim.difficulty || 'Intermediate'} • {sim.rating || '4.8'}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {/* Description */}
+                                <p style={{
+                                    color: 'rgba(255,255,255,0.7)',
+                                    fontSize: '0.85rem',
+                                    lineHeight: '1.5',
+                                    marginBottom: '1.5rem',
+                                    flex: 1,
+                                    textAlign: 'left'
+                                }}>
+                                    {sim.description || 'Learn to identify and respond to sophisticated phishing attempts'}
+                                </p>
+
+                                {/* Progress Bar */}
+                                <div style={{
+                                    marginBottom: '1rem'
+                                }}>
+                                    <div style={{
+                                        display: 'flex',
+                                        justifyContent: 'space-between',
+                                        alignItems: 'center',
+                                        marginBottom: '0.5rem'
+                                    }}>
+                                        <span style={{
+                                            color: 'rgba(255,255,255,0.5)',
+                                            fontSize: '0.7rem'
+                                        }}>
+                                            Progress
+                                        </span>
+                                        <span style={{
+                                            color: '#F97316',
+                                            fontSize: '0.7rem',
+                                            fontWeight: '600'
+                                        }}>
+                                            {sim.progress || Math.floor(Math.random() * 100)}%
+                                        </span>
+                                    </div>
+                                    <div style={{
+                                        backgroundColor: 'rgba(255,255,255,0.1)',
+                                        height: '6px',
+                                        borderRadius: '3px',
+                                        overflow: 'hidden'
+                                    }}>
+                                        <div style={{
+                                            width: `${sim.progress || Math.floor(Math.random() * 100)}%`,
+                                            height: '100%',
+                                            background: 'linear-gradient(90deg, #F97316, #2DD4BF)',
+                                            borderRadius: '3px'
+                                        }} />
+                                    </div>
+                                </div>
+
+                                {/* Bottom row */}
+                                <div style={{
+                                    display: 'flex',
+                                    justifyContent: 'space-between',
+                                    alignItems: 'center',
+                                    marginTop: '0.5rem',
+                                    borderTop: '1px solid rgba(255,255,255,0.05)',
+                                    paddingTop: '1rem'
+                                }}>
+                                    <span style={{
+                                        color: 'rgba(255,255,255,0.4)',
+                                        fontSize: '0.7rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.25rem'
+                                    }}>
+                                        <FontAwesomeIcon icon={faClock} style={{ fontSize: '0.6rem' }} />
+                                        {sim.duration || '15 min'}
+                                    </span>
+                                    <span style={{
+                                        color: '#F97316',
+                                        fontSize: '0.8rem',
+                                        fontWeight: '500',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: '0.25rem',
+                                        cursor: 'pointer',
+                                        padding: '0.25rem 0.75rem',
+                                        borderRadius: '2rem',
+                                        backgroundColor: 'rgba(249, 115, 22, 0.1)',
+                                        transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.backgroundColor = 'rgba(249, 115, 22, 0.2)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.backgroundColor = 'rgba(249, 115, 22, 0.1)';
+                                    }}>
+                                        Start
+                                        <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: '0.6rem' }} />
+                                    </span>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* View All Link */}
+                    <div style={{
+                        textAlign: 'center',
+                        marginTop: '2rem',
+                        marginBottom: '2rem'
+                    }}>
+                        <button
+                            onClick={() => {/* Handle view all */}}
+                            style={{
+                                backgroundColor: 'transparent',
+                                color: 'white',
+                                border: '2px solid rgba(249, 115, 22, 0.3)',
+                                padding: '0.75rem 2.5rem',
+                                borderRadius: '2rem',
+                                fontSize: '0.95rem',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '0.75rem',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = 'rgba(249, 115, 22, 0.1)';
+                                e.target.style.borderColor = '#F97316';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = 'transparent';
+                                e.target.style.borderColor = 'rgba(249, 115, 22, 0.3)';
+                            }}
+                        >
+                            Explore All Simulations
+                            <FontAwesomeIcon icon={faArrowRight} />
+                        </button>
                     </div>
                 </main>
             </div>
