@@ -1,12 +1,12 @@
 /**
  * Centralized API client for FlagIt.
- *
+const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api'; *
  * Reads the base URL from VITE_API_URL.
  * Automatically attaches Authorization header from localStorage.
  * Throws a descriptive Error for non-2xx responses.
  */
 
-const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5000') + '/api';
+const BASE_URL = (import.meta.env.VITE_API_URL || 'http://localhost:5001') + '/api';
 
 const getToken = () => localStorage.getItem('flagit_token');
 
