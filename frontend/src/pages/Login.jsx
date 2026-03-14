@@ -8,25 +8,26 @@ import {
     faEyeSlash,
     faArrowRight,
     faLock,
-    faEnvelope
+    faEnvelope,
+    faUserPlus
 } from '@fortawesome/free-solid-svg-icons';
 
-// Demo convenience credentials for each role
+// Demo convenience credentials for each role (stored but not autofilled)
 const ROLE_CREDENTIALS = {
     user: { email: 'flagit@gmail.com', password: 'Pilon123' },
     admin: { email: 'admin@flagit.com', password: 'Pilon123' },
-    aiMaintainer: { email: 'ai@flagit.com', password: 'Pilon123' },
 };
 
 const Login = () => {
     const { login } = useAppStore();
     const navigate = useNavigate();
-    const [email, setEmail] = useState('flagit@gmail.com');
-    const [password, setPassword] = useState('Pilon123');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [selectedRole, setSelectedRole] = useState('user');
     const [errors, setErrors] = useState({});
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isSignUp, setIsSignUp] = useState(false);
 
     const validate = () => {
         const newErrors = {};
@@ -41,15 +42,12 @@ const Login = () => {
         return newErrors;
     };
 
-    // Autofill credentials for the selected demo role
+    // Store credentials but don't autofill - just update state silently
     const handleRoleSwitch = (newRole) => {
         setSelectedRole(newRole);
-        const creds = ROLE_CREDENTIALS[newRole];
-        if (creds) {
-            setEmail(creds.email);
-            setPassword(creds.password);
-        }
+        // Don't set email/password - let user type them
         setErrors({});
+        setIsSignUp(false);
     };
 
     const handleLogin = async (e) => {
@@ -68,8 +66,6 @@ const Login = () => {
 
             if (role === 'admin') {
                 navigate('/admin');
-            } else if (role === 'aiMaintainer') {
-                navigate('/maintainer/models');
             } else {
                 navigate('/dashboard');
             }
@@ -78,6 +74,23 @@ const Login = () => {
         } finally {
             setIsSubmitting(false);
         }
+    };
+
+    const handleSignUp = async (e) => {
+        e.preventDefault();
+        const validationErrors = validate();
+        if (Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return;
+        }
+
+        setIsSubmitting(true);
+        setErrors({});
+        
+        // Just handle UI feedback - backend will be connected later
+        alert('Sign up functionality will be connected to the backend soon!');
+        setIsSubmitting(false);
+        setIsSignUp(false);
     };
 
     return (
@@ -137,32 +150,32 @@ const Login = () => {
                     textAlign: 'center',
                     borderRight: '1px solid rgba(255,255,255,0.05)'
                 }}>
-<div style={{
-    backgroundColor: 'white',
-    border: '3px solid #F97316',
-    borderRadius: '50%',
-    width: '120px',
-    height: '120px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: '2rem',
-    boxShadow: '0 10px 25px -5px rgba(249,115,22,0.3)',
-    overflow: 'hidden'
-}}>
-    <img 
-        src="/icons/flagit-logo.png" 
-        alt="FlagIt" 
-        style={{ 
-            width: '100px', 
-            height: '100px',
-            objectFit: 'contain',
-            objectPosition: 'center',
-            display: 'block',
-            transform: 'translate(0, 14px)' // Adjust these values if needed
-        }} 
-    />
-</div>
+                    <div style={{
+                        backgroundColor: 'white',
+                        border: '3px solid #F97316',
+                        borderRadius: '50%',
+                        width: '120px',
+                        height: '120px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        marginBottom: '2rem',
+                        boxShadow: '0 10px 25px -5px rgba(249,115,22,0.3)',
+                        overflow: 'hidden'
+                    }}>
+                        <img 
+                            src="/icons/flagit-logo.png" 
+                            alt="FlagIt" 
+                            style={{ 
+                                width: '100px', 
+                                height: '100px',
+                                objectFit: 'contain',
+                                objectPosition: 'center',
+                                display: 'block',
+                                transform: 'translate(0, 14px)'
+                            }} 
+                        />
+                    </div>
 
                     <h1 style={{
                         fontSize: '2.5rem',
@@ -233,7 +246,7 @@ const Login = () => {
                     </div>
                 </div>
 
-                {/* Right side - Login Form */}
+                {/* Right side - Login/Signup Form */}
                 <div style={{
                     flex: 1,
                     padding: '3rem',
@@ -262,7 +275,7 @@ const Login = () => {
                                 color: 'white',
                                 margin: 0
                             }}>
-                                Welcome Back
+                                {selectedRole === 'admin' ? 'Admin Access' : (isSignUp ? 'Create Account' : 'Welcome Back')}
                             </h2>
                         </div>
 
@@ -271,11 +284,15 @@ const Login = () => {
                             fontSize: '0.95rem',
                             marginBottom: '2rem'
                         }}>
-                            Enter your credentials to access your account
+                            {selectedRole === 'admin' 
+                                ? 'Admin credentials required' 
+                                : isSignUp 
+                                ? 'Sign up to start your security training'
+                                : 'Enter your credentials to access your account'}
                         </p>
 
-                        {/* Role indicator */}
-                        {selectedRole !== 'user' && (
+                        {/* Role indicator for admin */}
+                        {selectedRole === 'admin' && (
                             <div style={{
                                 display: 'inline-flex',
                                 alignItems: 'center',
@@ -287,12 +304,12 @@ const Login = () => {
                             }}>
                                 <FontAwesomeIcon icon={faShieldHalved} style={{ color: '#F97316', fontSize: '0.8rem' }} />
                                 <span style={{ color: '#F97316', fontSize: '0.85rem', fontWeight: '500' }}>
-                                    {selectedRole === 'admin' ? 'Admin Access' : 'Maintainer Access'}
+                                    Admin Access
                                 </span>
                             </div>
                         )}
 
-                        <form onSubmit={handleLogin}>
+                        <form onSubmit={isSignUp ? handleSignUp : handleLogin}>
                             <div style={{ marginBottom: '1.5rem' }}>
                                 <label style={{
                                     display: 'block',
@@ -321,6 +338,7 @@ const Login = () => {
                                         type="email"
                                         value={email}
                                         onChange={(e) => setEmail(e.target.value)}
+                                        placeholder="Enter your email"
                                         style={{
                                             width: '100%',
                                             padding: '0.875rem 1rem 0.875rem 3rem',
@@ -340,7 +358,6 @@ const Login = () => {
                                             e.target.style.backgroundColor = 'rgba(255,255,255,0.03)';
                                             e.target.style.borderColor = errors.email ? '#dc2626' : 'rgba(255,255,255,0.1)';
                                         }}
-                                        placeholder="Enter your email"
                                     />
                                 </div>
                                 {errors.email && (
@@ -368,18 +385,20 @@ const Login = () => {
                                     }}>
                                         Password
                                     </label>
-                                    <a 
-                                        href="#" 
-                                        style={{
-                                            color: '#F97316',
-                                            fontSize: '0.8rem',
-                                            textDecoration: 'none'
-                                        }}
-                                        onMouseEnter={(e) => e.target.style.color = '#2DD4BF'}
-                                        onMouseLeave={(e) => e.target.style.color = '#F97316'}
-                                    >
-                                        Forgot password?
-                                    </a>
+                                    {selectedRole !== 'admin' && !isSignUp && (
+                                        <a 
+                                            href="#" 
+                                            style={{
+                                                color: '#F97316',
+                                                fontSize: '0.8rem',
+                                                textDecoration: 'none'
+                                            }}
+                                            onMouseEnter={(e) => e.target.style.color = '#2DD4BF'}
+                                            onMouseLeave={(e) => e.target.style.color = '#F97316'}
+                                        >
+                                            Forgot password?
+                                        </a>
+                                    )}
                                 </div>
                                 <div style={{
                                     position: 'relative'
@@ -399,6 +418,7 @@ const Login = () => {
                                         type={showPassword ? 'text' : 'password'}
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
+                                        placeholder="Enter your password"
                                         style={{
                                             width: '100%',
                                             padding: '0.875rem 3rem 0.875rem 3rem',
@@ -418,7 +438,6 @@ const Login = () => {
                                             e.target.style.backgroundColor = 'rgba(255,255,255,0.03)';
                                             e.target.style.borderColor = errors.password ? '#dc2626' : 'rgba(255,255,255,0.1)';
                                         }}
-                                        placeholder="Enter your password"
                                     />
                                     <button
                                         type="button"
@@ -448,6 +467,7 @@ const Login = () => {
                                 )}
                             </div>
 
+                            {/* Main Action Button */}
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
@@ -466,7 +486,8 @@ const Login = () => {
                                     justifyContent: 'center',
                                     gap: '0.5rem',
                                     transition: 'all 0.2s',
-                                    opacity: isSubmitting ? 0.7 : 1
+                                    opacity: isSubmitting ? 0.7 : 1,
+                                    marginBottom: '1rem'
                                 }}
                                 onMouseEnter={(e) => {
                                     if (!isSubmitting) {
@@ -483,12 +504,79 @@ const Login = () => {
                                     }
                                 }}
                             >
-                                {isSubmitting ? 'Logging in...' : 'Log In'}
+                                {isSubmitting ? 'Processing...' : (isSignUp ? 'Sign Up' : 'Log In')}
                                 {!isSubmitting && <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: '0.9rem' }} />}
                             </button>
+
+                            {/* Sign Up Button - Only show for user role and not in signup mode */}
+                            {selectedRole === 'user' && !isSignUp && (
+                                <button
+                                    type="button"
+                                    onClick={() => setIsSignUp(true)}
+                                    style={{
+                                        width: '100%',
+                                        padding: '1rem',
+                                        backgroundColor: 'transparent',
+                                        color: 'white',
+                                        border: '1px solid rgba(249,115,22,0.3)',
+                                        borderRadius: '1rem',
+                                        fontSize: '1rem',
+                                        fontWeight: '500',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.5rem',
+                                        transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.backgroundColor = 'rgba(249,115,22,0.1)';
+                                        e.target.style.borderColor = '#F97316';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.backgroundColor = 'transparent';
+                                        e.target.style.borderColor = 'rgba(249,115,22,0.3)';
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={faUserPlus} />
+                                    Create New Account
+                                </button>
+                            )}
+
+                            {/* Back to Login Button - Only show in signup mode */}
+                            {selectedRole === 'user' && isSignUp && (
+                                <button
+                                    type="button"
+                                    onClick={() => setIsSignUp(false)}
+                                    style={{
+                                        width: '100%',
+                                        padding: '1rem',
+                                        backgroundColor: 'transparent',
+                                        color: 'white',
+                                        border: '1px solid rgba(255,255,255,0.1)',
+                                        borderRadius: '1rem',
+                                        fontSize: '1rem',
+                                        fontWeight: '500',
+                                        cursor: 'pointer',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        gap: '0.5rem',
+                                        transition: 'all 0.2s'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.target.style.backgroundColor = 'rgba(255,255,255,0.05)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.target.style.backgroundColor = 'transparent';
+                                    }}
+                                >
+                                    ← Back to Login
+                                </button>
+                            )}
                         </form>
 
-                        {/* Role switcher */}
+                        {/* Role switcher - Only user and admin */}
                         <div style={{
                             display: 'flex',
                             justifyContent: 'center',
@@ -496,7 +584,7 @@ const Login = () => {
                             marginTop: '2rem',
                             flexWrap: 'wrap'
                         }}>
-                            {['user', 'admin', 'aiMaintainer'].map((role) => (
+                            {['user', 'admin'].map((role) => (
                                 <button
                                     key={role}
                                     onClick={() => handleRoleSwitch(role)}
@@ -524,35 +612,23 @@ const Login = () => {
                                         }
                                     }}
                                 >
-                                    {role === 'user' && 'User Login'}
-                                    {role === 'admin' && 'Admin Login'}
-                                    {role === 'aiMaintainer' && 'Maintainer Login'}
+                                    {role === 'user' ? 'User Login' : 'Admin Login'}
                                 </button>
                             ))}
                         </div>
 
-                        {/* Sign up link */}
+                        {/* Demo credentials hint - subtle */}
                         <div style={{
-                            textAlign: 'center',
-                            marginTop: '2rem',
-                            paddingTop: '2rem',
-                            borderTop: '1px solid rgba(255,255,255,0.05)'
+                            marginTop: '1.5rem',
+                            padding: '0.75rem',
+                            backgroundColor: 'rgba(255,255,255,0.02)',
+                            borderRadius: '0.5rem',
+                            border: '1px dashed rgba(249,115,22,0.3)',
+                            fontSize: '0.75rem',
+                            color: 'rgba(255,255,255,0.4)',
+                            textAlign: 'center'
                         }}>
-                            <span style={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.9rem' }}>
-                                Don't have an account?{' '}
-                                <a 
-                                    href="#" 
-                                    style={{
-                                        color: '#2DD4BF',
-                                        textDecoration: 'none',
-                                        fontWeight: '500'
-                                    }}
-                                    onMouseEnter={(e) => e.target.style.color = '#F97316'}
-                                    onMouseLeave={(e) => e.target.style.color = '#2DD4BF'}
-                                >
-                                    Sign up here
-                                </a>
-                            </span>
+                            <span style={{ color: '#F97316', fontWeight: '500' }}>Demo credentials:</span> flagit@gmail.com / Pilon123 (User) • admin@flagit.com / Pilon123 (Admin)
                         </div>
                     </div>
                 </div>
