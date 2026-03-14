@@ -1,0 +1,150 @@
+/* src/phishingDetector/screens/PausedScreen.css */
+
+.paused-screen-compact {
+  width: 100%;
+  height: 70px;
+  background-color: #0a1a2f;
+  color: white;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.paused-content-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 16px;
+  width: 100%;
+  height: 100%;
+}
+
+/* Left: Radar Animation */
+.radar-paused {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.7;
+}
+
+/* Radar circles and line */
+.radar-circle-paused {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #F97316;
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: pulse-paused 3s infinite;
+}
+
+.radar-circle-paused.inner {
+  width: 70%;
+  height: 70%;
+  top: 15%;
+  left: 15%;
+  animation: pulse-paused 3s infinite 0.8s;
+}
+
+.radar-line-paused {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 2px;
+  background: #F97316;
+  transform-origin: left;
+  opacity: 0.5;
+  animation: scan-paused 4s infinite linear;
+  box-shadow: 0 0 8px #F97316;
+}
+
+/* Animations */
+@keyframes pulse-paused {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.3;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.2;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.3;
+  }
+}
+
+@keyframes scan-paused {
+  from {
+    transform: rotate(0deg);
+    opacity: 0.3;
+  }
+  to {
+    transform: rotate(360deg);
+    opacity: 0.3;
+  }
+}
+
+/* Middle: Text - Now with more space for (PAUSED) */
+.text-paused {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  line-height: 1;
+  min-width: 200px; /* Ensure text has room */
+}
+
+.text-paused h2 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+  color: #016B80;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  line-height: 1;
+}
+
+/* Right: Resume Button - Longer word needs more padding */
+.resume-button-compact {
+  background: transparent;
+  color: white;
+  border: 1px solid #F97316;
+  padding: 4px 16px; /* More horizontal padding than Pause button */
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 28px;
+  line-height: 1;
+  min-width: 85px; /* Ensure button has enough width for "Resume" */
+}
+
+.resume-button-compact:hover {
+  background: rgba(249, 115, 22, 0.1);
+  transform: scale(1.02);
+}
+
+.resume-button-compact:active {
+  transform: scale(0.98);
+}

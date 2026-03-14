@@ -1,0 +1,20 @@
+:root {
+  --primary-teal: #15798D;
+  --secondary-teal: #1B8FA7;
+  --deep-navy: #102045;
+  --accent-orange: #DD7D07;
+  --white: #FFFFFF;
+  --bg-gradient: linear-gradient(135deg, #15798D, #1B8FA7);
+  --text-main: #102045;
+  --text-muted: #6b7280;
+  --text-light: #f3f4f6;
+  --card-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --card-bg: #FFFFFF;
+  --danger: #ef4444;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --radius-sm: 0.25rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 1rem;
+  --radius-xl: 1.5rem;
+}

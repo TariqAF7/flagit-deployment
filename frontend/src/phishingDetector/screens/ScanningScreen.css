@@ -1,0 +1,141 @@
+.scanning-screen-compact {
+  width: 100%;
+  height: 70px; /* Fixed height */
+  background-color: #0a1a2f;
+  color: white;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center; /* Vertically centers everything */
+  justify-content: center;
+}
+
+.scanning-content-compact {
+  display: flex;
+  align-items: center; /* Vertically centers all items */
+  justify-content: space-between;
+  padding: 0 16px;
+  gap: 16px;
+  width: 100%;
+  height: 100%; /* Take full height */
+}
+
+/* Left: Radar Animation */
+.radar-compact {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0; /* Remove any margins */
+}
+
+.radar-circle-compact {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #F97316;
+  border-radius: 50%;
+  animation: pulse-compact 2s infinite;
+}
+
+.radar-circle-compact.inner {
+  width: 70%;
+  height: 70%;
+  top: 15%;
+  left: 15%;
+  animation: pulse-compact 2s infinite 0.5s;
+}
+
+.radar-line-compact {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 18px;
+  height: 2px;
+  background: #F97316;
+  transform-origin: left;
+  animation: scan-compact 2s infinite linear;
+  box-shadow: 0 0 8px #F97316;
+}
+
+@keyframes pulse-compact {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.8;
+  }
+}
+
+@keyframes scan-compact {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Middle: Text */
+.text-compact {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%; /* Take full height */
+  line-height: 1; /* Remove extra line height */
+}
+
+.text-compact h2 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+  color: #016B80;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  line-height: 1; /* Remove extra line height */
+}
+
+/* Right: Pause Button */
+.pause-button-compact {
+  background: transparent;
+  color: white;
+  border: 1px solid #F97316;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 28px; /* Fixed height */
+  line-height: 1;
+  margin: 0; /* Remove any margins */
+}
+
+.pause-button-compact:hover {
+  background: rgba(249, 115, 22, 0.1);
+  transform: scale(1.02);
+}
+
+.pause-button-compact:active {
+  transform: scale(0.98);
+}

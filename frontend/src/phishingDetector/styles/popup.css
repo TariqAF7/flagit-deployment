@@ -1,0 +1,14 @@
+/* src/styles/popup.css */
+html, body {
+  width: 360px; /* Shrunk from 420px */
+  height: 460px; /* Shrunk from 600px */
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #0a1a2f; 
+}
+
+#root {
+  width: 100%;
+  height: 100%;
+}
