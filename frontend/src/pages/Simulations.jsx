@@ -18,7 +18,13 @@ import {
     faSeedling,
     faExclamationTriangle,
     faCheckCircle,
-    faStar
+    faStar,
+    faEnvelope,
+    faLink,
+    faUserSecret,
+    faQrcode,
+    faPhone,
+    faGlobe
 } from '@fortawesome/free-solid-svg-icons';
 
 const Simulations = () => {
@@ -160,6 +166,100 @@ const Simulations = () => {
 
     const performanceMessages = getPerformanceMessages();
 
+    // Simulation data with training-focused descriptions - Less clue-giving
+const simulationModules = [
+    {
+        id: 1,
+        title: 'Psychological Tactics',
+        description: 'Analyze this email and decide: Is it a legitimate request or a manipulation attempt?',
+        icon: faBrain,
+        difficulty: 'Beginner',
+        duration: '12 min',
+        rating: 4.8,
+        progress: 0
+    },
+    {
+        id: 2,
+        title: 'Credential Harvesting',
+        description: 'Review this login page carefully. Would you enter your credentials?',
+        icon: faUserSecret,
+        difficulty: 'Beginner',
+        duration: '10 min',
+        rating: 4.6,
+        progress: 0
+    },
+    {
+        id: 3,
+        title: 'BiTB Awareness',
+        description: 'Examine this browser window. Can you spot anything unusual?',
+        icon: faGlobe,
+        difficulty: 'Intermediate',
+        duration: '15 min',
+        rating: 4.8,
+        progress: 0
+    },
+    {
+        id: 4,
+        title: 'Deceptive Links 101',
+        description: 'Before you click, examine this link. Is it safe or suspicious?',
+        icon: faLink,
+        difficulty: 'Beginner',
+        duration: '8 min',
+        rating: 4.9,
+        progress: 0
+    },
+    {
+        id: 5,
+        title: 'Spear Phishing',
+        description: 'This email knows your name and role. Does that make it trustworthy?',
+        icon: faBullseye,
+        difficulty: 'Advanced',
+        duration: '20 min',
+        rating: 4.7,
+        progress: 0
+    },
+    {
+        id: 6,
+        title: 'Quishing Tactics',
+        description: 'Scan this QR code? Think twice. What could be hidden behind it?',
+        icon: faQrcode,
+        difficulty: 'Intermediate',
+        duration: '12 min',
+        rating: 4.5,
+        progress: 0
+    },
+    {
+        id: 7,
+        title: 'Vishing Tactics',
+        description: 'Listen to this voicemail. Would you call back?',
+        icon: faPhone,
+        difficulty: 'Intermediate',
+        duration: '15 min',
+        rating: 4.4,
+        progress: 0
+    },
+    {
+        id: 8,
+        title: 'Watering Hole Attack',
+        description: 'This website looks normal. Can you spot the hidden danger?',
+        icon: faShieldHalved,
+        difficulty: 'Advanced',
+        duration: '18 min',
+        rating: 4.6,
+        progress: 0
+    },
+    {
+        id: 9,
+        title: 'CEO Fraud Detection',
+        description: 'Urgent request from your CEO. Would you comply or verify?',
+        icon: faEnvelope,
+        difficulty: 'Advanced',
+        duration: '15 min',
+        rating: 4.9,
+        progress: 0
+    }
+];
+
     return (
         <div className="dashboard-layout" style={{ backgroundColor: '#167f94' }}>
             <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
@@ -213,7 +313,7 @@ const Simulations = () => {
                             margin: '0 auto 1.5rem auto',
                             maxWidth: '600px'
                         }}>
-                            Navigate the Digital Landscape with Confidence
+                            Test your skills against real-world phishing scenarios
                         </p>
 
                         {/* Filters Row - Centered */}
@@ -333,7 +433,7 @@ const Simulations = () => {
                                 <FontAwesomeIcon icon={faShieldHalved} style={{ color: '#F97316' }} />
                                 <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>Total Simulations</span>
                             </div>
-                            <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white' }}>{simulations?.length || 0}</div>
+                            <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white' }}>{simulationModules?.length || 0}</div>
                         </div>
 
                         <div style={{
@@ -419,7 +519,7 @@ const Simulations = () => {
                             </div>
                         </div>
 
-                        {/* Dynamic Messages - FIXED ALIGNMENT */}
+                        {/* Dynamic Messages */}
                         {performanceMessages.map((msg, index) => (
                             <div key={index} style={{
                                 backgroundColor: msg.type === 'warning' ? 'rgba(249, 115, 22, 0.15)' : 
@@ -501,7 +601,7 @@ const Simulations = () => {
                         gap: '1.5rem',
                         marginBottom: '3rem'
                     }}>
-                        {simulations.map((sim, index) => (
+                        {simulationModules.map((sim, index) => (
                             <div
                                 key={sim.id}
                                 style={{
@@ -581,7 +681,7 @@ const Simulations = () => {
                                         justifyContent: 'center'
                                     }}>
                                         <FontAwesomeIcon 
-                                            icon={index === 0 ? faShieldHalved : index === 1 ? faBrain : faChartLine} 
+                                            icon={sim.icon} 
                                             style={{ 
                                                 fontSize: '1.5rem',
                                                 color: index % 2 === 0 ? '#F97316' : '#2DD4BF'
@@ -595,7 +695,7 @@ const Simulations = () => {
                                             color: 'white',
                                             margin: 0
                                         }}>
-                                            {sim.title || `Module ${sim.id}`}
+                                            {sim.title}
                                         </h3>
                                         <p style={{
                                             color: 'rgba(255,255,255,0.5)',
@@ -606,12 +706,12 @@ const Simulations = () => {
                                             gap: '0.25rem'
                                         }}>
                                             <FontAwesomeIcon icon={faStar} style={{ fontSize: '0.6rem', color: '#F97316' }} />
-                                            {sim.difficulty || 'Intermediate'} • {sim.rating || '4.8'}
+                                            {sim.difficulty} • {sim.rating}
                                         </p>
                                     </div>
                                 </div>
 
-                                {/* Description */}
+                                {/* Description - Training focused */}
                                 <p style={{
                                     color: 'rgba(255,255,255,0.7)',
                                     fontSize: '0.85rem',
@@ -620,7 +720,7 @@ const Simulations = () => {
                                     flex: 1,
                                     textAlign: 'left'
                                 }}>
-                                    {sim.description || 'Learn to identify and respond to sophisticated phishing attempts'}
+                                    {sim.description}
                                 </p>
 
                                 {/* Progress Bar */}
@@ -644,7 +744,7 @@ const Simulations = () => {
                                             fontSize: '0.7rem',
                                             fontWeight: '600'
                                         }}>
-                                            {sim.progress || Math.floor(Math.random() * 100)}%
+                                            {sim.progress}%
                                         </span>
                                     </div>
                                     <div style={{
@@ -654,7 +754,7 @@ const Simulations = () => {
                                         overflow: 'hidden'
                                     }}>
                                         <div style={{
-                                            width: `${sim.progress || Math.floor(Math.random() * 100)}%`,
+                                            width: `${sim.progress}%`,
                                             height: '100%',
                                             background: 'linear-gradient(90deg, #F97316, #2DD4BF)',
                                             borderRadius: '3px'
@@ -679,7 +779,7 @@ const Simulations = () => {
                                         gap: '0.25rem'
                                     }}>
                                         <FontAwesomeIcon icon={faClock} style={{ fontSize: '0.6rem' }} />
-                                        {sim.duration || '15 min'}
+                                        {sim.duration}
                                     </span>
                                     <span style={{
                                         color: '#F97316',
@@ -700,7 +800,7 @@ const Simulations = () => {
                                     onMouseLeave={(e) => {
                                         e.currentTarget.style.backgroundColor = 'rgba(249, 115, 22, 0.1)';
                                     }}>
-                                        Start
+                                        Start Training
                                         <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: '0.6rem' }} />
                                     </span>
                                 </div>
@@ -739,7 +839,7 @@ const Simulations = () => {
                                 e.target.style.borderColor = 'rgba(249, 115, 22, 0.3)';
                             }}
                         >
-                            Explore All Simulations
+                            View All Scenarios
                             <FontAwesomeIcon icon={faArrowRight} />
                         </button>
                     </div>
