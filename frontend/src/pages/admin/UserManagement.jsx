@@ -10,6 +10,14 @@ import {
   updateAdminUser,
   deleteAdminUser,
 } from '../../api/admin';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faUsers,
+  faFilter,
+  faSearch,
+  faPlus,
+  faEdit
+} from '@fortawesome/free-solid-svg-icons';
 
 // ── Role display helpers ─────────────────────────────────────────────────────
 const ROLE_LABEL = {
@@ -20,28 +28,28 @@ const ROLE_LABEL = {
 
 const ROLE_BADGE_STYLE = {
   user: {
-    backgroundColor: '#eff6ff',
-    color: '#3b82f6',
+    backgroundColor: '#1e3a5f',
+    color: '#60a5fa',
   },
   admin: {
-    backgroundColor: '#fef3c7',
-    color: '#d97706',
+    backgroundColor: '#5f3a1e',
+    color: '#fbbf24',
   },
   ai_maintainer: {
-    backgroundColor: '#f0fdf4',
-    color: '#16a34a',
+    backgroundColor: '#1e5f3a',
+    color: '#4ade80',
   },
 };
 
 const STATUS_BADGE_STYLE = {
   Active: {
-    backgroundColor: '#dcfce7',
-    color: '#16a34a',
-    dot: '#16a34a',
+    backgroundColor: '#1e5f3a',
+    color: '#4ade80',
+    dot: '#4ade80',
   },
   Inactive: {
-    backgroundColor: '#f1f5f9',
-    color: '#64748b',
+    backgroundColor: '#3a3a3a',
+    color: '#94a3b8',
     dot: '#94a3b8',
   },
 };
@@ -64,7 +72,17 @@ const RoleBadge = ({ rawRole }) => {
 const StatusBadge = ({ status }) => {
   const s = STATUS_BADGE_STYLE[status] || STATUS_BADGE_STYLE.Inactive;
   return (
-    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.3rem', ...s, padding: '0.2rem 0.6rem', borderRadius: '2rem', fontSize: '0.72rem', fontWeight: '600' }}>
+    <div style={{ 
+      display: 'inline-flex', 
+      alignItems: 'center', 
+      gap: '0.3rem', 
+      backgroundColor: s.backgroundColor,
+      color: s.color,
+      padding: '0.2rem 0.6rem', 
+      borderRadius: '2rem', 
+      fontSize: '0.72rem', 
+      fontWeight: '600' 
+    }}>
       <div style={{ width: '6px', height: '6px', borderRadius: '50%', backgroundColor: s.dot }} />
       {status}
     </div>
@@ -158,8 +176,8 @@ const UserManagement = () => {
           id:         u._id,
           name:       u.name,
           email:      u.email,
-          rawRole:    u.role,                         // backend enum: 'user'|'admin'|'ai_maintainer'
-          role:       ROLE_LABEL[u.role] || u.role,   // display label
+          rawRole:    u.role,
+          role:       ROLE_LABEL[u.role] || u.role,
           department: u.department || '—',
           status:     u.status,
         })));
@@ -172,12 +190,12 @@ const UserManagement = () => {
   }, [searchTerm, roleFilter, deptFilter, statusFilter, setAdminUsers]);
 
   // ── Initial load ─────────────────────────────────────────────
-  useEffect(() => { loadUsers(); }, []);  // eslint-disable-line
+  useEffect(() => { loadUsers(); }, []);
 
   // ── Re-fetch when dropdown filters change ────────────────────
   useEffect(() => {
     loadUsers();
-  }, [roleFilter, deptFilter, statusFilter]); // eslint-disable-line
+  }, [roleFilter, deptFilter, statusFilter]);
 
   // ── Debounced search ─────────────────────────────────────────
   const handleSearchChange = (value) => {
@@ -202,7 +220,7 @@ const UserManagement = () => {
         showToast(`${payload.name} created successfully.`);
       }
       setIsModalOpen(false);
-      loadUsers();   // refresh table
+      loadUsers();
     } catch (err) {
       const msg = err?.message || 'Something went wrong.';
       showToast(msg.includes('already registered') ? 'Email is already in use.' : msg, 'error');
@@ -216,27 +234,105 @@ const UserManagement = () => {
     padding: '0.5rem 0.75rem',
     borderRadius: '0.5rem',
     border: 'none',
-    backgroundColor: '#e2e8f0',
+    backgroundColor: '#132B44',
     fontSize: '0.8rem',
-    color: 'var(--deep-navy)',
+    color: 'white',
     cursor: 'pointer',
     fontWeight: '500',
   };
 
   return (
-    <div className="dashboard-layout" style={{ backgroundColor: 'var(--primary-teal)' }}>
+    <div className="dashboard-layout" style={{ backgroundColor: '#167f94', minHeight: '100vh' }}>
       <div className="dashboard-content" style={{ display: 'flex', width: '100%' }}>
         <AdminSidebar isOpen={sidebarOpen} close={() => setSidebarOpen(false)} />
 
-        <main className="main-content" style={{ backgroundColor: '#f1f5f9', padding: '2rem', flex: 1, minHeight: '100vh', overflowY: 'auto' }}>
+        <main className="main-content" style={{ 
+          backgroundColor: '#167f94', 
+          padding: '2rem', 
+          flex: 1, 
+          minHeight: '100vh', 
+          overflowY: 'auto' 
+        }}>
 
-          <AdminTopBar
-            title="User Management"
-            subtitle="Manage user accounts, roles, and security training progress"
-            toggleSidebar={() => setSidebarOpen(true)}
-          />
+          {/* Custom Header with gradient lines and icon */}
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            marginBottom: '2rem',
+            width: '100%'
+          }}>
+            {/* Left spacer for centering */}
+            <div style={{ width: '180px' }}></div>
 
-          <div style={{ backgroundColor: 'white', borderRadius: '1rem', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+            {/* Centered title section */}
+            <div style={{ 
+              textAlign: 'center',
+              flex: 1
+            }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '1rem',
+                marginBottom: '0.5rem'
+              }}>
+                <div style={{
+                  width: '4px',
+                  height: '32px',
+                  background: 'linear-gradient(180deg, #F97316, #2DD4BF)',
+                  borderRadius: '2px'
+                }} />
+                <FontAwesomeIcon icon={faUsers} style={{ color: '#F97316', fontSize: '2rem' }} />
+                <h1 style={{ 
+                  fontSize: '2.2rem', 
+                  fontWeight: '700', 
+                  color: 'white',
+                                  margin: 0,
+                  letterSpacing: '-0.02em'
+                }}>
+                  User Management
+                </h1>
+                <div style={{
+                  width: '4px',
+                  height: '32px',
+                  background: 'linear-gradient(180deg, #2DD4BF, #F97316)',
+                  borderRadius: '2px'
+                }} />
+              </div>
+              <p style={{ 
+                color: 'rgba(255,255,255,0.9)', 
+                fontSize: '1rem',
+                margin: 0
+              }}>
+                Manage user accounts, roles, and security training progress
+              </p>
+            </div>
+
+            {/* Right side - Last Updated */}
+            <div style={{ 
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '2rem',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              width: '180px',
+              textAlign: 'right'
+            }}>
+              <div style={{ fontWeight: '600', color: 'white' }}>Last Updated</div>
+              <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>Today, 3:42 PM</div>
+            </div>
+          </div>
+
+          <div style={{ 
+            backgroundColor: '#132B44',
+            borderRadius: '1rem', 
+            padding: '1.5rem', 
+            borderTop: '1px solid #F97316',
+            borderBottom: '1px solid #F97316',
+            borderLeft: '4px solid #F97316',
+            borderRight: 'none',
+            boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)'
+          }}>
 
             {/* ── Toolbar ── */}
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
@@ -245,44 +341,58 @@ const UserManagement = () => {
 
                 {/* Search */}
                 <div style={{ position: 'relative', maxWidth: '320px', width: '100%' }}>
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                    style={{ position: 'absolute', left: '0.85rem', top: '50%', transform: 'translateY(-50%)', color: '#94a3b8' }}>
-                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                  </svg>
+                  <FontAwesomeIcon 
+                    icon={faSearch} 
+                    style={{ 
+                      position: 'absolute', 
+                      left: '0.85rem', 
+                      top: '50%', 
+                      transform: 'translateY(-50%)', 
+                      color: 'rgba(255,255,255,0.5)',
+                      fontSize: '0.8rem'
+                    }} 
+                  />
                   <input
                     type="text"
                     placeholder="Search name or email…"
                     value={searchTerm}
                     onChange={(e) => handleSearchChange(e.target.value)}
                     style={{
-                      width: '100%', paddingLeft: '2.25rem', paddingRight: '0.875rem',
-                      paddingTop: '0.5rem', paddingBottom: '0.5rem',
-                      border: '1.5px solid #e2e8f0', borderRadius: '0.5rem',
-                      fontSize: '0.8rem', outline: 'none', backgroundColor: '#f8fafc',
-                      color: 'var(--deep-navy)', boxSizing: 'border-box',
+                      width: '100%', 
+                      paddingLeft: '2.25rem', 
+                      paddingRight: '0.875rem',
+                      paddingTop: '0.5rem', 
+                      paddingBottom: '0.5rem',
+                      border: '1px solid rgba(255,255,255,0.1)', 
+                      borderRadius: '0.5rem',
+                      fontSize: '0.8rem', 
+                      outline: 'none', 
+                      backgroundColor: 'rgba(255,255,255,0.05)',
+                      color: 'white',
+                      boxSizing: 'border-box',
                     }}
                   />
                 </div>
 
                 {/* Role filter */}
                 <select value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)} style={selectStyle}>
-                  <option value="all">All Roles</option>
-                  <option value="user">User</option>
-                  <option value="admin">Admin</option>
-                  <option value="ai_maintainer">AI Maintainer</option>
+                  <option value="all" style={{ backgroundColor: '#132B44' }}>All Roles</option>
+                  <option value="user" style={{ backgroundColor: '#132B44' }}>User</option>
+                  <option value="admin" style={{ backgroundColor: '#132B44' }}>Admin</option>
+                  <option value="ai_maintainer" style={{ backgroundColor: '#132B44' }}>AI Maintainer</option>
                 </select>
 
                 {/* Department filter */}
                 <select value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)} style={selectStyle}>
-                  <option value="all">All Departments</option>
-                  {departments.map(d => <option key={d} value={d}>{d}</option>)}
+                  <option value="all" style={{ backgroundColor: '#132B44' }}>All Departments</option>
+                  {departments.map(d => <option key={d} value={d} style={{ backgroundColor: '#132B44' }}>{d}</option>)}
                 </select>
 
                 {/* Status filter */}
                 <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} style={selectStyle}>
-                  <option value="all">All Status</option>
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
+                  <option value="all" style={{ backgroundColor: '#132B44' }}>All Status</option>
+                  <option value="Active" style={{ backgroundColor: '#132B44' }}>Active</option>
+                  <option value="Inactive" style={{ backgroundColor: '#132B44' }}>Inactive</option>
                 </select>
               </div>
 
@@ -291,37 +401,43 @@ const UserManagement = () => {
                 onClick={handleAdd}
                 style={{
                   padding: '0.55rem 1.1rem',
-                  backgroundColor: 'var(--primary-teal)',
+                  backgroundColor: '#F97316',
                   color: 'white',
                   border: 'none',
                   borderRadius: '0.5rem',
                   fontWeight: '600',
                   fontSize: '0.8rem',
                   cursor: 'pointer',
-                  display: 'flex', alignItems: 'center', gap: '0.4rem',
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '0.4rem',
                   whiteSpace: 'nowrap',
                 }}
               >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-                </svg>
+                <FontAwesomeIcon icon={faPlus} style={{ fontSize: '0.8rem' }} />
                 Add New User
               </button>
             </div>
 
             {/* ── Count row ── */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            <div style={{ 
+              display: 'flex', 
+              justifyContent: 'space-between', 
+              marginBottom: '1rem', 
+              fontSize: '0.75rem', 
+              color: 'rgba(255,255,255,0.8)' 
+            }}>
               <span>
                 {loading ? 'Loading…' : `Showing ${adminUsers.length} of ${total} results`}
               </span>
-              <span>Active: <strong style={{ color: '#16a34a' }}>{activeCount}</strong></span>
+              <span>Active: <strong style={{ color: '#4ade80' }}>{activeCount}</strong></span>
             </div>
 
             {/* ── Table ── */}
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '750px' }}>
                 <thead>
-                  <tr style={{ borderBottom: '2px solid #f1f5f9', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                  <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', fontSize: '0.75rem', color: 'rgba(255,255,255,0.8)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                     <th style={{ padding: '0.75rem 0', fontWeight: '600' }}>Name</th>
                     <th style={{ padding: '0.75rem 0', fontWeight: '600' }}>Email</th>
                     <th style={{ padding: '0.75rem 0', fontWeight: '600' }}>Role</th>
@@ -334,20 +450,20 @@ const UserManagement = () => {
                   {adminUsers.map(user => (
                     <tr
                       key={user.id}
-                      style={{ borderBottom: '1px solid #f1f5f9', transition: 'background 0.15s' }}
-                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#f8fafc'}
+                      style={{ borderBottom: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.15s' }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)'}
                       onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                     >
-                      <td style={{ padding: '0.875rem 0', fontWeight: '600', color: 'var(--deep-navy)', fontSize: '0.875rem' }}>
+                      <td style={{ padding: '0.875rem 0', fontWeight: '600', color: 'white', fontSize: '0.875rem' }}>
                         {user.name}
                       </td>
-                      <td style={{ padding: '0.875rem 0', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                      <td style={{ padding: '0.875rem 0', color: 'rgba(255,255,255,0.8)', fontSize: '0.8rem' }}>
                         {user.email}
                       </td>
                       <td style={{ padding: '0.875rem 0' }}>
                         <RoleBadge rawRole={user.rawRole} />
                       </td>
-                      <td style={{ padding: '0.875rem 0', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                      <td style={{ padding: '0.875rem 0', color: 'rgba(255,255,255,0.8)', fontSize: '0.8rem' }}>
                         {user.department}
                       </td>
                       <td style={{ padding: '0.875rem 0' }}>
@@ -357,11 +473,24 @@ const UserManagement = () => {
                         <button
                           onClick={() => handleEdit(user)}
                           title="Edit user"
-                          style={{ border: 'none', background: '#f1f5f9', color: 'var(--deep-navy)', cursor: 'pointer', padding: '0.4rem', borderRadius: '0.4rem', display: 'inline-flex' }}
+                          style={{ 
+                            border: 'none', 
+                            background: 'rgba(249,115,22,0.15)', 
+                            color: '#F97316', 
+                            cursor: 'pointer', 
+                            padding: '0.4rem', 
+                            borderRadius: '0.4rem', 
+                            display: 'inline-flex',
+                            transition: 'all 0.2s'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(249,115,22,0.3)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(249,115,22,0.15)';
+                          }}
                         >
-                          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                            <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
-                          </svg>
+                          <FontAwesomeIcon icon={faEdit} style={{ fontSize: '0.9rem' }} />
                         </button>
                       </td>
                     </tr>
@@ -370,13 +499,10 @@ const UserManagement = () => {
               </table>
 
               {!loading && adminUsers.length === 0 && (
-                <div style={{ padding: '3rem', textAlign: 'center', color: 'var(--text-muted)' }}>
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1" style={{ margin: '0 auto 1rem', opacity: 0.4 }}>
-                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
-                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-                  </svg>
-                  <p style={{ margin: 0, fontWeight: '600' }}>No users match your filters.</p>
-                  <p style={{ margin: '0.25rem 0 0', fontSize: '0.8rem' }}>Try adjusting the search or filter options.</p>
+                <div style={{ padding: '3rem', textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>
+                  <FontAwesomeIcon icon={faUsers} style={{ fontSize: '2.5rem', marginBottom: '1rem', opacity: 0.4 }} />
+                  <p style={{ margin: 0, fontWeight: '600', color: 'white' }}>No users match your filters.</p>
+                  <p style={{ margin: '0.25rem 0 0', fontSize: '0.8rem', color: 'rgba(255,255,255,0.5)' }}>Try adjusting the search or filter options.</p>
                 </div>
               )}
             </div>

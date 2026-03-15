@@ -10,6 +10,19 @@ import {
   fetchReportPdfData,
   fetchAdminDepartments,
 } from '../../api/admin';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+  faChartLine,
+  faDownload,
+  faFilter,
+  faUsers,
+  faShieldHalved,
+  faFlag,
+  faExclamationTriangle,
+  faCheckCircle,
+  faChartPie,
+  faArrowRight
+} from '@fortawesome/free-solid-svg-icons';
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const SIM_TYPES = [
@@ -26,10 +39,10 @@ const TIMEFRAMES = [
 
 // ── Risk colour scale (green → red) ─────────────────────────────────────────
 const RISK_COLOR = {
-  Critical: { bar: '#ef4444', badge: '#fef2f2', text: '#dc2626' },
-  High:     { bar: '#f97316', badge: '#fff7ed', text: '#ea580c' },
-  Moderate: { bar: '#eab308', badge: '#fefce8', text: '#ca8a04' },
-  Low:      { bar: '#22c55e', badge: '#f0fdf4', text: '#16a34a' },
+  Critical: { bar: '#ef4444', badge: '#ef444420', text: '#ef4444' },
+  High:     { bar: '#f97316', badge: '#f9731620', text: '#f97316' },
+  Moderate: { bar: '#eab308', badge: '#eab30820', text: '#eab308' },
+  Low:      { bar: '#22c55e', badge: '#22c55e20', text: '#22c55e' },
 };
 
 // Interpolate vulnerability rate 0-100 → green (#22c55e) → red (#ef4444)
@@ -42,17 +55,40 @@ const vulnColor = (rate) => {
 
 // ── Small reusable components ────────────────────────────────────────────────
 const StatCard = ({ label, value, sub, color, icon }) => (
-  <div style={{ border: '1px solid #e2e8f0', borderRadius: '0.75rem', padding: '1.25rem', position: 'relative', backgroundColor: 'white' }}>
-    <div style={{ position: 'absolute', top: '1rem', right: '1rem', width: 32, height: 32, borderRadius: 8, backgroundColor: color + '18', color, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{icon}</div>
-    <div style={{ fontSize: '0.72rem', color: '#64748b', marginBottom: '0.5rem', fontWeight: 600 }}>{label}</div>
-    <div style={{ fontSize: '1.9rem', fontWeight: 800, color: 'var(--deep-navy)', lineHeight: 1, marginBottom: '0.3rem' }}>{value}</div>
-    <div style={{ fontSize: '0.7rem', color }}>{sub}</div>
+  <div style={{ 
+    backgroundColor: '#132B44',
+    borderRadius: '1rem',
+    padding: '1.5rem',
+    borderTop: '1px solid #F97316',
+    borderBottom: '1px solid #F97316',
+    borderLeft: '4px solid #F97316',
+    borderRight: 'none',
+    boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)',
+    position: 'relative'
+  }}>
+    <div style={{ 
+      position: 'absolute', 
+      top: '1rem', 
+      right: '1rem', 
+      width: 36, 
+      height: 36, 
+      borderRadius: '10px', 
+      backgroundColor: `${color}20`,
+      color, 
+      display: 'flex', 
+      alignItems: 'center', 
+      justifyContent: 'center',
+      fontSize: '1.1rem'
+    }}>{icon}</div>
+    <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', marginBottom: '0.5rem', fontWeight: '600' }}>{label}</div>
+    <div style={{ fontSize: '2.2rem', fontWeight: '700', color: 'white', lineHeight: 1, marginBottom: '0.3rem' }}>{value}</div>
+    <div style={{ fontSize: '0.75rem', color: color }}>{sub}</div>
   </div>
 );
 
 const Spinner = () => (
-  <div style={{ fontSize: '0.78rem', color: '#94a3b8', display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-    <div style={{ width: 12, height: 12, border: '2px solid #cbd5e1', borderTopColor: 'var(--primary-teal)', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+  <div style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+    <div style={{ width: 14, height: 14, border: '2px solid rgba(255,255,255,0.2)', borderTopColor: '#F97316', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
     Loading…
   </div>
 );
@@ -60,7 +96,12 @@ const Spinner = () => (
 // ── Heatmap Tab ──────────────────────────────────────────────────────────────
 const HeatmapTab = ({ data, loading, fallback }) => {
   if (loading) return <div style={{ padding: '4rem', textAlign: 'center' }}><Spinner /></div>;
-  if (!data || data.length === 0) return <div style={{ padding: '4rem', textAlign: 'center', color: '#94a3b8' }}>No heatmap data available.</div>;
+  if (!data || data.length === 0) return (
+    <div style={{ padding: '4rem', textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>
+      <FontAwesomeIcon icon={faUsers} style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.4 }} />
+      <p style={{ margin: 0, fontWeight: '600', color: 'white' }}>No heatmap data available.</p>
+    </div>
+  );
 
   const maxRate = Math.max(...data.map(d => d.vulnerabilityRate), 1);
 
@@ -68,17 +109,17 @@ const HeatmapTab = ({ data, loading, fallback }) => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
         <div>
-          <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: '0 0 0.2rem', color: 'var(--deep-navy)' }}>Department Vulnerability Ranking</h3>
-          <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748b' }}>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: '600', margin: '0 0 0.2rem', color: 'white' }}>Department Vulnerability Ranking</h3>
+          <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
             Ranked most-to-least vulnerable · Click Rate = (Phishing Link Clicks / Total Simulations) × 100
             {fallback && ' · Sample data'}
           </p>
         </div>
         {/* Legend */}
-        <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', backgroundColor: '#132B44', padding: '0.5rem 1rem', borderRadius: '2rem', border: '1px solid rgba(255,255,255,0.1)' }}>
           {Object.entries(RISK_COLOR).map(([level, c]) => (
-            <div key={level} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.72rem', color: '#475569' }}>
-              <div style={{ width: 10, height: 10, borderRadius: 2, backgroundColor: c.bar }} />
+            <div key={level} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.8)' }}>
+              <div style={{ width: 10, height: 10, borderRadius: '2px', backgroundColor: c.bar }} />
               {level}
             </div>
           ))}
@@ -90,19 +131,48 @@ const HeatmapTab = ({ data, loading, fallback }) => {
           const rc = RISK_COLOR[row.riskLevel] || RISK_COLOR.Low;
           const barW = (row.vulnerabilityRate / maxRate) * 100;
           return (
-            <div key={row.department} style={{ display: 'grid', gridTemplateColumns: '130px 1fr 90px 90px', alignItems: 'center', gap: '1rem', padding: '0.85rem 1rem', borderRadius: '0.6rem', backgroundColor: '#f8fafc', border: '1px solid #e2e8f0' }}>
+            <div key={row.department} style={{ 
+              display: 'grid', 
+              gridTemplateColumns: '140px 1fr 90px 100px', 
+              alignItems: 'center', 
+              gap: '1rem', 
+              padding: '0.85rem 1rem', 
+              borderRadius: '0.75rem', 
+              backgroundColor: 'rgba(255,255,255,0.02)',
+              border: '1px solid rgba(255,255,255,0.05)',
+              transition: 'all 0.2s'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)';
+              e.currentTarget.style.borderColor = 'rgba(249,115,22,0.3)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)';
+              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)';
+            }}>
               {/* Rank + name */}
               <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ width: 22, height: 22, borderRadius: '50%', backgroundColor: rc.bar, color: 'white', fontSize: '0.65rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{i + 1}</span>
-                <span style={{ fontWeight: 600, fontSize: '0.82rem', color: 'var(--deep-navy)' }}>{row.department}</span>
+                <span style={{ 
+                  width: 24, 
+                  height: 24, 
+                  borderRadius: '50%', 
+                  backgroundColor: rc.bar, 
+                  color: 'white', 
+                  fontSize: '0.7rem', 
+                  fontWeight: '700', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  justifyContent: 'center' 
+                }}>{i + 1}</span>
+                <span style={{ fontWeight: '600', fontSize: '0.85rem', color: 'white' }}>{row.department}</span>
               </div>
 
               {/* Bar */}
-              <div style={{ position: 'relative', height: 10, backgroundColor: '#e2e8f0', borderRadius: 99 }}>
+              <div style={{ position: 'relative', height: 10, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '99px' }}>
                 <div style={{
                   position: 'absolute', left: 0, top: 0, height: '100%',
                   width: `${barW}%`,
-                  borderRadius: 99,
+                  borderRadius: '99px',
                   backgroundColor: vulnColor(row.vulnerabilityRate),
                   transition: 'width 0.8s ease',
                 }} />
@@ -110,16 +180,23 @@ const HeatmapTab = ({ data, loading, fallback }) => {
 
               {/* Rate */}
               <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '1.1rem', fontWeight: 800, color: rc.bar }}>{row.vulnerabilityRate}%</div>
-                <div style={{ fontSize: '0.62rem', color: '#94a3b8' }}>click rate</div>
+                <div style={{ fontSize: '1.2rem', fontWeight: '700', color: rc.bar }}>{row.vulnerabilityRate}%</div>
+                <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)' }}>click rate</div>
               </div>
 
               {/* Badge */}
               <div style={{ textAlign: 'center' }}>
-                <span style={{ backgroundColor: rc.badge, color: rc.text, padding: '0.2rem 0.6rem', borderRadius: '2rem', fontSize: '0.68rem', fontWeight: 700 }}>
+                <span style={{ 
+                  backgroundColor: rc.badge, 
+                  color: rc.text, 
+                  padding: '0.2rem 0.8rem', 
+                  borderRadius: '2rem', 
+                  fontSize: '0.7rem', 
+                  fontWeight: '600' 
+                }}>
                   {row.riskLevel}
                 </span>
-                <div style={{ fontSize: '0.62rem', color: '#94a3b8', marginTop: '0.2rem' }}>{row.clicks}/{row.total}</div>
+                <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.2rem' }}>{row.clicks}/{row.total}</div>
               </div>
             </div>
           );
@@ -132,7 +209,12 @@ const HeatmapTab = ({ data, loading, fallback }) => {
 // ── Effectiveness Tab ────────────────────────────────────────────────────────
 const EffectivenessTab = ({ data, loading, fallback }) => {
   if (loading) return <div style={{ padding: '4rem', textAlign: 'center' }}><Spinner /></div>;
-  if (!data) return <div style={{ padding: '4rem', textAlign: 'center', color: '#94a3b8' }}>No effectiveness data available.</div>;
+  if (!data) return (
+    <div style={{ padding: '4rem', textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>
+      <FontAwesomeIcon icon={faChartLine} style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.4 }} />
+      <p style={{ margin: 0, fontWeight: '600', color: 'white' }}>No effectiveness data available.</p>
+    </div>
+  );
 
   const { trained, untrained, impact } = data;
   const maxRate = Math.max(trained.avgClickRate, untrained.avgClickRate, 1);
@@ -144,11 +226,11 @@ const EffectivenessTab = ({ data, loading, fallback }) => {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, gap: '0.75rem' }}>
         {/* Rate label above bar */}
-        <div style={{ fontSize: '2rem', fontWeight: 800, color: accentColor }}>{group.avgClickRate}%</div>
-        <div style={{ fontSize: '0.72rem', color: '#64748b' }}>avg click rate</div>
+        <div style={{ fontSize: '2.2rem', fontWeight: '700', color: accentColor }}>{group.avgClickRate}%</div>
+        <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>avg click rate</div>
 
         {/* Bar */}
-        <div style={{ width: '100%', maxWidth: 120, height: BAR_H, backgroundColor: '#f1f5f9', borderRadius: '0.5rem', position: 'relative', display: 'flex', alignItems: 'flex-end', overflow: 'hidden' }}>
+        <div style={{ width: '100%', maxWidth: 120, height: BAR_H, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '0.5rem', position: 'relative', display: 'flex', alignItems: 'flex-end', overflow: 'hidden' }}>
           <div style={{
             width: '100%', height: barH,
             backgroundColor: color,
@@ -159,12 +241,12 @@ const EffectivenessTab = ({ data, loading, fallback }) => {
 
         {/* Label */}
         <div style={{ textAlign: 'center' }}>
-          <div style={{ fontWeight: 700, fontSize: '0.85rem', color: 'var(--deep-navy)' }}>{group.label}</div>
-          <div style={{ fontSize: '0.72rem', color: '#94a3b8', marginTop: '0.2rem' }}>
+          <div style={{ fontWeight: '700', fontSize: '0.9rem', color: 'white' }}>{group.label}</div>
+          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.2rem' }}>
             {group.totalUsers != null ? `${group.totalUsers} user${group.totalUsers !== 1 ? 's' : ''}` : ''}
             {group.totalResults != null ? ` · ${group.totalResults} attempts` : ''}
           </div>
-          <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '0.4rem', maxWidth: 180 }}>{group.description}</div>
+          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.4rem', maxWidth: 200 }}>{group.description}</div>
         </div>
       </div>
     );
@@ -172,61 +254,105 @@ const EffectivenessTab = ({ data, loading, fallback }) => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '2rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem', textAlign: 'center' }}>
         <div>
-          <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: '0 0 0.2rem', color: 'var(--deep-navy)' }}>Training Effectiveness</h3>
-          <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748b' }}>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: '600', margin: '0 0 0.2rem', color: 'white' }}>Training Effectiveness</h3>
+          <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
             Comparing phishing click rates between trained and untrained user groups
             {fallback && ' · Sample data'}
           </p>
         </div>
         {/* Impact badge */}
         {impact > 0 && (
-          <div style={{ backgroundColor: '#f0fdf4', border: '1px solid #86efac', borderRadius: '0.75rem', padding: '0.75rem 1.25rem', textAlign: 'center' }}>
-            <div style={{ fontSize: '1.6rem', fontWeight: 800, color: '#16a34a', lineHeight: 1 }}>−{impact}pp</div>
-            <div style={{ fontSize: '0.7rem', color: '#16a34a', marginTop: '0.2rem' }}>click rate reduction</div>
-            <div style={{ fontSize: '0.65rem', color: '#94a3b8', marginTop: '0.1rem' }}>from training</div>
+          <div style={{ 
+            backgroundColor: '#1e5f3a', 
+            border: '1px solid #4ade80', 
+            borderRadius: '0.75rem', 
+            padding: '0.75rem 1.5rem', 
+            textAlign: 'center' 
+          }}>
+            <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#4ade80', lineHeight: 1 }}>−{impact}pp</div>
+            <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.7)', marginTop: '0.2rem' }}>click rate reduction</div>
+            <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.1rem' }}>from training</div>
           </div>
         )}
       </div>
 
       {/* Bar chart comparison */}
-      <div style={{ backgroundColor: '#f8fafc', borderRadius: '1rem', padding: '2rem' }}>
+      <div style={{ 
+        backgroundColor: 'rgba(255,255,255,0.02)', 
+        borderRadius: '1rem', 
+        padding: '2rem',
+        border: '1px solid rgba(255,255,255,0.05)'
+      }}>
         <div style={{ display: 'flex', justifyContent: 'center', gap: '4rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
-          <GroupBar group={untrained} color="#ef4444" accentColor="#dc2626" />
+          <GroupBar group={untrained} color="#ef4444" accentColor="#ef4444" />
 
           {/* VS divider */}
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', paddingBottom: '4rem' }}>
-            <div style={{ width: 2, height: 40, backgroundColor: '#e2e8f0' }} />
-            <div style={{ width: 36, height: 36, borderRadius: '50%', backgroundColor: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.72rem', fontWeight: 700, color: '#94a3b8' }}>VS</div>
-            <div style={{ width: 2, height: 40, backgroundColor: '#e2e8f0' }} />
+            <div style={{ width: 2, height: 40, backgroundColor: 'rgba(255,255,255,0.1)' }} />
+            <div style={{ 
+              width: 40, 
+              height: 40, 
+              borderRadius: '50%', 
+              backgroundColor: 'rgba(255,255,255,0.05)', 
+              display: 'flex', 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              fontSize: '0.8rem', 
+              fontWeight: '700', 
+              color: 'rgba(255,255,255,0.5)' 
+            }}>VS</div>
+            <div style={{ width: 2, height: 40, backgroundColor: 'rgba(255,255,255,0.1)' }} />
           </div>
 
-          <GroupBar group={trained} color="#22c55e" accentColor="#16a34a" />
+          <GroupBar group={trained} color="#22c55e" accentColor="#4ade80" />
         </div>
       </div>
 
       {/* Key insight row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginTop: '1.5rem' }}>
-        <div style={{ border: '1px solid #fecaca', backgroundColor: '#fef2f2', borderRadius: '0.75rem', padding: '1rem', textAlign: 'center' }}>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#dc2626' }}>{untrained.avgClickRate}%</div>
-          <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '0.25rem' }}>Click rate — untrained users</div>
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', 
+        gap: '1rem', 
+        marginTop: '1.5rem' 
+      }}>
+        <div style={{ 
+          backgroundColor: '#5f2a2a',
+          borderRadius: '0.75rem', 
+          padding: '1rem', 
+          textAlign: 'center',
+          border: '1px solid #ef4444'
+        }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#ef4444' }}>{untrained.avgClickRate}%</div>
+          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.25rem' }}>Click rate — untrained users</div>
         </div>
-        <div style={{ border: '1px solid #bbf7d0', backgroundColor: '#f0fdf4', borderRadius: '0.75rem', padding: '1rem', textAlign: 'center' }}>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#16a34a' }}>{trained.avgClickRate}%</div>
-          <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '0.25rem' }}>Click rate — trained users</div>
+        <div style={{ 
+          backgroundColor: '#1e5f3a',
+          borderRadius: '0.75rem', 
+          padding: '1rem', 
+          textAlign: 'center',
+          border: '1px solid #4ade80'
+        }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#4ade80' }}>{trained.avgClickRate}%</div>
+          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.25rem' }}>Click rate — trained users</div>
         </div>
-        <div style={{ border: '1px solid #bfdbfe', backgroundColor: '#eff6ff', borderRadius: '0.75rem', padding: '1rem', textAlign: 'center' }}>
-          <div style={{ fontSize: '1.5rem', fontWeight: 800, color: '#2563eb' }}>{impact > 0 ? `−${impact}pp` : '—'}</div>
-          <div style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '0.25rem' }}>Percentage-point improvement</div>
+        <div style={{ 
+          backgroundColor: '#1e3a5f',
+          borderRadius: '0.75rem', 
+          padding: '1rem', 
+          textAlign: 'center',
+          border: '1px solid #60a5fa'
+        }}>
+          <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#60a5fa' }}>{impact > 0 ? `−${impact}pp` : '—'}</div>
+          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.25rem' }}>Percentage-point improvement</div>
         </div>
       </div>
     </div>
   );
 };
 
-// ── Export helpers ───────────────────────────────────────────────────────────
-// Inject jsPDF from CDN once (no install needed)
+// ── Export helpers (unchanged) ───────────────────────────────────────────────
 const ensureJsPDF = () => new Promise((resolve) => {
   if (window.jspdf) return resolve(window.jspdf.jsPDF);
   const s = document.createElement('script');
@@ -443,54 +569,183 @@ const AnalyticsReports = () => {
   };
 
   const selectStyle = {
-    width: '100%', backgroundColor: '#f1f5f9', border: 'none',
-    padding: '0.65rem 1rem', borderRadius: '0.5rem',
-    color: 'var(--deep-navy)', fontSize: '0.85rem', fontWeight: 500, cursor: 'pointer', outline: 'none',
+    width: '100%', 
+    backgroundColor: '#132B44', 
+    border: '1px solid rgba(255,255,255,0.1)',
+    padding: '0.65rem 1rem', 
+    borderRadius: '0.5rem',
+    color: 'white', 
+    fontSize: '0.85rem', 
+    fontWeight: '500', 
+    cursor: 'pointer', 
+    outline: 'none',
   };
 
   return (
-    <div className="dashboard-layout" style={{ backgroundColor: 'var(--primary-teal)' }}>
+    <div className="dashboard-layout" style={{ backgroundColor: '#167f94', minHeight: '100vh' }}>
       <div className="dashboard-content" style={{ display: 'flex', width: '100%' }}>
         <AdminSidebar isOpen={sidebarOpen} close={() => setSidebarOpen(false)} />
 
-        <main className="main-content" style={{ backgroundColor: '#f1f5f9', padding: '2rem', flex: 1, minHeight: '100vh', overflowY: 'auto' }}>
+        <main className="main-content" style={{ 
+          backgroundColor: '#167f94', 
+          padding: '2rem', 
+          flex: 1, 
+          minHeight: '100vh', 
+          overflowY: 'auto' 
+        }}>
 
-          <AdminTopBar
-            title="Phishing Awareness Analytics"
-            subtitle="Comprehensive security training insights and threat detection metrics"
-            toggleSidebar={() => setSidebarOpen(true)}
-          />
+          {/* Custom Header with gradient lines and icon */}
+          <div style={{ 
+            display: 'flex', 
+            justifyContent: 'space-between', 
+            alignItems: 'center',
+            marginBottom: '2rem',
+            width: '100%'
+          }}>
+            {/* Left spacer for centering */}
+            <div style={{ width: '180px' }}></div>
+
+            {/* Centered title section */}
+            <div style={{ 
+              textAlign: 'center',
+              flex: 1
+            }}>
+              <div style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '1rem',
+                marginBottom: '0.5rem'
+              }}>
+                <div style={{
+                  width: '4px',
+                  height: '32px',
+                  background: 'linear-gradient(180deg, #F97316, #2DD4BF)',
+                  borderRadius: '2px'
+                }} />
+                <FontAwesomeIcon icon={faChartLine} style={{ color: '#F97316', fontSize: '2rem' }} />
+                <h1 style={{ 
+                  fontSize: '2.2rem', 
+                  fontWeight: '700', 
+                  color: 'white',
+                  margin: 0,
+                  letterSpacing: '-0.02em'
+                }}>
+                  Analytics Reports
+                </h1>
+                <div style={{
+                  width: '4px',
+                  height: '32px',
+                  background: 'linear-gradient(180deg, #2DD4BF, #F97316)',
+                  borderRadius: '2px'
+                }} />
+              </div>
+              <p style={{ 
+                color: 'rgba(255,255,255,0.9)', 
+                fontSize: '1rem',
+                margin: 0
+              }}>
+                Comprehensive security training insights and threat detection metrics
+              </p>
+            </div>
+
+            {/* Right side - Last Updated */}
+            <div style={{ 
+              backgroundColor: 'rgba(255,255,255,0.1)',
+              padding: '0.75rem 1.5rem',
+              borderRadius: '2rem',
+              backdropFilter: 'blur(10px)',
+              border: '1px solid rgba(255,255,255,0.1)',
+              width: '180px',
+              textAlign: 'right'
+            }}>
+              <div style={{ fontWeight: '600', color: 'white' }}>Last Updated</div>
+              <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>Today, 3:42 PM</div>
+            </div>
+          </div>
 
           {/* Toast */}
           {toast && (
-            <div style={{ position: 'fixed', top: '1.25rem', right: '1.25rem', zIndex: 200, backgroundColor: '#22c55e', color: 'white', padding: '0.85rem 1.25rem', borderRadius: '0.75rem', boxShadow: '0 8px 24px rgba(0,0,0,0.15)', fontSize: '0.875rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <div style={{ 
+              position: 'fixed', 
+              top: '1.25rem', 
+              right: '1.25rem', 
+              zIndex: 200, 
+              backgroundColor: '#22c55e', 
+              color: 'white', 
+              padding: '0.85rem 1.25rem', 
+              borderRadius: '0.75rem', 
+              boxShadow: '0 8px 24px rgba(0,0,0,0.15)', 
+              fontSize: '0.875rem', 
+              fontWeight: '600', 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '0.5rem' 
+            }}>
+              <FontAwesomeIcon icon={faCheckCircle} />
               {toast}
             </div>
           )}
 
           {/* ── Filter Panel ── */}
-          <div style={{ backgroundColor: 'white', borderRadius: '1rem', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', marginBottom: '1.5rem' }}>
+          <div style={{ 
+            backgroundColor: '#132B44',
+            borderRadius: '1rem', 
+            padding: '1.5rem', 
+            borderTop: '1px solid #F97316',
+            borderBottom: '1px solid #F97316',
+            borderLeft: '4px solid #F97316',
+            borderRight: 'none',
+            boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)',
+            marginBottom: '1.5rem' 
+          }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem', marginBottom: '1rem' }}>
               <div>
-                <h2 style={{ fontSize: '1.05rem', fontWeight: 700, margin: '0 0 0.2rem', color: 'var(--deep-navy)' }}>Report Filters</h2>
-                <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748b' }}>
+                <h2 style={{ fontSize: '1.1rem', fontWeight: '600', margin: '0 0 0.2rem', color: 'white' }}>Report Filters</h2>
+                <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
                   {trendsFallback ? 'Showing sample data — no simulation results in DB yet.' : `${reportTrends.length} data point${reportTrends.length !== 1 ? 's' : ''} for selected filters`}
                 </p>
               </div>
               <button
                 onClick={handleExport}
                 disabled={exporting}
-                style={{ padding: '0.55rem 1.1rem', backgroundColor: exporting ? '#94a3b8' : '#3b82f6', color: 'white', border: 'none', borderRadius: '0.5rem', fontWeight: 600, fontSize: '0.8rem', cursor: exporting ? 'not-allowed' : 'pointer', display: 'flex', alignItems: 'center', gap: '0.4rem', transition: 'background 0.2s', whiteSpace: 'nowrap' }}
+                style={{ 
+                  padding: '0.65rem 1.25rem', 
+                  backgroundColor: exporting ? 'rgba(255,255,255,0.2)' : '#F97316', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '2rem', 
+                  fontWeight: '600', 
+                  fontSize: '0.85rem', 
+                  cursor: exporting ? 'not-allowed' : 'pointer', 
+                  display: 'flex', 
+                  alignItems: 'center', 
+                  gap: '0.5rem', 
+                  transition: 'all 0.2s',
+                  opacity: exporting ? 0.5 : 1
+                }}
+                onMouseEnter={(e) => {
+                  if (!exporting) {
+                    e.target.style.backgroundColor = '#fb923c';
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 10px 20px -5px rgba(249,115,22,0.4)';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!exporting) {
+                    e.target.style.backgroundColor = '#F97316';
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = 'none';
+                  }
+                }}
               >
                 {exporting ? (
                   <>
-                    <div style={{ width: 12, height: 12, border: '2px solid rgba(255,255,255,0.4)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
+                    <div style={{ width: 14, height: 14, border: '2px solid rgba(255,255,255,0.4)', borderTopColor: 'white', borderRadius: '50%', animation: 'spin 0.8s linear infinite' }} />
                     Generating PDF…
                   </>
                 ) : (
                   <>
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                    <FontAwesomeIcon icon={faDownload} />
                     Download PDF Report
                   </>
                 )}
@@ -499,68 +754,129 @@ const AnalyticsReports = () => {
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(170px, 1fr))', gap: '1rem' }}>
               <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: '#64748b', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Timeframe</label>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'rgba(255,255,255,0.6)', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Timeframe</label>
                 <select style={selectStyle} value={timeframe} onChange={e => setTimeframe(e.target.value)}>
-                  {TIMEFRAMES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                  {TIMEFRAMES.map(t => <option key={t.value} value={t.value} style={{ backgroundColor: '#132B44' }}>{t.label}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: '#64748b', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Department</label>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'rgba(255,255,255,0.6)', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Department</label>
                 <select style={selectStyle} value={department} onChange={e => setDepartment(e.target.value)}>
-                  <option value="all">All Departments</option>
-                  {departments.map(d => <option key={d} value={d}>{d}</option>)}
+                  <option value="all" style={{ backgroundColor: '#132B44' }}>All Departments</option>
+                  {departments.map(d => <option key={d} value={d} style={{ backgroundColor: '#132B44' }}>{d}</option>)}
                 </select>
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 600, color: '#64748b', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Simulation Type</label>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: '600', color: 'rgba(255,255,255,0.6)', marginBottom: '0.3rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>Simulation Type</label>
                 <select style={selectStyle} value={simType} onChange={e => setSimType(e.target.value)}>
-                  {SIM_TYPES.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                  {SIM_TYPES.map(t => <option key={t.value} value={t.value} style={{ backgroundColor: '#132B44' }}>{t.label}</option>)}
                 </select>
               </div>
             </div>
           </div>
 
           {/* ── Chart / Tab Panel ── */}
-          <div style={{ backgroundColor: 'white', borderRadius: '1rem', padding: '1.5rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
+          <div style={{ 
+            backgroundColor: '#132B44',
+            borderRadius: '1rem', 
+            padding: '1.5rem', 
+            borderTop: '1px solid #F97316',
+            borderBottom: '1px solid #F97316',
+            borderLeft: '4px solid #F97316',
+            borderRight: 'none',
+            boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)'
+          }}>
 
             {/* Tab bar */}
-            <div style={{ display: 'flex', gap: '0.5rem', borderBottom: '1px solid #e2e8f0', marginBottom: '2rem', paddingBottom: '0.5rem', overflowX: 'auto' }}>
+            <div style={{ 
+              display: 'flex', 
+              gap: '0.5rem', 
+              borderBottom: '1px solid rgba(255,255,255,0.1)', 
+              marginBottom: '2rem', 
+              paddingBottom: '0.5rem', 
+              overflowX: 'auto' 
+            }}>
               {['Trends', 'User Heatmap', 'Training Effectiveness'].map(tab => (
                 <button
                   key={tab}
                   onClick={() => handleTabChange(tab)}
-                  style={{ border: 'none', background: tab === activeTab ? 'var(--primary-teal)' : 'transparent', color: tab === activeTab ? 'white' : '#64748b', padding: '0.45rem 1.2rem', borderRadius: '2rem', fontSize: '0.82rem', fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s' }}
+                  style={{ 
+                    border: 'none', 
+                    background: tab === activeTab ? '#F97316' : 'transparent', 
+                    color: tab === activeTab ? 'white' : 'rgba(255,255,255,0.6)', 
+                    padding: '0.5rem 1.25rem', 
+                    borderRadius: '2rem', 
+                    fontSize: '0.85rem', 
+                    fontWeight: '600', 
+                    cursor: 'pointer', 
+                    whiteSpace: 'nowrap', 
+                    transition: 'all 0.2s' 
+                  }}
+                  onMouseEnter={(e) => {
+                    if (tab !== activeTab) {
+                      e.target.style.backgroundColor = 'rgba(255,255,255,0.05)';
+                      e.target.style.color = 'white';
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (tab !== activeTab) {
+                      e.target.style.backgroundColor = 'transparent';
+                      e.target.style.color = 'rgba(255,255,255,0.6)';
+                    }
+                  }}
                 >
                   {tab}
                 </button>
               ))}
             </div>
 
-            {/* ── Trends Tab ── */}
+                        {/* ── Trends Tab ── */}
             {activeTab === 'Trends' && (
               <div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-                  <div>
-                    <h3 style={{ fontSize: '1.05rem', fontWeight: 700, margin: '0 0 0.2rem', color: 'var(--deep-navy)' }}>Phishing Incidents Over Time</h3>
-                    <p style={{ margin: 0, fontSize: '0.78rem', color: '#64748b' }}>
-                      {TIMEFRAMES.find(t => t.value === timeframe)?.label}
-                      {department !== 'all' ? ` · ${department}` : ''}
-                      {simType !== 'all' ? ` · ${SIM_TYPES.find(t => t.value === simType)?.label}` : ''}
-                    </p>
-                  </div>
+                <div style={{ 
+                  display: 'flex', 
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  marginBottom: '1.5rem', 
+                  textAlign: 'center'
+                }}>
+                  <h3 style={{ 
+                    fontSize: '1.1rem', 
+                    fontWeight: '600', 
+                    margin: '0 0 0.2rem', 
+                    color: 'white', 
+                    textAlign: 'center' 
+                  }}>
+                    Phishing Incidents Over Time
+                  </h3>
+                  <p style={{ 
+                    margin: '0 0 0.5rem', 
+                    fontSize: '0.8rem', 
+                    color: 'rgba(255,255,255,0.6)', 
+                    textAlign: 'center' 
+                  }}>
+                    {TIMEFRAMES.find(t => t.value === timeframe)?.label}
+                    {department !== 'all' ? ` · ${department}` : ''}
+                    {simType !== 'all' ? ` · ${SIM_TYPES.find(t => t.value === simType)?.label}` : ''}
+                  </p>
                   {trendsLoading && <Spinner />}
                 </div>
 
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.75rem' }}>
-                  <StatCard label="Total Incidents"    value={totals.total.toLocaleString()}    sub="Simulation events in period"    color="#1e3a5f"
-                    icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>} />
-                  <StatCard label="Detected"           value={totals.detected.toLocaleString()} sub={`${detRate}% detection rate`}    color="#0d9488"
-                    icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg>} />
-                  <StatCard label="Reported (FlagIT)"  value={totals.reported.toLocaleString()} sub={`${repRate}% reporting rate`}    color="#f97316"
-                    icon={<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>} />
+                  <StatCard label="Total Incidents"    value={totals.total.toLocaleString()}    sub="Simulation events in period"    color="#F97316"
+                    icon={<FontAwesomeIcon icon={faExclamationTriangle} />} />
+                  <StatCard label="Detected"           value={totals.detected.toLocaleString()} sub={`${detRate}% detection rate`}    color="#22c55e"
+                    icon={<FontAwesomeIcon icon={faShieldHalved} />} />
+                  <StatCard label="Reported (FlagIT)"  value={totals.reported.toLocaleString()} sub={`${repRate}% reporting rate`}    color="#3b82f6"
+                    icon={<FontAwesomeIcon icon={faFlag} />} />
                 </div>
 
-                <div style={{ backgroundColor: '#f8fafc', borderRadius: '0.75rem', padding: '1.5rem' }}>
+                <div style={{ 
+                  backgroundColor: 'rgba(255,255,255,0.02)', 
+                  borderRadius: '0.75rem', 
+                  padding: '1.5rem',
+                  border: '1px solid rgba(255,255,255,0.05)'
+                }}>
                   <SvgLineChart data={reportTrends} />
                 </div>
               </div>
@@ -581,7 +897,12 @@ const AnalyticsReports = () => {
       </div>
 
       <style>{`
-        @keyframes spin { to { transform: rotate(360deg); } }
+        @keyframes spin { 
+          to { transform: rotate(360deg); } 
+        }
+        @media (min-width: 768px) {
+          .hamburger { display: none !important; }
+        }
       `}</style>
     </div>
   );

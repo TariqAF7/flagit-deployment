@@ -65,41 +65,168 @@ const AdminDashboard = () => {
     const strokeDashoffset = CIRCUMFERENCE - (CIRCUMFERENCE * score) / 100;
 
     return (
-        <div className="dashboard-layout" style={{ backgroundColor: 'var(--primary-teal)' }}>
+        <div className="dashboard-layout" style={{ backgroundColor: '#167f94', minHeight: '100vh' }}>
             <div className="dashboard-content" style={{ display: 'flex', width: '100%' }}>
                 <AdminSidebar isOpen={sidebarOpen} close={() => setSidebarOpen(false)} />
 
-                <main className="main-content" style={{ backgroundColor: 'var(--primary-teal)', padding: '2rem', flex: 1, minHeight: '100vh', overflowY: 'auto' }}>
+                <main className="main-content" style={{ 
+                    backgroundColor: '#167f94', 
+                    padding: '2rem', 
+                    flex: 1, 
+                    overflowY: 'auto' 
+                }}>
 
-                    {/* Header specific to Admin Dashboard root */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem', color: 'white' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <button className="hamburger" onClick={() => setSidebarOpen(true)} style={{ background: 'white', color: 'var(--primary-teal)', border: 'none', padding: '0.5rem', borderRadius: '0.25rem' }}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
-                            </button>
-                            <div>
-                                <h1 style={{ fontSize: '1.75rem', fontWeight: 'bold', margin: '0 0 0.25rem 0', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <div style={{ backgroundColor: 'white', borderRadius: '50%', padding: '0.25rem', display: 'inline-flex' }}>
-                                        <svg viewBox="0 0 24 24" width="24" height="24"><path fill="var(--deep-navy)" d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" /><circle cx="12" cy="10" r="3" fill="var(--primary-teal)" /></svg>
-                                    </div>
-                                    FlagIt Admin
+                    {/* Header with centered title and right-aligned welcome card */}
+                    <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'space-between', 
+                        alignItems: 'center',
+                        marginBottom: '2rem',
+                        width: '100%'
+                    }}>
+                        {/* Left spacer for centering */}
+                        <div style={{ width: '200px' }}></div>
+
+                        {/* Centered title section - like Analytics */}
+                        <div style={{ 
+                            textAlign: 'center',
+                            flex: 1
+                        }}>
+                            <div style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '1rem',
+                                marginBottom: '0.5rem'
+                            }}>
+                                <div style={{
+                                    width: '4px',
+                                    height: '32px',
+                                    background: 'linear-gradient(180deg, #F97316, #2DD4BF)',
+                                    borderRadius: '2px'
+                                }} />
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#F97316" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect x="2" y="4" width="20" height="16" rx="2" ry="2"></rect>
+                                    <path d="M8 10h8"></path>
+                                    <path d="M8 14h4"></path>
+                                </svg>
+                                <h1 style={{ 
+                                    fontSize: '2.2rem', 
+                                    fontWeight: '700', 
+                                    color: 'white',
+                                    margin: 0,
+                                    letterSpacing: '-0.02em'
+                                }}>
+                                    Admin Dashboard
                                 </h1>
-                                <p style={{ margin: 0, opacity: 0.8, fontSize: '0.875rem' }}>Phishing Detection Platform</p>
+                                <div style={{
+                                    width: '4px',
+                                    height: '32px',
+                                    background: 'linear-gradient(180deg, #2DD4BF, #F97316)',
+                                    borderRadius: '2px'
+                                }} />
                             </div>
+                            <p style={{ 
+                                color: 'rgba(255,255,255,0.7)', 
+                                fontSize: '1rem',
+                                margin: 0
+                            }}>
+                                Monitor your organization's security posture
+                            </p>
                         </div>
-                        <div style={{ textAlign: 'right' }}>
-                            <div style={{ fontWeight: 'bold' }}>Welcome back, Sarah!</div>
-                            <div style={{ opacity: 0.8, fontSize: '0.75rem' }}>Monitor your organization's security posture</div>
+
+                        {/* Right side - Welcome card - FIXED: now fits on one line */}
+                        <div style={{ 
+                            backgroundColor: 'rgba(255,255,255,0.1)',
+                            padding: '0.75rem 1.5rem',
+                            borderRadius: '2rem',
+                            backdropFilter: 'blur(10px)',
+                            border: '1px solid rgba(255,255,255,0.1)',
+                            width: 'auto',
+                            minWidth: '180px',
+                            textAlign: 'right',
+                            whiteSpace: 'nowrap'
+                        }}>
+                            <div style={{ fontWeight: '600', color: 'white', display: 'inline-block' }}>
+                                Welcome back, <span style={{ fontWeight: '700' }}>Sarah!</span>
+                            </div>
+                            <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.75rem', marginTop: '0.2rem' }}>Administrator</div>
                         </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 2fr', gap: '1.5rem', marginBottom: '2.5rem' }}>
+                    {/* Hamburger button for mobile */}
+                    <button 
+                        className="hamburger" 
+                        onClick={() => setSidebarOpen(true)} 
+                        style={{ 
+                            background: 'white', 
+                            color: '#167f94', 
+                            border: 'none', 
+                            padding: '0.5rem', 
+                            borderRadius: '0.5rem',
+                            display: 'none',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            marginBottom: '1rem'
+                        }}
+                    >
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12"></line>
+                            <line x1="3" y1="6" x2="21" y2="6"></line>
+                            <line x1="3" y1="18" x2="21" y2="18"></line>
+                        </svg>
+                    </button>
+
+                    {/* Main Metrics Grid */}
+                    <div style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: '1.2fr 1.8fr', 
+                        gap: '1.5rem', 
+                        marginBottom: '2.5rem' 
+                    }}>
 
                         {/* Resilience Score Ring */}
-                        <div style={{ backgroundColor: 'white', borderRadius: '1rem', padding: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
-                            <div style={{ position: 'relative', width: '200px', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <div style={{ 
+                            backgroundColor: '#132B44',
+                            borderRadius: '1rem',
+                            padding: '2rem',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            borderTop: '1px solid #F97316',
+                            borderBottom: '1px solid #F97316',
+                            borderLeft: '4px solid #F97316',
+                            borderRight: 'none',
+                            boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)',
+                            height: 'fit-content'
+                        }}>
+                            <div style={{ 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                gap: '0.75rem', 
+                                marginBottom: '2rem',
+                                alignSelf: 'flex-start'
+                            }}>
+                                <div style={{
+                                    width: '4px',
+                                    height: '24px',
+                                    background: 'linear-gradient(180deg, #F97316, #2DD4BF)',
+                                    borderRadius: '2px'
+                                }} />
+                                <span style={{
+                                    fontSize: '0.9rem',
+                                    fontWeight: '600',
+                                    color: 'rgba(255,255,255,0.7)',
+                                    letterSpacing: '0.5px',
+                                    textTransform: 'uppercase'
+                                }}>
+                                    Organizational Resilience
+                                </span>
+                            </div>
+
+                            <div style={{ position: 'relative', width: '200px', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '1.5rem' }}>
                                 <svg width="200" height="200" style={{ transform: 'rotate(-90deg)' }}>
-                                    <circle cx="100" cy="100" r="90" fill="none" stroke="#f1f5f9" strokeWidth="12" />
+                                    <circle cx="100" cy="100" r="90" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="12" />
                                     <circle
                                         cx="100" cy="100" r="90" fill="none"
                                         stroke={profile.ringColor}
@@ -110,119 +237,521 @@ const AdminDashboard = () => {
                                         strokeLinecap="round"
                                     />
                                 </svg>
-                                <div style={{ position: 'absolute', textAlign: 'center', color: 'var(--deep-navy)' }}>
-                                    <div style={{ fontSize: '3rem', fontWeight: 'bold', lineHeight: 1, color: profile.ringColor, transition: 'color 0.5s ease' }}>{score}</div>
-                                    <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>/ 100</div>
+                                <div style={{ position: 'absolute', textAlign: 'center' }}>
+                                    <div style={{ 
+                                        fontSize: '3rem', 
+                                        fontWeight: '700', 
+                                        lineHeight: 1, 
+                                        color: 'white'
+                                    }}>{score}</div>
+                                    <div style={{ 
+                                        fontSize: '0.875rem', 
+                                        color: 'rgba(255,255,255,0.5)' 
+                                    }}>/ 100</div>
                                 </div>
                             </div>
 
-                            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+                            <div style={{ textAlign: 'center', width: '100%' }}>
                                 <div style={{
                                     display: 'inline-block',
                                     backgroundColor: profile.color + '20',
                                     color: profile.color,
                                     borderRadius: '2rem',
-                                    padding: '0.2rem 0.8rem',
-                                    fontSize: '0.7rem',
-                                    fontWeight: 'bold',
-                                    letterSpacing: '0.06em',
-                                    marginBottom: '0.75rem',
-                                    textTransform: 'uppercase',
+                                    padding: '0.25rem 1rem',
+                                    fontSize: '0.75rem',
+                                    fontWeight: '600',
+                                    marginBottom: '1rem',
                                 }}>{profile.label}</div>
-                                <div style={{ fontSize: '0.6rem', fontWeight: 'bold', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>ORGANIZATIONAL RESILIENCE SCORE</div>
-                                <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--deep-navy)', marginBottom: '0.5rem' }}>{profile.title}</h2>
-                                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', maxWidth: '250px', margin: '0 auto', lineHeight: '1.5' }}>{profile.message}</p>
+                                
+                                <h2 style={{ 
+                                    fontSize: '1.25rem', 
+                                    fontWeight: '700', 
+                                    color: 'white', 
+                                    marginBottom: '0.75rem' 
+                                }}>{profile.title}</h2>
+                                
+                                <p style={{ 
+                                    fontSize: '0.85rem', 
+                                    color: 'rgba(255,255,255,0.7)', 
+                                    maxWidth: '280px', 
+                                    margin: '0 auto 1.5rem auto', 
+                                    lineHeight: '1.6' 
+                                }}>{profile.message}</p>
+                                
                                 {/* Sub-metrics */}
-                                <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', marginTop: '1.25rem' }}>
+                                <div style={{ 
+                                    display: 'flex', 
+                                    gap: '2rem', 
+                                    justifyContent: 'center', 
+                                    paddingTop: '1.5rem',
+                                    borderTop: '1px solid rgba(255,255,255,0.1)'
+                                }}>
                                     <div style={{ textAlign: 'center' }}>
-                                        <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--deep-navy)' }}>{adminStats.detectionRate ?? adminStats.avgDetectionRate ?? 0}%</div>
-                                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>Detection Rate</div>
+                                        <div style={{ 
+                                            fontSize: '1.3rem', 
+                                            fontWeight: '700', 
+                                            color: 'white' 
+                                        }}>{adminStats.detectionRate ?? adminStats.avgDetectionRate ?? 0}%</div>
+                                        <div style={{ 
+                                            fontSize: '0.7rem', 
+                                            color: 'rgba(255,255,255,0.5)',
+                                            marginTop: '0.25rem' 
+                                        }}>Detection Rate</div>
                                     </div>
-                                    <div style={{ width: '1px', backgroundColor: '#e2e8f0' }} />
+                                    <div style={{ width: '1px', backgroundColor: 'rgba(255,255,255,0.1)' }} />
                                     <div style={{ textAlign: 'center' }}>
-                                        <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--deep-navy)' }}>{adminStats.reportingRate ?? 0}%</div>
-                                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>Reporting Rate</div>
+                                        <div style={{ 
+                                            fontSize: '1.3rem', 
+                                            fontWeight: '700', 
+                                            color: 'white' 
+                                        }}>{adminStats.reportingRate ?? 0}%</div>
+                                        <div style={{ 
+                                            fontSize: '0.7rem', 
+                                            color: 'rgba(255,255,255,0.5)',
+                                            marginTop: '0.25rem' 
+                                        }}>Reporting Rate</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                        {/* 4 Stats Grid */}
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', alignContent: 'start' }}>
-                            <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '1rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', position: 'relative' }}>
-                                <div style={{ fontWeight: 'bold', color: 'var(--deep-navy)', marginBottom: '1rem' }}>Total Users</div>
-                                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--deep-navy)', lineHeight: 1, marginBottom: '0.5rem' }}>{(adminStats.totalUsers ?? 0).toLocaleString()}</div>
-                                <div style={{ fontSize: '0.75rem', color: '#16a34a' }}><span style={{ fontWeight: 'bold' }}>All registered</span> platform accounts</div>
-                                <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', width: '32px', height: '32px', backgroundColor: '#eff6ff', color: '#3b82f6', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                        {/* Stats Grid - 2x2 layout */}
+                        <div style={{ 
+                            display: 'grid', 
+                            gridTemplateColumns: '1fr 1fr', 
+                            gap: '1.5rem',
+                            height: 'fit-content'
+                        }}>
+                            <div style={{ 
+                                backgroundColor: '#132B44',
+                                padding: '1.5rem', 
+                                borderRadius: '1rem',
+                                borderTop: '1px solid #F97316',
+                                borderBottom: '1px solid #F97316',
+                                borderLeft: '4px solid #F97316',
+                                borderRight: 'none',
+                                boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)',
+                                position: 'relative',
+                                height: 'fit-content'
+                            }}>
+                                <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '1rem' }}>Total Users</div>
+                                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: 'white', lineHeight: 1, marginBottom: '0.5rem' }}>{(adminStats.totalUsers ?? 0).toLocaleString()}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>All registered platform accounts</div>
+                                <div style={{ 
+                                    position: 'absolute', 
+                                    top: '1.5rem', 
+                                    right: '1.5rem', 
+                                    width: '36px', 
+                                    height: '36px', 
+                                    backgroundColor: 'rgba(59, 130, 246, 0.15)', 
+                                    color: '#3b82f6', 
+                                    borderRadius: '10px', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center' 
+                                }}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                        <circle cx="9" cy="7" r="4"></circle>
+                                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                    </svg>
                                 </div>
                             </div>
 
-                            <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '1rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', position: 'relative' }}>
-                                <div style={{ fontWeight: 'bold', color: 'var(--deep-navy)', marginBottom: '1rem' }}>Active Users</div>
-                                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--deep-navy)', lineHeight: 1, marginBottom: '0.5rem' }}>{(adminStats.activeUsers ?? 0).toLocaleString()}</div>
-                                <div style={{ fontSize: '0.75rem', color: '#16a34a' }}><span style={{ fontWeight: 'bold' }}>{adminStats.totalUsers ? Math.round(((adminStats.activeUsers ?? 0) / adminStats.totalUsers) * 100) : 0}%</span> of total users</div>
-                                <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', width: '32px', height: '32px', backgroundColor: '#dcfce7', color: '#16a34a', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                            <div style={{ 
+                                backgroundColor: '#132B44',
+                                padding: '1.5rem', 
+                                borderRadius: '1rem',
+                                borderTop: '1px solid #F97316',
+                                borderBottom: '1px solid #F97316',
+                                borderLeft: '4px solid #F97316',
+                                borderRight: 'none',
+                                boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)',
+                                position: 'relative',
+                                height: 'fit-content'
+                            }}>
+                                <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '1rem' }}>Active Users</div>
+                                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: 'white', lineHeight: 1, marginBottom: '0.5rem' }}>{(adminStats.activeUsers ?? 0).toLocaleString()}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>
+                                    <span style={{ color: '#16a34a', fontWeight: '600' }}>
+                                        {adminStats.totalUsers ? Math.round(((adminStats.activeUsers ?? 0) / adminStats.totalUsers) * 100) : 0}%
+                                    </span> of total users
+                                </div>
+                                <div style={{ 
+                                    position: 'absolute', 
+                                    top: '1.5rem', 
+                                    right: '1.5rem', 
+                                    width: '36px', 
+                                    height: '36px', 
+                                    backgroundColor: 'rgba(22, 163, 74, 0.15)', 
+                                    color: '#16a34a', 
+                                    borderRadius: '10px', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center' 
+                                }}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    </svg>
                                 </div>
                             </div>
 
-                            <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '1rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', position: 'relative' }}>
-                                <div style={{ fontWeight: 'bold', color: 'var(--deep-navy)', marginBottom: '1rem' }}>Avg Detection Rate</div>
-                                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--deep-navy)', lineHeight: 1, marginBottom: '0.5rem' }}>{adminStats.avgDetectionRate ?? 0}%</div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--accent-orange)' }}>Correct identifications / total simulations</div>
-                                <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', width: '32px', height: '32px', backgroundColor: '#fef3c7', color: 'var(--accent-orange)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                            <div style={{ 
+                                backgroundColor: '#132B44',
+                                padding: '1.5rem', 
+                                borderRadius: '1rem',
+                                borderTop: '1px solid #F97316',
+                                borderBottom: '1px solid #F97316',
+                                borderLeft: '4px solid #F97316',
+                                borderRight: 'none',
+                                boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)',
+                                position: 'relative',
+                                height: 'fit-content'
+                            }}>
+                                <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '1rem' }}>Avg Detection Rate</div>
+                                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: 'white', lineHeight: 1, marginBottom: '0.5rem' }}>{adminStats.avgDetectionRate ?? 0}%</div>
+                                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>Correct identifications / total simulations</div>
+                                <div style={{ 
+                                    position: 'absolute', 
+                                    top: '1.5rem', 
+                                    right: '1.5rem', 
+                                    width: '36px', 
+                                    height: '36px', 
+                                    backgroundColor: 'rgba(249, 115, 22, 0.15)', 
+                                    color: '#F97316', 
+                                    borderRadius: '10px', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center' 
+                                }}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                                    </svg>
                                 </div>
                             </div>
 
-                            <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '1rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', position: 'relative' }}>
-                                <div style={{ fontWeight: 'bold', color: 'var(--deep-navy)', marginBottom: '1rem' }}>Incidents Reported</div>
-                                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--deep-navy)', lineHeight: 1, marginBottom: '0.5rem' }}>{adminStats.incidentsReported ?? 0}</div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Times FlagIT button was pressed</div>
-                                <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', width: '32px', height: '32px', backgroundColor: '#fee2e2', color: '#ef4444', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
-                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                            <div style={{ 
+                                backgroundColor: '#132B44',
+                                padding: '1.5rem', 
+                                borderRadius: '1rem',
+                                borderTop: '1px solid #F97316',
+                                borderBottom: '1px solid #F97316',
+                                borderLeft: '4px solid #F97316',
+                                borderRight: 'none',
+                                boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)',
+                                position: 'relative',
+                                height: 'fit-content'
+                            }}>
+                                <div style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.6)', marginBottom: '1rem' }}>Incidents Reported</div>
+                                <div style={{ fontSize: '2.5rem', fontWeight: '700', color: 'white', lineHeight: 1, marginBottom: '0.5rem' }}>{adminStats.incidentsReported ?? 0}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>Times FlagIT button was pressed</div>
+                                <div style={{ 
+                                    position: 'absolute', 
+                                    top: '1.5rem', 
+                                    right: '1.5rem', 
+                                    width: '36px', 
+                                    height: '36px', 
+                                    backgroundColor: 'rgba(239, 68, 68, 0.15)', 
+                                    color: '#ef4444', 
+                                    borderRadius: '10px', 
+                                    display: 'flex', 
+                                    alignItems: 'center', 
+                                    justifyContent: 'center' 
+                                }}>
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                                        <line x1="12" y1="9" x2="12" y2="13"></line>
+                                        <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                                    </svg>
                                 </div>
                             </div>
-
-                            <button onClick={handleLogout} style={{ gridColumn: '1 / -1', padding: '0.75rem', backgroundColor: '#3b82f6', color: 'white', borderRadius: '0.5rem', fontWeight: 'bold', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', width: '150px' }}>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-                                Logout
-                            </button>
                         </div>
                     </div>
 
-                    <div style={{ color: 'white', marginBottom: '1.5rem' }}>
-                        <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'white', margin: '0 0 0.25rem 0' }}>Administrative Tools</h2>
-                        <p style={{ opacity: 0.8, fontSize: '0.875rem' }}>Manage your organization's security training</p>
+                    {/* ADMINISTRATIVE TOOLS SECTION - REDESIGNED */}
+                    <div style={{ 
+                        marginTop: '2rem',
+                        marginBottom: '1.5rem'
+                    }}>
+                        <div style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '1rem',
+                            marginBottom: '0.5rem'
+                        }}>
+                            <div style={{
+                                width: '4px',
+                                height: '32px',
+                                background: 'linear-gradient(180deg, #F97316, #2DD4BF)',
+                                borderRadius: '2px'
+                            }} />
+                            <div style={{
+                                width: '40px',
+                                height: '40px',
+                                borderRadius: '10px',
+                                backgroundColor: 'rgba(249,115,22,0.15)',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                color: '#F97316'
+                            }}>
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                </svg>
+                            </div>
+                            <div>
+                                <h2 style={{ 
+                                    fontSize: '1.3rem', 
+                                    fontWeight: '600', 
+                                    color: 'white',
+                                    margin: 0,
+                                    lineHeight: 1.2
+                                }}>
+                                    Administrative Tools
+                                </h2>
+                                <p style={{ 
+                                    color: 'rgba(255,255,255,0.6)', 
+                                    fontSize: '0.875rem',
+                                    margin: '0.25rem 0 0 0'
+                                }}>
+                                    Manage your organization's security training
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
-
-                        <div onClick={() => navigate('/admin/users')} style={{ backgroundColor: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '2rem', borderRadius: '1rem', color: 'white', textAlign: 'center', cursor: 'pointer', transition: 'background 0.2s' }}>
-                            <div style={{ width: '48px', height: '48px', backgroundColor: 'var(--accent-orange)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto' }}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    {/* Admin Tools Cards */}
+                    <div style={{ 
+                        display: 'grid', 
+                        gridTemplateColumns: 'repeat(3, 1fr)', 
+                        gap: '1.5rem',
+                        marginBottom: '2.5rem'
+                    }}>
+                        <div 
+                            onClick={() => navigate('/admin/users')} 
+                            style={{ 
+                                backgroundColor: '#132B44',
+                                borderRadius: '1rem',
+                                padding: '2rem 1.5rem',
+                                borderTop: '1px solid #F97316',
+                                borderBottom: '1px solid #F97316',
+                                borderLeft: '4px solid #F97316',
+                                borderRight: 'none',
+                                boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.transform = 'translateY(-4px)';
+                                e.currentTarget.style.boxShadow = '0 15px 30px -8px rgba(249,115,22,0.3)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = '0 8px 20px -6px rgba(0, 0, 0, 0.4)';
+                            }}
+                        >
+                            <div style={{ 
+                                width: '48px', 
+                                height: '48px', 
+                                backgroundColor: 'rgba(249,115,22,0.15)', 
+                                color: '#F97316',
+                                borderRadius: '12px', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                marginBottom: '1.5rem' 
+                            }}>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="9" cy="7" r="4"></circle>
+                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                </svg>
                             </div>
-                            <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>User Management</h3>
-                            <p style={{ fontSize: '0.75rem', opacity: 0.8, lineHeight: 1.5 }}>Manage user accounts, permissions, and access levels across your organization</p>
+                            <h3 style={{ 
+                                fontSize: '1.125rem', 
+                                fontWeight: '600', 
+                                color: 'white', 
+                                marginBottom: '0.75rem' 
+                            }}>User Management</h3>
+                            <p style={{ 
+                                fontSize: '0.85rem', 
+                                color: 'rgba(255,255,255,0.6)', 
+                                lineHeight: '1.5',
+                                margin: 0,
+                                flex: 1
+                            }}>
+                                Manage user accounts, permissions, and access levels across your organization
+                            </p>
                         </div>
 
-                        <div onClick={() => navigate('/admin/campaigns')} style={{ backgroundColor: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '2rem', borderRadius: '1rem', color: 'white', textAlign: 'center', cursor: 'pointer', transition: 'background 0.2s' }}>
-                            <div style={{ width: '48px', height: '48px', backgroundColor: 'var(--accent-orange)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto' }}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="3" y1="9" x2="21" y2="9"></line><line x1="9" y1="21" x2="9" y2="9"></line></svg>
+                        <div 
+                            onClick={() => navigate('/admin/campaigns')} 
+                            style={{ 
+                                backgroundColor: '#132B44',
+                                borderRadius: '1rem',
+                                padding: '2rem 1.5rem',
+                                borderTop: '1px solid #F97316',
+                                borderBottom: '1px solid #F97316',
+                                borderLeft: '4px solid #F97316',
+                                borderRight: 'none',
+                                boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.transform = 'translateY(-4px)';
+                                e.currentTarget.style.boxShadow = '0 15px 30px -8px rgba(249,115,22,0.3)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = '0 8px 20px -6px rgba(0, 0, 0, 0.4)';
+                            }}
+                        >
+                            <div style={{ 
+                                width: '48px', 
+                                height: '48px', 
+                                backgroundColor: 'rgba(249,115,22,0.15)', 
+                                color: '#F97316',
+                                borderRadius: '12px', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                marginBottom: '1.5rem' 
+                            }}>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                    <line x1="3" y1="9" x2="21" y2="9"></line>
+                                    <line x1="9" y1="21" x2="9" y2="9"></line>
+                                </svg>
                             </div>
-                            <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>Training Campaigns</h3>
-                            <p style={{ fontSize: '0.75rem', opacity: 0.8, lineHeight: 1.5 }}>Create and deploy phishing simulation campaigns and security awareness training</p>
+                            <h3 style={{ 
+                                fontSize: '1.125rem', 
+                                fontWeight: '600', 
+                                color: 'white', 
+                                marginBottom: '0.75rem' 
+                            }}>Training Campaigns</h3>
+                            <p style={{ 
+                                fontSize: '0.85rem', 
+                                color: 'rgba(255,255,255,0.6)', 
+                                lineHeight: '1.5',
+                                margin: 0,
+                                flex: 1
+                            }}>
+                                Create and deploy phishing simulation campaigns and security awareness training
+                            </p>
                         </div>
 
-                        <div onClick={() => navigate('/admin/reports')} style={{ backgroundColor: 'rgba(255,255,255,0.1)', border: '1px solid rgba(255,255,255,0.2)', padding: '2rem', borderRadius: '1rem', color: 'white', textAlign: 'center', cursor: 'pointer', transition: 'background 0.2s' }}>
-                            <div style={{ width: '48px', height: '48px', backgroundColor: 'var(--accent-orange)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem auto' }}>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path><path d="M22 12A10 10 0 0 0 12 2v10z"></path></svg>
+                        <div 
+                            onClick={() => navigate('/admin/reports')} 
+                            style={{ 
+                                backgroundColor: '#132B44',
+                                borderRadius: '1rem',
+                                padding: '2rem 1.5rem',
+                                borderTop: '1px solid #F97316',
+                                borderBottom: '1px solid #F97316',
+                                borderLeft: '4px solid #F97316',
+                                borderRight: 'none',
+                                boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                height: '100%',
+                                display: 'flex',
+                                flexDirection: 'column'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.currentTarget.style.transform = 'translateY(-4px)';
+                                e.currentTarget.style.boxShadow = '0 15px 30px -8px rgba(249,115,22,0.3)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.currentTarget.style.transform = 'translateY(0)';
+                                e.currentTarget.style.boxShadow = '0 8px 20px -6px rgba(0, 0, 0, 0.4)';
+                            }}
+                        >
+                            <div style={{ 
+                                width: '48px', 
+                                height: '48px', 
+                                backgroundColor: 'rgba(249,115,22,0.15)', 
+                                color: '#F97316',
+                                borderRadius: '12px', 
+                                display: 'flex', 
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                marginBottom: '1.5rem' 
+                            }}>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+                                    <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+                                </svg>
                             </div>
-                            <h3 style={{ fontSize: '1.125rem', fontWeight: 'bold', color: 'white', marginBottom: '0.5rem' }}>Analytics & Reporting</h3>
-                            <p style={{ fontSize: '0.75rem', opacity: 0.8, lineHeight: 1.5 }}>View detailed analytics, generate reports, and track security awareness progress</p>
+                            <h3 style={{ 
+                                fontSize: '1.125rem', 
+                                fontWeight: '600', 
+                                color: 'white', 
+                                marginBottom: '0.75rem' 
+                            }}>Analytics & Reporting</h3>
+                            <p style={{ 
+                                fontSize: '0.85rem', 
+                                color: 'rgba(255,255,255,0.6)', 
+                                lineHeight: '1.5',
+                                margin: 0,
+                                flex: 1
+                            }}>
+                                View detailed analytics, generate reports, and track security awareness progress
+                            </p>
                         </div>
+                    </div>
 
+                    {/* Logout Button */}
+                    <div style={{ 
+                        display: 'flex', 
+                        justifyContent: 'flex-end',
+                        borderTop: '1px solid rgba(255,255,255,0.1)',
+                        paddingTop: '2rem'
+                    }}>
+                        <button 
+                            onClick={handleLogout} 
+                            style={{ 
+                                padding: '0.75rem 2rem',
+                                backgroundColor: 'transparent',
+                                color: 'white',
+                                border: '1px solid rgba(249,115,22,0.3)',
+                                borderRadius: '2rem',
+                                fontSize: '0.9rem',
+                                fontWeight: '500',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                cursor: 'pointer',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = 'rgba(249,115,22,0.1)';
+                                e.target.style.borderColor = '#F97316';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = 'transparent';
+                                e.target.style.borderColor = 'rgba(249,115,22,0.3)';
+                            }}
+                        >
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                                <polyline points="16 17 21 12 16 7"></polyline>
+                                <line x1="21" y1="12" x2="9" y2="12"></line>
+                            </svg>
+                            Logout
+                        </button>
                     </div>
                 </main>
             </div>
@@ -230,6 +759,9 @@ const AdminDashboard = () => {
             <style>{`
                 @media (min-width: 768px) {
                     .hamburger { display: none !important; }
+                }
+                @media (max-width: 767px) {
+                    .hamburger { display: flex !important; }
                 }
             `}</style>
         </div>
