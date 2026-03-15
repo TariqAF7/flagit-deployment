@@ -56,6 +56,7 @@ export const AppStateProvider = ({ children }) => {
     const [modules, setModules] = useState(() => safeLoad('flagit_modules', INITIAL_MODULES));
     const [simulations, setSimulations] = useState(() => safeLoad('flagit_simulations', INITIAL_SIMULATIONS));
     const [resultsHistory, setResultsHistory] = useState(() => safeLoad('flagit_history', []));
+    const [currentSimulation, setCurrentSimulation] = useState(null);
 
     // ── Admin States ──────────────────────────────────────────
     const [adminUsers, setAdminUsers] = useState(() => safeLoad('flagit_adminUsers', MOCK_USERS));
@@ -106,6 +107,7 @@ export const AppStateProvider = ({ children }) => {
             if (Array.isArray(sims)) {
                 setSimulations(sims.map(s => ({
                     id: s._id,
+                    slug: s.slug,
                     title: s.title,
                     description: s.description,
                     icon: s.icon,
@@ -296,6 +298,7 @@ export const AppStateProvider = ({ children }) => {
             // User data
             stats, resilienceScore,
             modules, simulations, resultsHistory,
+            currentSimulation, setCurrentSimulation,
             reportSimulation, getLastResult,
             // Admin
             adminUsers, setAdminUsers,

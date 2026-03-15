@@ -20,6 +20,12 @@ const simulationSchema = new mongoose.Schema(
       required: [true, 'Simulation title is required'],
       trim: true,
     },
+    slug: {
+      type: String,
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
     description: {
       type: String,
       required: [true, 'Simulation description is required'],
@@ -73,5 +79,16 @@ const simulationSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+// Auto-generate slug from title if not provided
+simulationSchema.pre('validate', function (next) {
+  if (!this.slug && this.title) {
+    this.slug = this.title
+      .toLowerCase()
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]/g, '');
+  }
+  next();
+});
 
 module.exports = mongoose.model('Simulation', simulationSchema);

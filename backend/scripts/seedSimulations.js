@@ -18,6 +18,7 @@ const Simulation = require('../models/Simulation');
 const simulations = [
   {
     title: 'Psychological Tactics',
+    slug: 'psychological-tactics',
     description: 'Analyze this email and decide: Is it a legitimate request or a manipulation attempt?',
     icon: 'Brain',
     rating: 4.8,
@@ -41,6 +42,7 @@ const simulations = [
   },
   {
     title: 'Credential Harvesting',
+    slug: 'credential-harvesting',
     description: 'Review this login page carefully. Would you enter your credentials?',
     icon: 'UserSecret',
     rating: 4.6,
@@ -64,6 +66,7 @@ const simulations = [
   },
   {
     title: 'BiTB Awareness',
+    slug: 'bitb-awareness',
     description: 'Examine this browser window. Can you spot anything unusual?',
     icon: 'Globe',
     rating: 4.8,
@@ -86,6 +89,7 @@ const simulations = [
   },
   {
     title: 'Deceptive Links 101',
+    slug: 'deceptive-links-101',
     description: 'Before you click, examine this link. Is it safe or suspicious?',
     icon: 'Link',
     rating: 4.9,
@@ -108,6 +112,7 @@ const simulations = [
   },
   {
     title: 'Spear Phishing',
+    slug: 'spear-phishing',
     description: 'This email knows your name and role. Does that make it trustworthy?',
     icon: 'Bullseye',
     rating: 4.7,
@@ -131,6 +136,7 @@ const simulations = [
   },
   {
     title: 'Quishing Tactics',
+    slug: 'quishing-tactics',
     description: 'Scan this QR code? Think twice. What could be hidden behind it?',
     icon: 'Qrcode',
     rating: 4.5,
@@ -153,6 +159,7 @@ const simulations = [
   },
   {
     title: 'Vishing Tactics',
+    slug: 'vishing-tactics',
     description: 'Listen to this voicemail. Would you call back?',
     icon: 'Phone',
     rating: 4.4,
@@ -175,6 +182,7 @@ const simulations = [
   },
   {
     title: 'Watering Hole Attack',
+    slug: 'watering-hole-attack',
     description: 'This website looks normal. Can you spot the hidden danger?',
     icon: 'Shield',
     rating: 4.6,
@@ -197,6 +205,7 @@ const simulations = [
   },
   {
     title: 'CEO Fraud Detection',
+    slug: 'ceo-fraud-detection',
     description: 'Urgent request from your CEO. Would you comply or verify?',
     icon: 'Envelope',
     rating: 4.9,

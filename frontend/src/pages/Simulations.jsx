@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAppStore } from '../store/useAppStore';
 import SimulationCard from '../components/SimulationCard';
 import Navbar from '../components/Navbar';
@@ -44,6 +45,7 @@ const ICON_MAP = {
 
 const Simulations = () => {
     const { simulations, resultsHistory } = useAppStore();
+    const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [filter, setFilter] = useState('all');
     const [timeRange, setTimeRange] = useState('2weeks');
@@ -62,6 +64,7 @@ const Simulations = () => {
                 if (Array.isArray(simsResp)) {
                     setSimulationData(simsResp.map(s => ({
                         id: s._id,
+                        slug: s.slug,
                         title: s.title,
                         description: s.description,
                         icon: s.icon,
@@ -70,6 +73,7 @@ const Simulations = () => {
                         tags: s.tags || [],
                         playCount: s.playCount || 0,
                         createdAt: s.createdAt,
+                        timeLimit: s.timeLimit || 900,
                         progress: 0,
                     })));
                 }
@@ -133,6 +137,29 @@ const Simulations = () => {
         if (seconds < 60) return `${seconds}s`;
         if (seconds < 3600) return `${Math.round(seconds / 60)}m`;
         return `${(seconds / 3600).toFixed(1)}h`;
+    };
+
+    // Format relative time (e.g. "2 days ago")
+    const formatTimeAgo = (dateStr) => {
+        const now = new Date();
+        const date = new Date(dateStr);
+        const diffMs = now - date;
+        const diffSec = Math.floor(diffMs / 1000);
+        const diffMin = Math.floor(diffSec / 60);
+        const diffHr = Math.floor(diffMin / 60);
+        const diffDays = Math.floor(diffHr / 24);
+        const diffWeeks = Math.floor(diffDays / 7);
+        const diffMonths = Math.floor(diffDays / 30);
+
+        if (diffMin < 1) return 'just now';
+        if (diffMin < 60) return `${diffMin}m ago`;
+        if (diffHr < 24) return `${diffHr}h ago`;
+        if (diffDays === 1) return '1 day ago';
+        if (diffDays < 7) return `${diffDays} days ago`;
+        if (diffWeeks === 1) return '1 week ago';
+        if (diffWeeks < 5) return `${diffWeeks} weeks ago`;
+        if (diffMonths === 1) return '1 month ago';
+        return `${diffMonths} months ago`;
     };
 
     // Generate performance messages from API insights
@@ -540,7 +567,7 @@ const Simulations = () => {
                                     e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
                                     e.currentTarget.style.boxShadow = '0 8px 20px -6px rgba(0, 0, 0, 0.4)';
                                 }}
-                                onClick={() => {/* Navigate to simulation detail */}}
+                                onClick={() => sim.slug && navigate(`/simulations/${sim.slug}`)}
                             >
                                 {/* Badges */}
                                 {sim.tags && sim.tags.includes('NEW') && (
@@ -683,16 +710,33 @@ const Simulations = () => {
                                     borderTop: '1px solid rgba(255,255,255,0.05)',
                                     paddingTop: '1rem'
                                 }}>
-                                    <span style={{
-                                        color: 'rgba(255,255,255,0.4)',
-                                        fontSize: '0.7rem',
+                                    <div style={{
                                         display: 'flex',
                                         alignItems: 'center',
-                                        gap: '0.25rem'
+                                        gap: '0.75rem'
                                     }}>
-                                        <FontAwesomeIcon icon={faClock} style={{ fontSize: '0.6rem' }} />
-                                        {sim.duration}
-                                    </span>
+                                        <span style={{
+                                            color: 'rgba(255,255,255,0.4)',
+                                            fontSize: '0.7rem',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.25rem'
+                                        }}>
+                                            <FontAwesomeIcon icon={faClock} style={{ fontSize: '0.6rem' }} />
+                                            {Math.floor((sim.timeLimit || 900) / 60)} min
+                                        </span>
+                                        {sim.createdAt && (
+                                            <span style={{
+                                                color: 'rgba(255,255,255,0.3)',
+                                                fontSize: '0.65rem',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                gap: '0.2rem'
+                                            }}>
+                                                · {formatTimeAgo(sim.createdAt)}
+                                            </span>
+                                        )}
+                                    </div>
                                     <span style={{
                                         color: '#F97316',
                                         fontSize: '0.8rem',
@@ -711,6 +755,10 @@ const Simulations = () => {
                                     }}
                                     onMouseLeave={(e) => {
                                         e.currentTarget.style.backgroundColor = 'rgba(249, 115, 22, 0.1)';
+                                    }}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        if (sim.slug) navigate(`/simulations/${sim.slug}`);
                                     }}>
                                         Start Training
                                         <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: '0.6rem' }} />

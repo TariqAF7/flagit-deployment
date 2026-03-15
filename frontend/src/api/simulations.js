@@ -6,6 +6,9 @@ export const fetchSimulations = () => get('/simulations');
 /** GET /api/simulations/:id — single simulation with full email content */
 export const fetchSimulationById = (id) => get(`/simulations/${id}`);
 
+/** GET /api/simulations/slug/:slug — single simulation by slug with full email content */
+export const fetchSimulationBySlug = (slug) => get(`/simulations/slug/${slug}`);
+
 /**
  * POST /api/simulations/:id/submit
  * @param {string}          id

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const SimulationCard = ({ id, title, description, progress, rating, icon }) => {
+const SimulationCard = ({ id, slug, title, description, progress, rating, icon }) => {
     const navigate = useNavigate();
 
     return (
@@ -27,7 +27,7 @@ const SimulationCard = ({ id, title, description, progress, rating, icon }) => {
             </div>
 
             <div className="flex justify-between items-center mt-6">
-                <button onClick={() => navigate(`/simulations/${id}`)} className="btn btn-white" style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', padding: '0.5rem 1.5rem', borderRadius: '2rem' }}>
+                <button onClick={() => navigate(`/simulations/${slug || id}`)} className="btn btn-white" style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', color: 'white', padding: '0.5rem 1.5rem', borderRadius: '2rem' }}>
                     Start
                 </button>
                 <div className="flex items-center gap-1 text-sm font-bold" style={{ color: 'var(--accent-orange)' }}>

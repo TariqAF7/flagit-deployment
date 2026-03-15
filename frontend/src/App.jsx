@@ -39,7 +39,7 @@ function AppRoutes() {
       {/* End User Flow (Protected) */}
       <Route path="/dashboard" element={<RoleProtectedRoute allowedRoles={['user']}><Dashboard /></RoleProtectedRoute>} />
       <Route path="/simulations" element={<RoleProtectedRoute allowedRoles={['user']}><Simulations /></RoleProtectedRoute>} />
-      <Route path="/simulations/:id" element={<RoleProtectedRoute allowedRoles={['user']}><SimulationDetail /></RoleProtectedRoute>} />
+      <Route path="/simulations/:slug" element={<RoleProtectedRoute allowedRoles={['user']}><SimulationDetail /></RoleProtectedRoute>} />
       <Route path="/results/success" element={<RoleProtectedRoute allowedRoles={['user']}><ResultsSuccess /></RoleProtectedRoute>} />
       <Route path="/results/recap" element={<RoleProtectedRoute allowedRoles={['user']}><ResultsRecap /></RoleProtectedRoute>} />
       <Route path="/analytics" element={<RoleProtectedRoute allowedRoles={['user']}><Analytics /></RoleProtectedRoute>} />

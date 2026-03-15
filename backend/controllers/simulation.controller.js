@@ -13,6 +13,20 @@ exports.getAll = async (req, res, next) => {
   }
 };
 
+// @desc    Get simulation detail by slug (with email content)
+// @route   GET /api/simulations/slug/:slug
+exports.getBySlug = async (req, res, next) => {
+  try {
+    const simulation = await Simulation.findOne({ slug: req.params.slug });
+    if (!simulation) {
+      return res.status(404).json({ success: false, message: 'Simulation not found' });
+    }
+    res.json({ success: true, data: simulation });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Get simulation detail (with email content)
 // @route   GET /api/simulations/:id
 exports.getById = async (req, res, next) => {
