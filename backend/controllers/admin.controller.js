@@ -1,5 +1,7 @@
 const User = require('../models/User');
 const SimulationResult = require('../models/SimulationResult');
+const Settings = require('../models/Settings');
+
 
 // @desc    Get admin dashboard stats
 // @route   GET /api/admin/stats
@@ -229,33 +231,43 @@ exports.deleteUser = async (req, res, next) => {
   }
 };
 
-// @desc    Get platform settings (stub)
+// @desc    Get platform settings from MongoDB
 // @route   GET /api/admin/settings
 exports.getSettings = async (req, res, next) => {
   try {
-    res.json({
-      success: true,
-      data: {
-        platformName: 'FlagIt',
-        maxSimulationTime: 1066,
-        emailNotifications: true,
-        maintenanceMode: false,
-      },
-    });
+    const settings = await Settings.getSingleton();
+    res.json({ success: true, data: settings });
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Update platform settings (stub)
+// @desc    Update platform settings — persists to MongoDB
 // @route   PUT /api/admin/settings
 exports.updateSettings = async (req, res, next) => {
   try {
-    res.json({
-      success: true,
-      message: 'Settings updated',
-      data: req.body,
+    // Whitelist of fields admins are allowed to change
+    const ALLOWED = [
+      'platformName',
+      'maintenanceMode',
+      'defaultSimulationDifficulty',
+      'maxSimulationTime',
+      'emailNotifications',
+      'sessionTimeoutMinutes',
+    ];
+
+    const updates = {};
+    ALLOWED.forEach(field => {
+      if (req.body[field] !== undefined) updates[field] = req.body[field];
     });
+
+    const settings = await Settings.findOneAndUpdate(
+      {},                        // match the singleton
+      { $set: updates },
+      { new: true, upsert: true, runValidators: true }
+    );
+
+    res.json({ success: true, message: 'Settings saved.', data: settings });
   } catch (error) {
     next(error);
   }
