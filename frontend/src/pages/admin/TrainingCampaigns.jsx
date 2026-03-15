@@ -169,12 +169,13 @@ const TrainingCampaigns = () => {
                 <AdminSidebar isOpen={sidebarOpen} close={() => setSidebarOpen(false)} />
 
                 <main className="main-content" style={{ 
-                    backgroundColor: '#167f94', 
-                    padding: '2rem', 
-                    flex: 1, 
-                    minHeight: '100vh', 
-                    overflowY: 'auto' 
-                }}>
+    marginLeft: '280px',  // ← ADD THIS
+    backgroundColor: '#167f94', 
+    padding: '2rem', 
+    flex: 1, 
+    minHeight: '100vh', 
+    overflowY: 'auto' 
+}}>
 
                     {/* Custom Header with gradient lines and icon */}
                     <div style={{ 
