@@ -195,9 +195,9 @@ export const AppStateProvider = ({ children }) => {
      * Submits simulation choice to the backend and updates local stats.
      * Falls back to local computation if API fails.
      */
-    const reportSimulation = async (simId, choice, responseTime = 0) => {
+    const reportSimulation = async (simId, choice, responseTime = 0, flagged = false) => {
         try {
-            const result = await submitSimulation(simId, choice, responseTime);
+            const result = await submitSimulation(simId, choice, responseTime, flagged);
             const isCorrect = result.isCorrect;
 
             const newEntry = {
@@ -205,6 +205,7 @@ export const AppStateProvider = ({ children }) => {
                 simulationId: simId,
                 choice,
                 isCorrect,
+                flagged: result.flagged ?? flagged,
                 timestamp: new Date().toISOString(),
             };
 
@@ -230,6 +231,7 @@ export const AppStateProvider = ({ children }) => {
                 simulationId: simId,
                 choice,
                 isCorrect,
+                flagged,
                 timestamp: new Date().toISOString(),
             };
             setResultsHistory(prev => [...prev, newEntry]);

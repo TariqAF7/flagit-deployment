@@ -26,6 +26,10 @@ const simulationResultSchema = new mongoose.Schema(
       type: Number, // seconds
       default: 0,
     },
+    flagged: {
+      type: Boolean, // true = user clicked the FlagIT report button
+      default: false,
+    },
   },
   {
     timestamps: true,

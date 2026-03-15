@@ -12,7 +12,13 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         fetchAdminStats()
-            .then(data => setAdminStats(data))
+            .then(data => {
+                // ── UI DIAGNOSTIC LOG (remove after verification) ──────────
+                console.log('[DIAG] /api/admin/stats raw response:', JSON.stringify(data, null, 2));
+                console.log('[DIAG] orgResilienceScore being set to:', data?.orgResilienceScore ?? 'MISSING — will default to 0');
+                // ──────────────────────────────────────────────────────────
+                setAdminStats(data);
+            })
             .catch(err => console.warn('Failed to fetch admin stats:', err.message));
     }, []);
 
@@ -20,6 +26,43 @@ const AdminDashboard = () => {
         logout();
         navigate('/login');
     };
+
+    // ── Dynamic Resilience Profile ────────────────────────────────────────
+    const getResilienceProfile = (s) => {
+        if (s <= 40) return {
+            label: 'Critical',
+            color: '#ef4444',
+            ringColor: '#ef4444',
+            title: 'High Vulnerability',
+            message: 'Immediate training intervention required. Your organization is at high risk of a breach.',
+        };
+        if (s <= 70) return {
+            label: 'Moderate Risk',
+            color: '#f97316',
+            ringColor: '#f97316',
+            title: 'Moderate Risk',
+            message: 'Awareness is improving, but reporting rates remain low. Targeted simulations recommended.',
+        };
+        if (s <= 90) return {
+            label: 'Good',
+            color: 'var(--primary-teal)',
+            ringColor: '#0d9488',
+            title: 'Strong Resilience',
+            message: 'Most users are identifying threats. Focus on maintaining consistency across departments.',
+        };
+        return {
+            label: 'Excellent',
+            color: '#22c55e',
+            ringColor: '#22c55e',
+            title: 'Cyber-Resilient',
+            message: 'Your organization shows elite-level detection and reporting habits.',
+        };
+    };
+
+    const score = adminStats.orgResilienceScore ?? 0;
+    const profile = getResilienceProfile(score);
+    const CIRCUMFERENCE = 2 * Math.PI * 90; // ≈ 565.48
+    const strokeDashoffset = CIRCUMFERENCE - (CIRCUMFERENCE * score) / 100;
 
     return (
         <div className="dashboard-layout" style={{ backgroundColor: 'var(--primary-teal)' }}>
@@ -52,23 +95,55 @@ const AdminDashboard = () => {
 
                     <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 2fr', gap: '1.5rem', marginBottom: '2.5rem' }}>
 
-                        {/* Big Card */}
+                        {/* Resilience Score Ring */}
                         <div style={{ backgroundColor: 'white', borderRadius: '1rem', padding: '2.5rem', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)' }}>
                             <div style={{ position: 'relative', width: '200px', height: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                                 <svg width="200" height="200" style={{ transform: 'rotate(-90deg)' }}>
                                     <circle cx="100" cy="100" r="90" fill="none" stroke="#f1f5f9" strokeWidth="12" />
-                                    <circle cx="100" cy="100" r="90" fill="none" stroke="var(--accent-orange)" strokeWidth="12" strokeDasharray="565.48" strokeDashoffset={565.48 - (565.48 * 82) / 100} style={{ transition: 'stroke-dashoffset 1s ease-out' }} strokeLinecap="round" />
+                                    <circle
+                                        cx="100" cy="100" r="90" fill="none"
+                                        stroke={profile.ringColor}
+                                        strokeWidth="12"
+                                        strokeDasharray={CIRCUMFERENCE}
+                                        strokeDashoffset={strokeDashoffset}
+                                        style={{ transition: 'stroke-dashoffset 1s ease-out, stroke 0.5s ease' }}
+                                        strokeLinecap="round"
+                                    />
                                 </svg>
                                 <div style={{ position: 'absolute', textAlign: 'center', color: 'var(--deep-navy)' }}>
-                                    <div style={{ fontSize: '3rem', fontWeight: 'bold', lineHeight: 1 }}>82</div>
+                                    <div style={{ fontSize: '3rem', fontWeight: 'bold', lineHeight: 1, color: profile.ringColor, transition: 'color 0.5s ease' }}>{score}</div>
                                     <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>/ 100</div>
                                 </div>
                             </div>
 
                             <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-                                <div style={{ fontSize: '0.65rem', fontWeight: 'bold', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>ORGANIZATIONAL RESILIENCE SCORE</div>
-                                <h2 style={{ fontSize: '1.5rem', fontWeight: 'bold', color: 'var(--deep-navy)', marginBottom: '0.5rem' }}>Strong Security Posture</h2>
-                                <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', maxWidth: '250px', margin: '0 auto', lineHeight: '1.4' }}>Your organization demonstrates excellent phishing awareness and response capabilities.</p>
+                                <div style={{
+                                    display: 'inline-block',
+                                    backgroundColor: profile.color + '20',
+                                    color: profile.color,
+                                    borderRadius: '2rem',
+                                    padding: '0.2rem 0.8rem',
+                                    fontSize: '0.7rem',
+                                    fontWeight: 'bold',
+                                    letterSpacing: '0.06em',
+                                    marginBottom: '0.75rem',
+                                    textTransform: 'uppercase',
+                                }}>{profile.label}</div>
+                                <div style={{ fontSize: '0.6rem', fontWeight: 'bold', letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '0.4rem', textTransform: 'uppercase' }}>ORGANIZATIONAL RESILIENCE SCORE</div>
+                                <h2 style={{ fontSize: '1.25rem', fontWeight: 'bold', color: 'var(--deep-navy)', marginBottom: '0.5rem' }}>{profile.title}</h2>
+                                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', maxWidth: '250px', margin: '0 auto', lineHeight: '1.5' }}>{profile.message}</p>
+                                {/* Sub-metrics */}
+                                <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', marginTop: '1.25rem' }}>
+                                    <div style={{ textAlign: 'center' }}>
+                                        <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--deep-navy)' }}>{adminStats.detectionRate ?? adminStats.avgDetectionRate ?? 0}%</div>
+                                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>Detection Rate</div>
+                                    </div>
+                                    <div style={{ width: '1px', backgroundColor: '#e2e8f0' }} />
+                                    <div style={{ textAlign: 'center' }}>
+                                        <div style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--deep-navy)' }}>{adminStats.reportingRate ?? 0}%</div>
+                                        <div style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>Reporting Rate</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 

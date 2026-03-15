@@ -8,19 +8,46 @@ exports.getStats = async (req, res, next) => {
     const totalUsers = await User.countDocuments();
     const activeUsers = await User.countDocuments({ status: 'Active' });
 
-    // Average detection rate across all users
-    const users = await User.find({ role: 'user' });
-    let totalScore = 0;
-    users.forEach((u) => {
-      totalScore += u.resilienceScore;
-    });
-    const avgDetectionRate = users.length > 0 ? Math.round(totalScore / users.length) : 0;
+    // ── Weighted Organisational Resilience Score ──────────────────────────
+    // Formula: Score = (DetectionRate × 0.6) + (ReportingRate × 0.4)
+    //   DetectionRate : % of simulation results where the user identified the
+    //                   phishing attempt correctly (isCorrect === true).
+    //   ReportingRate : % of simulation results where the user actively pressed
+    //                   the FlagIT button to report (flagged === true).
+    const totalResults = await SimulationResult.countDocuments();
 
-    // Count total incorrect results (simulated "incidents")
+    let detectionRate = 0;
+    let reportingRate = 0;
+    let orgResilienceScore = 0;
+
+    if (totalResults > 0) {
+      const correctCount  = await SimulationResult.countDocuments({ isCorrect: true });
+      const flaggedCount  = await SimulationResult.countDocuments({ flagged: true });
+
+      detectionRate = Math.round((correctCount  / totalResults) * 100);
+      reportingRate = Math.round((flaggedCount  / totalResults) * 100);
+
+      orgResilienceScore = Math.round(
+        detectionRate * 0.6 + reportingRate * 0.4
+      );
+
+      // ── DIAGNOSTIC LOGS (remove after verification) ──────────────
+      console.log('\n[DIAG] ── Resilience Score Calculation ────────────────');
+      console.log(`[DIAG]  Total SimulationResults : ${totalResults}`);
+      console.log(`[DIAG]  Correct (isCorrect=true): ${correctCount}`);
+      console.log(`[DIAG]  Flagged (flagged=true)  : ${flaggedCount}`);
+      console.log(`[DIAG]  Detection Rate          : ${detectionRate}%  (correctCount / total × 100)`);
+      console.log(`[DIAG]  Reporting Rate          : ${reportingRate}%  (flaggedCount  / total × 100)`);
+      console.log(`[DIAG]  Final Score (60/40)     : ${orgResilienceScore}  (${detectionRate}×0.6 + ${reportingRate}×0.4)`);
+      console.log('[DIAG] ──────────────────────────────────────────────────\n');
+      // ─────────────────────────────────────────────────────────────
+    }
+
+    // Keep avgDetectionRate for backwards compatibility with other views
+    const avgDetectionRate = detectionRate;
+
+    // incidentsReported = results where user fell for the phishing attempt
     const incidentsReported = await SimulationResult.countDocuments({ isCorrect: false });
-
-    // Org resilience score (average of all user scores)
-    const orgResilienceScore = avgDetectionRate;
 
     res.json({
       success: true,
@@ -28,6 +55,8 @@ exports.getStats = async (req, res, next) => {
         totalUsers,
         activeUsers,
         avgDetectionRate,
+        detectionRate,
+        reportingRate,
         incidentsReported,
         orgResilienceScore,
       },

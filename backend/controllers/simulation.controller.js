@@ -31,7 +31,7 @@ exports.getById = async (req, res, next) => {
 // @route   POST /api/simulations/:id/submit
 exports.submit = async (req, res, next) => {
   try {
-    const { choice, responseTime } = req.body;
+    const { choice, responseTime, flagged } = req.body;
     const simulation = await Simulation.findById(req.params.id);
 
     if (!simulation) {
@@ -44,12 +44,18 @@ exports.submit = async (req, res, next) => {
 
     const isCorrect = simulation.isPhishing ? choice === 'phish' : choice === 'legit';
 
+    // flagged === true means the user actively clicked the FlagIT report button.
+    // Strict boolean coercion prevents truthy non-boolean values (e.g. the
+    // string "true") from accidentally inflating the org reporting rate.
+    const wasFlagged = flagged === true;
+
     const result = await SimulationResult.create({
       userId: req.user._id,
       simulationId: simulation._id,
       choice,
       isCorrect,
       responseTime: responseTime || 0,
+      flagged: wasFlagged,
     });
 
     // Update user stats
@@ -78,6 +84,7 @@ exports.submit = async (req, res, next) => {
       data: {
         result,
         isCorrect,
+        flagged: wasFlagged,
         updatedResilienceScore: newScore,
       },
     });

@@ -60,7 +60,10 @@ export const ADMIN_STATS = {
   totalUsers: 1247,
   activeUsers: 1089,
   avgDetectionRate: 78,
-  incidentsReported: 23
+  detectionRate: 78,
+  reportingRate: 65,
+  incidentsReported: 23,
+  orgResilienceScore: 73,
 };
 
 export const MOCK_USERS = [
