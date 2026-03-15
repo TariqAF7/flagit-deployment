@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { INITIAL_MODULES, INITIAL_SIMULATIONS, MOCK_USER, ADMIN_STATS, MOCK_USERS, ACTIVE_CAMPAIGNS, PAST_CAMPAIGNS, REPORT_TRENDS, AI_MODELS, AI_DATASETS } from '../data/seed';
-import { loginUser } from '../api/auth';
+import { loginUser, registerUser } from '../api/auth';
 import { fetchModules } from '../api/modules';
 import { fetchSimulations, submitSimulation, fetchHistory, fetchLastResult } from '../api/simulations';
 
@@ -56,6 +56,7 @@ export const AppStateProvider = ({ children }) => {
     const [modules, setModules] = useState(() => safeLoad('flagit_modules', INITIAL_MODULES));
     const [simulations, setSimulations] = useState(() => safeLoad('flagit_simulations', INITIAL_SIMULATIONS));
     const [resultsHistory, setResultsHistory] = useState(() => safeLoad('flagit_history', []));
+    const [currentSimulation, setCurrentSimulation] = useState(null);
 
     // ── Admin States ──────────────────────────────────────────
     const [adminUsers, setAdminUsers] = useState(() => safeLoad('flagit_adminUsers', MOCK_USERS));
@@ -106,11 +107,15 @@ export const AppStateProvider = ({ children }) => {
             if (Array.isArray(sims)) {
                 setSimulations(sims.map(s => ({
                     id: s._id,
+                    slug: s.slug,
                     title: s.title,
                     description: s.description,
                     icon: s.icon,
                     rating: s.rating,
                     difficulty: s.difficulty,
+                    tags: s.tags || [],
+                    playCount: s.playCount || 0,
+                    createdAt: s.createdAt,
                     progress: 0,
                 })));
             }
@@ -166,6 +171,44 @@ export const AppStateProvider = ({ children }) => {
             setStats(apiUser.stats ?? { simulationsCompleted: 0, phishDetected: 0, modulesFinished: 0 });
 
             // Fetch live data in background (non-blocking)
+            hydrateUserData(normalizedRole);
+
+            return normalizedRole;
+        } catch (err) {
+            setApiError(err.message);
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // ── Register ──────────────────────────────────────────────
+    /**
+     * Creates a new user account and logs them in automatically.
+     * @param {string} email
+     * @param {string} password
+     * @returns {string} 'user'
+     * @throws {Error} with user-friendly message on failure
+     */
+    const register = async (email, password) => {
+        // Derive a name from the email prefix
+        const name = email.split('@')[0];
+        setLoading(true);
+        setApiError(null);
+        try {
+            const { user: apiUser, token } = await registerUser(name, email, password);
+
+            localStorage.setItem('flagit_token', token);
+            localStorage.setItem('flagit_user', JSON.stringify(apiUser));
+
+            const normalizedRole = normalizeRole(apiUser.role);
+
+            setUser(apiUser);
+            setRole(normalizedRole);
+            setIsLoggedIn(true);
+            setResilienceScore(apiUser.resilienceScore ?? 0);
+            setStats(apiUser.stats ?? { simulationsCompleted: 0, phishDetected: 0, modulesFinished: 0 });
+
             hydrateUserData(normalizedRole);
 
             return normalizedRole;
@@ -251,10 +294,11 @@ export const AppStateProvider = ({ children }) => {
     return (
         <AppStateContext.Provider value={{
             // Auth
-            isLoggedIn, role, user, login, logout, loading, apiError,
+            isLoggedIn, role, user, login, register, logout, loading, apiError,
             // User data
             stats, resilienceScore,
             modules, simulations, resultsHistory,
+            currentSimulation, setCurrentSimulation,
             reportSimulation, getLastResult,
             // Admin
             adminUsers, setAdminUsers,

@@ -34,15 +34,15 @@ export const INITIAL_MODULES = [
 ];
 
 export const INITIAL_SIMULATIONS = [
-  { id: 1, title: 'Psychological Tactics', description: 'Learn to identify manipulation techniques', progress: 0, rating: 4.8, icon: 'Brain' },
-  { id: 2, title: 'BiTB Awareness', description: 'Browser-in-the-Browser attack detection', progress: 0, rating: 4.8, icon: 'Shield' },
-  { id: 3, title: 'Deceptive Links 101', description: 'Spot malicious URLs and domains', progress: 0, rating: 4.8, icon: 'Link' },
-  { id: 4, title: 'Credential Harvesting', description: 'Learn to identify manipulation techniques', progress: 0, rating: 4.6, icon: 'Brain' },
-  { id: 5, title: 'Spear Phishing', description: 'Learn to Spot Targeted Impersonation', progress: 0, rating: 3.3, icon: 'Shield' },
-  { id: 6, title: 'Drive-by-Downloads', description: 'Learn to Recognize Malicious Web Redirections', progress: 0, rating: 5.0, icon: 'Link' },
-  { id: 7, title: 'Quishing Tactics', description: 'QR Code attack detection', progress: 0, rating: 4.9, icon: 'Brain' },
-  { id: 8, title: 'Vishing Tactics', description: 'Learn to hear the Voice-attack scripts', progress: 0, rating: 4.1, icon: 'Shield' },
-  { id: 9, title: 'Watering Hole Attack', description: 'Learn to Identify Compromised Websites', progress: 0, rating: 3.9, icon: 'Link' }
+  { id: 1, slug: 'psychological-tactics', title: 'Psychological Tactics', description: 'Analyze this email and decide: Is it a legitimate request or a manipulation attempt?', progress: 0, rating: 4.8, icon: 'Brain' },
+  { id: 2, slug: 'bitb-awareness', title: 'BiTB Awareness', description: 'Examine this browser window. Can you spot anything unusual?', progress: 0, rating: 4.8, icon: 'Globe' },
+  { id: 3, slug: 'deceptive-links-101', title: 'Deceptive Links 101', description: 'Before you click, examine this link. Is it safe or suspicious?', progress: 0, rating: 4.9, icon: 'Link' },
+  { id: 4, slug: 'credential-harvesting', title: 'Credential Harvesting', description: 'Review this login page carefully. Would you enter your credentials?', progress: 0, rating: 4.6, icon: 'UserSecret' },
+  { id: 5, slug: 'spear-phishing', title: 'Spear Phishing', description: 'This email knows your name and role. Does that make it trustworthy?', progress: 0, rating: 4.7, icon: 'Bullseye' },
+  { id: 6, slug: 'ceo-fraud-detection', title: 'CEO Fraud Detection', description: 'Urgent request from your CEO. Would you comply or verify?', progress: 0, rating: 4.9, icon: 'Envelope' },
+  { id: 7, slug: 'quishing-tactics', title: 'Quishing Tactics', description: 'Scan this QR code? Think twice. What could be hidden behind it?', progress: 0, rating: 4.5, icon: 'Qrcode' },
+  { id: 8, slug: 'vishing-tactics', title: 'Vishing Tactics', description: 'Listen to this voicemail. Would you call back?', progress: 0, rating: 4.4, icon: 'Phone' },
+  { id: 9, slug: 'watering-hole-attack', title: 'Watering Hole Attack', description: 'This website looks normal. Can you spot the hidden danger?', progress: 0, rating: 4.6, icon: 'Shield' }
 ];
 
 export const MOCK_USER = {

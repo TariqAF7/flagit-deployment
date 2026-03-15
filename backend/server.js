@@ -1,14 +1,15 @@
-const express = require('express');
 const dotenv = require('dotenv');
+
+// Load env vars BEFORE importing modules that read process.env
+dotenv.config();
+
+const express = require('express');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const corsOptions = require('./config/cors');
 const errorHandler = require('./middleware/errorHandler');
-
-// Load env vars
-dotenv.config();
 
 // Connect to database
 connectDB();

@@ -403,7 +403,7 @@ const Dashboard = () => {
                                         transition: 'all 0.2s',
                                         height: 'fit-content'
                                     }}
-                                    onClick={() => navigate('/simulations/featured')}
+                                    onClick={() => navigate('/simulations/credential-harvesting')}
                                     onMouseEnter={(e) => {
                                         e.target.style.transform = 'scale(1.02)';
                                         e.target.style.boxShadow = '0 15px 25px -5px rgba(249, 115, 22, 0.4)';

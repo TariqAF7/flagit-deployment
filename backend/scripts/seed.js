@@ -133,13 +133,49 @@ const modules = [
 
 const simulations = [
   {
-    title: 'Credential Harvesting',
-    description: 'A fake Microsoft security alert designed to steal your login credentials.',
-    icon: 'Shield',
-    rating: 4.5,
-    difficulty: 'Intermediate',
+    title: 'Psychological Tactics',
+    description: 'Analyze this email and decide: Is it a legitimate request or a manipulation attempt?',
+    icon: 'Brain',
+    rating: 4.8,
+    difficulty: 'Beginner',
+    tags: ['NEW'],
+    playCount: 12,
     isPhishing: true,
-    timeLimit: 1066,
+    timeLimit: 720,
+    emailContent: {
+      senderName: 'IT Help Desk',
+      senderEmail: 'helpdesk@company-support-portal.com',
+      subject: 'ACTION REQUIRED: Verify Your Identity to Avoid Account Suspension',
+      body: `<div style="font-family: Arial, sans-serif; max-width: 600px;">
+<div style="background-color: #1a365d; padding: 20px; color: white; text-align: center;">
+<h1>IT Help Desk - Account Verification</h1>
+</div>
+<div style="padding: 20px;">
+<p>Dear Employee,</p>
+<p>We have detected unusual activity on your corporate account. As part of our security protocol, you must verify your identity within <strong>12 hours</strong> or your account will be temporarily suspended.</p>
+<p>Please click the link below to verify your credentials:</p>
+<p><a href="#" style="background-color: #e53e3e; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Verify Now</a></p>
+<p style="font-size: 12px; color: #666;">This is an automated message. Do not reply directly.</p>
+</div>
+</div>`,
+      redFlags: [
+        { type: 'technical', title: 'Suspicious Domain', description: 'The sender domain "company-support-portal.com" is not the real corporate domain.' },
+        { type: 'psychological', title: 'Urgency & Time Pressure', description: 'Creates false urgency with a 12-hour deadline.' },
+        { type: 'psychological', title: 'Fear & Consequences', description: 'Threatens account suspension to compel action.' },
+        { type: 'psychological', title: 'Authority Impersonation', description: 'Pretends to be from "IT Help Desk".' },
+      ],
+    },
+  },
+  {
+    title: 'Credential Harvesting',
+    description: 'Review this login page carefully. Would you enter your credentials?',
+    icon: 'UserSecret',
+    rating: 4.6,
+    difficulty: 'Beginner',
+    tags: [],
+    playCount: 45,
+    isPhishing: true,
+    timeLimit: 600,
     emailContent: {
       senderName: 'Microsoft Security Team',
       senderEmail: 'security-alerts@microsft-security.com',
@@ -165,68 +201,223 @@ const simulations = [
         { type: 'technical', title: 'Suspicious Domain', description: 'The sender domain "microsft-security.com" is missing the \'o\' in Microsoft.' },
         { type: 'technical', title: 'External Sender Warning', description: 'The email was flagged as "External" yet claims to be from Microsoft Security.' },
         { type: 'technical', title: 'Suspicious Links', description: 'The verification link points to a non-Microsoft domain.' },
-        { type: 'technical', title: 'Suspicious Attachments', description: 'Unexpected PDF attachments in security alerts are often malicious.' },
         { type: 'psychological', title: 'Urgency & Time Pressure', description: 'Creates false urgency with a "24 hours" deadline.' },
         { type: 'psychological', title: 'Authority Impersonation', description: 'Pretends to be from "Microsoft Security Team".' },
         { type: 'psychological', title: 'Fear & Consequences', description: 'Threatens account suspension and loss of access.' },
-        { type: 'psychological', title: 'Social Engineering', description: 'Uses specific details like "Moscow, Russia" to create credibility.' },
       ],
     },
   },
   {
-    title: 'Invoice Fraud',
-    description: 'A fake invoice scam targeting finance teams with urgent payment requests.',
-    icon: 'Mail',
-    rating: 4.3,
-    difficulty: 'Advanced',
+    title: 'BiTB Awareness',
+    description: 'Examine this browser window. Can you spot anything unusual?',
+    icon: 'Globe',
+    rating: 4.8,
+    difficulty: 'Intermediate',
+    tags: ['POPULAR'],
+    playCount: 120,
     isPhishing: true,
     timeLimit: 900,
     emailContent: {
-      senderName: 'Accounts Payable',
-      senderEmail: 'ap@supp1ier-invoices.com',
-      subject: 'OVERDUE: Invoice #INV-2024-8891 — Payment Required Immediately',
-      body: `<div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px;">
-<p>Dear Finance Team,</p>
-<p>Please find attached the overdue invoice #INV-2024-8891 for $14,750.00. This payment was due 15 days ago.</p>
-<p>Please process payment immediately to avoid service interruption and late fees.</p>
-<p><strong>New Banking Details:</strong></p>
-<ul>
-<li>Bank: Chase International</li>
-<li>Account: 4418-9920-3311</li>
-<li>Routing: 072000326</li>
-</ul>
-<p><a href="#" style="background-color: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Download Invoice PDF</a></p>
+      senderName: 'Google Workspace',
+      senderEmail: 'workspace-noreply@google-apps-auth.com',
+      subject: 'Sign in to Continue to Google Drive',
+      body: `<div style="font-family: Arial, sans-serif; max-width: 600px;">
+<div style="background-color: #4285f4; padding: 20px; color: white; text-align: center;">
+<h1>Google Workspace</h1>
+</div>
+<div style="padding: 20px;">
+<p>Hi,</p>
+<p>Someone shared a document with you on Google Drive. To view the file, please sign in with your Google account.</p>
+<p><a href="#" style="background-color: #4285f4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Open in Google Drive</a></p>
+<p style="font-size: 12px; color: #666;">This link will open a secure sign-in window.</p>
+</div>
 </div>`,
       redFlags: [
-        { type: 'technical', title: 'Misspelled Domain', description: 'The domain "supp1ier-invoices.com" uses a number "1" instead of the letter "l".' },
-        { type: 'technical', title: 'Changed Banking Details', description: 'Legitimate vendors rarely change banking details via email.' },
-        { type: 'psychological', title: 'Urgency', description: 'Pressures immediate payment with threats of late fees.' },
-        { type: 'psychological', title: 'Authority', description: 'Impersonates a known vendor/supplier.' },
+        { type: 'technical', title: 'Fake Login Window', description: 'The sign-in popup is actually rendered inside the page (Browser-in-the-Browser attack).' },
+        { type: 'technical', title: 'Spoofed Domain', description: 'The domain "google-apps-auth.com" is not owned by Google.' },
+        { type: 'psychological', title: 'Trust Exploitation', description: 'Leverages the trust users place in familiar Google sign-in windows.' },
       ],
     },
   },
   {
-    title: 'Account Recovery Scam',
-    description: 'A deceptive password reset email designed to capture your current credentials.',
+    title: 'Deceptive Links 101',
+    description: 'Before you click, examine this link. Is it safe or suspicious?',
     icon: 'Link',
-    rating: 4.0,
+    rating: 4.9,
     difficulty: 'Beginner',
+    tags: [],
+    playCount: 88,
     isPhishing: true,
-    timeLimit: 600,
+    timeLimit: 480,
     emailContent: {
-      senderName: 'Google Account Recovery',
-      senderEmail: 'noreply@g00gle-recover.com',
-      subject: 'Your Google Account Password Has Been Changed',
-      body: `<div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px;">
-<p>Hi,</p>
-<p>Your Google Account password was recently changed. If you did not make this change, someone may have accessed your account.</p>
-<p>Please reset your password immediately:</p>
-<p><a href="#" style="background-color: #1a73e8; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Reset Password</a></p>
-<p style="font-size: 12px; color: #666;">Google will never ask for your password via email.</p>
+      senderName: 'PayPal Customer Service',
+      senderEmail: 'service@paypa1-resolution.com',
+      subject: 'Your PayPal Account Has Been Limited',
+      body: `<div style="font-family: Arial, sans-serif; max-width: 600px;">
+<div style="background-color: #003087; padding: 20px; color: white; text-align: center;">
+<h1>PayPal</h1>
+</div>
+<div style="padding: 20px;">
+<p>Dear Customer,</p>
+<p>We've noticed some unusual activity on your PayPal account. Your account access has been limited until you verify your information.</p>
+<p>Click below to restore full access:</p>
+<p><a href="#" style="background-color: #0070ba; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Restore Account Access</a></p>
+<p style="font-size: 12px; color: #666;">If you don't verify within 48 hours, your account will be permanently restricted.</p>
+</div>
 </div>`,
       redFlags: [
-        { type: 'technical', title: 'Fake Domain', description: 'The domain "g00gle-recover.com" uses zeros instead of "o".' },
-        { type: 'psychological', title: 'Fear', description: 'Creates fear that someone has taken over your account.' },
+        { type: 'technical', title: 'Lookalike Domain', description: 'The domain "paypa1-resolution.com" uses the number "1" instead of the letter "l".' },
+        { type: 'technical', title: 'Hover Mismatch', description: 'The displayed link text doesn\'t match the actual URL destination.' },
+        { type: 'psychological', title: 'Fear', description: 'Threatens permanent account restriction.' },
+        { type: 'psychological', title: 'Urgency', description: 'Imposes a 48-hour deadline.' },
+      ],
+    },
+  },
+  {
+    title: 'Spear Phishing',
+    description: 'This email knows your name and role. Does that make it trustworthy?',
+    icon: 'Bullseye',
+    rating: 4.7,
+    difficulty: 'Advanced',
+    tags: [],
+    playCount: 32,
+    isPhishing: true,
+    timeLimit: 1200,
+    emailContent: {
+      senderName: 'David Chen, CFO',
+      senderEmail: 'd.chen@companycorp-finance.com',
+      subject: 'Quick Favor - Confidential Wire Transfer',
+      body: `<div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px;">
+<p>Hi,</p>
+<p>I'm in a meeting and can't talk right now. I need you to process an urgent wire transfer for a confidential acquisition we're finalizing today.</p>
+<p><strong>Amount:</strong> $47,500.00<br/>
+<strong>Recipient:</strong> Apex Holdings LLC<br/>
+<strong>Account:</strong> 8834-2291-0057<br/>
+<strong>Routing:</strong> 021000089</p>
+<p>Please process this ASAP and confirm once done. Don't discuss this with anyone — it's confidential until the deal closes.</p>
+<p>Thanks,<br/>David Chen<br/>Chief Financial Officer</p>
+</div>`,
+      redFlags: [
+        { type: 'technical', title: 'External Domain', description: 'The sender uses "companycorp-finance.com" instead of the real company domain.' },
+        { type: 'psychological', title: 'Authority', description: 'Impersonates a C-level executive (CFO).' },
+        { type: 'psychological', title: 'Secrecy', description: 'Insists on confidentiality to prevent verification.' },
+        { type: 'psychological', title: 'Urgency', description: 'Pressures immediate action with "ASAP".' },
+      ],
+    },
+  },
+  {
+    title: 'Quishing Tactics',
+    description: 'Scan this QR code? Think twice. What could be hidden behind it?',
+    icon: 'Qrcode',
+    rating: 4.5,
+    difficulty: 'Intermediate',
+    tags: [],
+    playCount: 19,
+    isPhishing: true,
+    timeLimit: 720,
+    emailContent: {
+      senderName: 'Facilities Management',
+      senderEmail: 'facilities@building-mgmt-portal.com',
+      subject: 'Updated Parking Registration - QR Code Enclosed',
+      body: `<div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px;">
+<p>Dear Tenant,</p>
+<p>As part of our new digital parking system, all employees must re-register their vehicles by scanning the QR code below.</p>
+<p style="text-align: center; padding: 20px; background: #f5f5f5; border-radius: 8px;">[QR Code Image Placeholder]</p>
+<p>Please complete registration by end of this week to avoid parking violations.</p>
+<p>Thank you,<br/>Building Facilities Team</p>
+</div>`,
+      redFlags: [
+        { type: 'technical', title: 'QR Code Danger', description: 'QR codes can redirect to any URL — you cannot verify the destination before scanning.' },
+        { type: 'technical', title: 'Unknown Sender Domain', description: 'The domain "building-mgmt-portal.com" is not a recognized company domain.' },
+        { type: 'psychological', title: 'Routine Disguise', description: 'Disguises the attack as a routine administrative task.' },
+        { type: 'psychological', title: 'Mild Urgency', description: 'Imposes an end-of-week deadline.' },
+      ],
+    },
+  },
+  {
+    title: 'Vishing Tactics',
+    description: 'Listen to this voicemail. Would you call back?',
+    icon: 'Phone',
+    rating: 4.4,
+    difficulty: 'Intermediate',
+    tags: [],
+    playCount: 15,
+    isPhishing: true,
+    timeLimit: 900,
+    emailContent: {
+      senderName: 'Bank Security Department',
+      senderEmail: 'alerts@secure-banknotify.com',
+      subject: 'Voicemail: Urgent Call About Your Account',
+      body: `<div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px;">
+<p>You have a new voicemail from your bank's security department:</p>
+<div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 15px 0;">
+<p><em>"This is the fraud prevention department. We've detected suspicious transactions on your account ending in 4829. Your account has been temporarily frozen. Please call us back immediately at 1-800-555-0199 to verify your identity and restore access."</em></p>
+</div>
+<p><a href="#" style="background-color: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Listen to Full Voicemail</a></p>
+</div>`,
+      redFlags: [
+        { type: 'technical', title: 'Fake Callback Number', description: 'The phone number leads to scammers, not your real bank.' },
+        { type: 'technical', title: 'Spoofed Email Domain', description: 'The domain "secure-banknotify.com" is not a real bank domain.' },
+        { type: 'psychological', title: 'Fear', description: 'Claims your account is frozen to trigger panic.' },
+        { type: 'psychological', title: 'Urgency', description: 'Pressures you to call back "immediately".' },
+      ],
+    },
+  },
+  {
+    title: 'Watering Hole Attack',
+    description: 'This website looks normal. Can you spot the hidden danger?',
+    icon: 'Shield',
+    rating: 4.6,
+    difficulty: 'Advanced',
+    tags: [],
+    playCount: 8,
+    isPhishing: true,
+    timeLimit: 1080,
+    emailContent: {
+      senderName: 'Industry Newsletter',
+      senderEmail: 'newsletter@techinsider-daily.com',
+      subject: 'Breaking: Major Security Vulnerability Discovered',
+      body: `<div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px;">
+<p>Dear Security Professional,</p>
+<p>A critical zero-day vulnerability has been discovered affecting major enterprise systems. Read the full analysis and recommended patches on our blog:</p>
+<p><a href="#" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Read Full Analysis</a></p>
+<p style="font-size: 12px; color: #666;">This article is trending in the cybersecurity community.</p>
+</div>`,
+      redFlags: [
+        { type: 'technical', title: 'Compromised Website', description: 'The linked blog has been compromised with a drive-by download exploit.' },
+        { type: 'technical', title: 'Unknown Domain', description: 'The domain "techinsider-daily.com" is not a recognized industry publication.' },
+        { type: 'psychological', title: 'Professional Appeal', description: 'Targets security professionals with relevant-sounding content.' },
+        { type: 'psychological', title: 'Curiosity', description: 'Uses "breaking news" to entice clicking.' },
+      ],
+    },
+  },
+  {
+    title: 'CEO Fraud Detection',
+    description: 'Urgent request from your CEO. Would you comply or verify?',
+    icon: 'Envelope',
+    rating: 4.9,
+    difficulty: 'Advanced',
+    tags: [],
+    playCount: 55,
+    isPhishing: true,
+    timeLimit: 900,
+    emailContent: {
+      senderName: 'Sarah Mitchell, CEO',
+      senderEmail: 's.mitchell@company-executive.com',
+      subject: 'URGENT - Need Gift Cards for Client Appreciation',
+      body: `<div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px;">
+<p>Hi,</p>
+<p>I need you to purchase 10 Amazon gift cards at $200 each for a surprise client appreciation event I'm organizing. Please buy them today and send me the codes via email.</p>
+<p>I'm in back-to-back meetings so I can't call. Just reply with the codes when you have them.</p>
+<p>I'll get you reimbursed through expense reports.</p>
+<p>Thanks for handling this quickly!<br/>Sarah Mitchell<br/>CEO</p>
+</div>`,
+      redFlags: [
+        { type: 'technical', title: 'External Domain', description: 'The sender uses "company-executive.com" instead of the real company domain.' },
+        { type: 'psychological', title: 'Authority', description: 'Impersonates the CEO to leverage organizational authority.' },
+        { type: 'psychological', title: 'Urgency', description: 'Requests immediate action — "buy them today".' },
+        { type: 'psychological', title: 'Isolation', description: 'Claims to be unavailable for calls, preventing verbal verification.' },
+        { type: 'psychological', title: 'Gift Card Red Flag', description: 'Legitimate executives never request gift card purchases via email.' },
       ],
     },
   },
