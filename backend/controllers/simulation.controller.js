@@ -120,3 +120,169 @@ exports.getLastResult = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Start a simulation (increment playCount)
+// @route   POST /api/simulations/:id/start
+exports.startSimulation = async (req, res, next) => {
+  try {
+    const simulation = await Simulation.findByIdAndUpdate(
+      req.params.id,
+      { $inc: { playCount: 1 } },
+      { new: true }
+    ).select('-emailContent');
+
+    if (!simulation) {
+      return res.status(404).json({ success: false, message: 'Simulation not found' });
+    }
+
+    res.json({ success: true, data: simulation });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Get user stats for simulations page
+// @route   GET /api/simulations/user-stats
+exports.getUserStats = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+
+    // Get all results for this user
+    const results = await SimulationResult.find({ userId });
+
+    const totalSimulations = results.length;
+    const correctCount = results.filter((r) => r.isCorrect).length;
+    const avgScore = totalSimulations > 0 ? Math.round((correctCount / totalSimulations) * 100) : 0;
+    const totalResponseTime = results.reduce((sum, r) => sum + (r.responseTime || 0), 0);
+    const timeSpent = totalResponseTime; // in seconds
+
+    // Compute streak (consecutive weeks with at least one simulation)
+    let streak = 0;
+    if (results.length > 0) {
+      const now = new Date();
+      const sortedByDate = [...results].sort((a, b) => b.createdAt - a.createdAt);
+
+      // Check week-by-week backwards
+      let weekStart = new Date(now);
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay()); // start of current week
+      weekStart.setHours(0, 0, 0, 0);
+
+      for (let i = 0; i < 52; i++) {
+        const weekEnd = new Date(weekStart);
+        weekEnd.setDate(weekEnd.getDate() + 7);
+
+        const hasActivity = sortedByDate.some(
+          (r) => r.createdAt >= weekStart && r.createdAt < weekEnd
+        );
+
+        if (hasActivity) {
+          streak++;
+        } else {
+          break;
+        }
+
+        // Move to previous week
+        weekStart.setDate(weekStart.getDate() - 7);
+      }
+    }
+
+    // Compute flaggedCorrectly (correct phish detection + flagged)
+    const flaggedCorrectly = results.filter((r) => r.isCorrect && r.flagged).length;
+
+    // Generate badges
+    const badges = [];
+    if (avgScore >= 90) badges.push('Elite Defender');
+    if (avgScore >= 75) badges.push('Strong Defender');
+    if (streak >= 5) badges.push('Consistent Learner');
+    if (totalSimulations >= 20) badges.push('Veteran');
+
+    // Generate learning insights
+    const insights = [];
+
+    if (streak >= 10) {
+      insights.push({
+        type: 'achievement',
+        title: '🔥 10-Week Streak!',
+        description: "You've completed simulations for 10 weeks straight - exceptional dedication!",
+        badge: 'elite',
+      });
+    } else if (streak >= 5) {
+      insights.push({
+        type: 'achievement',
+        title: '⭐ 5-Week Streak',
+        description: 'Consistent progress! Keep the momentum going.',
+        badge: 'consistent',
+      });
+    }
+
+    if (avgScore >= 90) {
+      insights.push({
+        type: 'success',
+        title: '🏆 Elite Defender',
+        description: "You're in the top 5% of all users. Masterful phishing detection!",
+        badge: 'elite',
+      });
+    } else if (avgScore > 80) {
+      insights.push({
+        type: 'success',
+        title: '🛡️ Strong Defender',
+        description: `Your average score of ${avgScore}% puts you well above average.`,
+        badge: 'strong',
+      });
+    } else if (avgScore >= 60) {
+      insights.push({
+        type: 'success',
+        title: '📈 On Track',
+        description: 'Good progress! Keep practicing to improve your score.',
+        badge: 'improving',
+      });
+    } else {
+      insights.push({
+        type: 'success',
+        title: '🌱 Building Foundation',
+        description: 'Every expert was once a beginner. Keep learning!',
+        badge: 'beginner',
+      });
+    }
+
+    if (flaggedCorrectly >= 10) {
+      insights.push({
+        type: 'strength',
+        title: '✅ URL Detection Master',
+        description: 'Your ability to spot and flag malicious content is exceptional.',
+        badge: 'strength',
+      });
+    }
+
+    // Recommendation based on weaknesses
+    const incorrectResults = results.filter((r) => !r.isCorrect);
+    if (incorrectResults.length > 0) {
+      insights.push({
+        type: 'warning',
+        title: 'Recommended: Practice More Simulations',
+        description: `You have ${incorrectResults.length} incorrect answers. Try repeating those scenarios.`,
+      });
+    } else if (totalSimulations === 0) {
+      insights.push({
+        type: 'warning',
+        title: 'Get Started!',
+        description: 'Complete your first simulation to begin building your defense skills.',
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        totalSimulations,
+        avgScore,
+        timeSpent,
+        streak,
+        badges,
+        flaggedCorrectly,
+        insights,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};

@@ -26,7 +26,7 @@ const simulationSchema = new mongoose.Schema(
     },
     icon: {
       type: String,
-      enum: ['Brain', 'Shield', 'Link', 'Mail'],
+      enum: ['Brain', 'Shield', 'Link', 'Mail', 'UserSecret', 'Globe', 'Bullseye', 'Qrcode', 'Phone', 'Envelope'],
       default: 'Brain',
     },
     rating: {
@@ -34,6 +34,14 @@ const simulationSchema = new mongoose.Schema(
       default: 0,
       min: 0,
       max: 5,
+    },
+    tags: {
+      type: [String],
+      default: [],
+    },
+    playCount: {
+      type: Number,
+      default: 0,
     },
     difficulty: {
       type: String,

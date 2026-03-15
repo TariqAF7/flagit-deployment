@@ -19,7 +19,7 @@ const ROLE_CREDENTIALS = {
 };
 
 const Login = () => {
-    const { login } = useAppStore();
+    const { login, register, logout } = useAppStore();
     const navigate = useNavigate();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -64,13 +64,30 @@ const Login = () => {
         try {
             const role = await login(email, password);
 
+            // Enforce tab-role match
+            if (selectedRole === 'user' && role !== 'user') {
+                logout();
+                setErrors({ email: 'This account is not authorized for the selected login tab.' });
+                return;
+            }
+            if (selectedRole === 'admin' && role !== 'admin') {
+                logout();
+                setErrors({ email: 'This account is not authorized for the selected login tab.' });
+                return;
+            }
+
             if (role === 'admin') {
                 navigate('/admin');
             } else {
                 navigate('/dashboard');
             }
         } catch (err) {
-            setErrors({ email: err.message || 'Invalid email or password' });
+            const msg = err.message || 'Invalid email or password';
+            if (msg.toLowerCase().includes('password')) {
+                setErrors({ password: msg });
+            } else {
+                setErrors({ email: msg });
+            }
         } finally {
             setIsSubmitting(false);
         }
@@ -86,11 +103,20 @@ const Login = () => {
 
         setIsSubmitting(true);
         setErrors({});
-        
-        // Just handle UI feedback - backend will be connected later
-        alert('Sign up functionality will be connected to the backend soon!');
-        setIsSubmitting(false);
-        setIsSignUp(false);
+
+        try {
+            await register(email, password);
+            navigate('/dashboard');
+        } catch (err) {
+            const msg = err.message || 'Failed to create account. Please try again.';
+            if (msg.toLowerCase().includes('password')) {
+                setErrors({ password: msg });
+            } else {
+                setErrors({ email: msg });
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -547,7 +573,7 @@ const Login = () => {
                             {selectedRole === 'user' && isSignUp && (
                                 <button
                                     type="button"
-                                    onClick={() => setIsSignUp(false)}
+                                    onClick={() => { setIsSignUp(false); setErrors({}); }}
                                     style={{
                                         width: '100%',
                                         padding: '1rem',

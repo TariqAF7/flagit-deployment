@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import SimulationCard from '../components/SimulationCard';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
+import { fetchSimulations, fetchUserStats } from '../api/simulations';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faBrain, 
@@ -27,238 +28,149 @@ import {
     faGlobe
 } from '@fortawesome/free-solid-svg-icons';
 
+// Map icon string names from DB to FontAwesome icon objects
+const ICON_MAP = {
+    Brain: faBrain,
+    UserSecret: faUserSecret,
+    Globe: faGlobe,
+    Link: faLink,
+    Bullseye: faBullseye,
+    Qrcode: faQrcode,
+    Phone: faPhone,
+    Shield: faShieldHalved,
+    Envelope: faEnvelope,
+    Mail: faEnvelope,
+};
+
 const Simulations = () => {
-    const { simulations, userStats } = useAppStore();
+    const { simulations, resultsHistory } = useAppStore();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [filter, setFilter] = useState('all');
     const [timeRange, setTimeRange] = useState('2weeks');
+    const [userStats, setUserStats] = useState(null);
+    const [simulationData, setSimulationData] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    // Mock user performance data (will be replaced with real backend data)
-    const userPerformance = {
-        overallScore: 82,
-        completedModules: 7,
-        averageScore: 75,
-        teamAverage: 72,
-        strengths: ['deceptiveLinks', 'urgencyDetection'],
-        weaknesses: ['spearPhishing', 'quishing'],
-        streak: 5,
-        lastWeekImprovement: 12,
-        rank: 'top25'
+    // Fetch simulations + user stats on mount
+    useEffect(() => {
+        const loadData = async () => {
+            try {
+                const [simsResp, statsResp] = await Promise.all([
+                    fetchSimulations(),
+                    fetchUserStats(),
+                ]);
+                if (Array.isArray(simsResp)) {
+                    setSimulationData(simsResp.map(s => ({
+                        id: s._id,
+                        title: s.title,
+                        description: s.description,
+                        icon: s.icon,
+                        rating: s.rating,
+                        difficulty: s.difficulty,
+                        tags: s.tags || [],
+                        playCount: s.playCount || 0,
+                        createdAt: s.createdAt,
+                        progress: 0,
+                    })));
+                }
+                if (statsResp) {
+                    setUserStats(statsResp);
+                }
+            } catch (err) {
+                console.warn('Failed to load simulations data:', err.message);
+                // Fallback to store data
+                if (simulations.length) {
+                    setSimulationData(simulations);
+                }
+            } finally {
+                setLoading(false);
+            }
+        };
+        loadData();
+    }, []);
+
+    // Filtering logic
+    const getFilteredSimulations = () => {
+        let filtered = [...simulationData];
+        const now = new Date();
+
+        // Secondary filter: time range
+        if (timeRange === '2weeks') {
+            const cutoff = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+            filtered = filtered.filter(s => !s.createdAt || new Date(s.createdAt) >= cutoff);
+        } else if (timeRange === 'month') {
+            const cutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+            filtered = filtered.filter(s => !s.createdAt || new Date(s.createdAt) >= cutoff);
+        }
+        // 'all' = no time filter
+
+        // Primary filter
+        if (filter === 'new') {
+            const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+            filtered = filtered.filter(s => s.createdAt && new Date(s.createdAt) >= dayAgo);
+        } else if (filter === 'popular') {
+            filtered = [...filtered].sort((a, b) => (b.playCount || 0) - (a.playCount || 0)).slice(0, 3);
+        } else if (filter === 'recommended') {
+            const attemptedIds = new Set(resultsHistory.map(r => r.simulationId));
+            filtered = filtered.filter(s => !attemptedIds.has(s.id));
+        }
+        // 'all' = show everything
+
+        return filtered;
     };
 
-    // Dynamic messages based on user performance
+    const filteredSimulations = getFilteredSimulations();
+
+    // Derive stats from API response or defaults
+    const statsData = {
+        totalSimulations: userStats?.totalSimulations ?? simulationData.length,
+        avgScore: userStats?.avgScore ?? 0,
+        timeSpent: userStats?.timeSpent ?? 0,
+    };
+
+    // Format time spent (seconds → human readable)
+    const formatTimeSpent = (seconds) => {
+        if (seconds < 60) return `${seconds}s`;
+        if (seconds < 3600) return `${Math.round(seconds / 60)}m`;
+        return `${(seconds / 3600).toFixed(1)}h`;
+    };
+
+    // Generate performance messages from API insights
     const getPerformanceMessages = () => {
-        const messages = [];
-        
-        // Recommendation message based on weakest area
-        if (userPerformance.weaknesses.includes('spearPhishing')) {
-            messages.push({
-                type: 'warning',
-                icon: faExclamationTriangle,
-                title: 'Recommended: Complete "Spear Phishing" module',
-                description: 'This will help you spot targeted impersonation attacks - your current weak spot',
-                color: '#F97316',
-                priority: 'high'
-            });
-        } else if (userPerformance.weaknesses.includes('quishing')) {
-            messages.push({
-                type: 'warning',
-                icon: faExclamationTriangle,
-                title: 'Recommended: Complete "Quishing Tactics" module',
-                description: 'QR code attacks are on the rise - strengthen your detection skills',
-                color: '#F97316',
-                priority: 'high'
-            });
-        } else {
-            messages.push({
-                type: 'warning',
-                icon: faExclamationTriangle,
-                title: 'Recommended: Complete "Urgency Tactics" module',
-                description: 'This will help improve your resistance to time-pressure attacks',
-                color: '#F97316',
-                priority: 'high'
-            });
-        }
-
-        // Achievement message based on streak
-        if (userPerformance.streak >= 10) {
-            messages.push({
-                type: 'achievement',
-                icon: faTrophy,
-                title: '🔥 10-Week Streak!',
-                description: 'You\'ve completed simulations for 10 weeks straight - exceptional dedication!',
-                color: '#2DD4BF',
-                badge: 'elite'
-            });
-        } else if (userPerformance.streak >= 5) {
-            messages.push({
-                type: 'achievement',
-                icon: faRocket,
-                title: '⭐ 5-Week Streak',
-                description: 'Consistent progress! Keep the momentum going.',
-                color: '#2DD4BF',
-                badge: 'consistent'
-            });
-        }
-
-        // Performance-based message
-        if (userPerformance.overallScore >= 90) {
-            messages.push({
-                type: 'success',
-                icon: faTrophy,
-                title: '🏆 Elite Defender',
-                description: 'You\'re in the top 5% of all users. Masterful phishing detection!',
-                color: '#2DD4BF',
-                badge: 'elite'
-            });
-        } else if (userPerformance.overallScore >= 75) {
-            messages.push({
-                type: 'success',
-                icon: faShieldHalved,
-                title: '🛡️ Strong Defender',
-                description: `You're performing ${userPerformance.overallScore - userPerformance.teamAverage} points above team average`,
-                color: '#2DD4BF',
-                badge: 'strong'
-            });
-        } else if (userPerformance.overallScore >= 60) {
-            messages.push({
-                type: 'success',
-                icon: faChartLine,
-                title: '📈 On Track',
-                description: `You've improved by ${userPerformance.lastWeekImprovement}% this week - great progress!`,
-                color: '#2DD4BF',
-                badge: 'improving'
-            });
-        } else {
-            messages.push({
+        if (!userStats?.insights || userStats.insights.length === 0) {
+            // Fallback: show a single default message
+            return [{
                 type: 'success',
                 icon: faSeedling,
                 title: '🌱 Building Foundation',
-                description: 'Every expert was once a beginner. Keep learning!',
+                description: 'Complete simulations to see your personalized insights!',
                 color: '#2DD4BF',
                 badge: 'beginner'
-            });
+            }];
         }
 
-        // Strength-based message
-        if (userPerformance.strengths.includes('deceptiveLinks')) {
-            messages.push({
-                type: 'strength',
-                icon: faCheckCircle,
-                title: '✅ URL Detection Master',
-                description: 'Your ability to spot malicious links is exceptional',
-                color: '#2DD4BF',
-                badge: 'strength'
-            });
-        } else if (userPerformance.strengths.includes('urgencyDetection')) {
-            messages.push({
-                type: 'strength',
-                icon: faCheckCircle,
-                title: '✅ Calm Under Pressure',
-                description: 'You resist urgency tactics better than 85% of users',
-                color: '#2DD4BF',
-                badge: 'strength'
-            });
-        }
+        // Map API insight types to icons and colors
+        const iconMap = {
+            warning: { icon: faExclamationTriangle, color: '#F97316' },
+            achievement: { icon: faRocket, color: '#2DD4BF' },
+            success: { icon: faShieldHalved, color: '#2DD4BF' },
+            strength: { icon: faCheckCircle, color: '#2DD4BF' },
+        };
 
-        return messages;
+        return userStats.insights.map(insight => {
+            const mapping = iconMap[insight.type] || iconMap.success;
+            return {
+                type: insight.type,
+                icon: mapping.icon,
+                title: insight.title,
+                description: insight.description,
+                color: mapping.color,
+                badge: insight.badge || null,
+            };
+        });
     };
 
     const performanceMessages = getPerformanceMessages();
-
-    // Simulation data with training-focused descriptions - Less clue-giving
-const simulationModules = [
-    {
-        id: 1,
-        title: 'Psychological Tactics',
-        description: 'Analyze this email and decide: Is it a legitimate request or a manipulation attempt?',
-        icon: faBrain,
-        difficulty: 'Beginner',
-        duration: '12 min',
-        rating: 4.8,
-        progress: 0
-    },
-    {
-        id: 2,
-        title: 'Credential Harvesting',
-        description: 'Review this login page carefully. Would you enter your credentials?',
-        icon: faUserSecret,
-        difficulty: 'Beginner',
-        duration: '10 min',
-        rating: 4.6,
-        progress: 0
-    },
-    {
-        id: 3,
-        title: 'BiTB Awareness',
-        description: 'Examine this browser window. Can you spot anything unusual?',
-        icon: faGlobe,
-        difficulty: 'Intermediate',
-        duration: '15 min',
-        rating: 4.8,
-        progress: 0
-    },
-    {
-        id: 4,
-        title: 'Deceptive Links 101',
-        description: 'Before you click, examine this link. Is it safe or suspicious?',
-        icon: faLink,
-        difficulty: 'Beginner',
-        duration: '8 min',
-        rating: 4.9,
-        progress: 0
-    },
-    {
-        id: 5,
-        title: 'Spear Phishing',
-        description: 'This email knows your name and role. Does that make it trustworthy?',
-        icon: faBullseye,
-        difficulty: 'Advanced',
-        duration: '20 min',
-        rating: 4.7,
-        progress: 0
-    },
-    {
-        id: 6,
-        title: 'Quishing Tactics',
-        description: 'Scan this QR code? Think twice. What could be hidden behind it?',
-        icon: faQrcode,
-        difficulty: 'Intermediate',
-        duration: '12 min',
-        rating: 4.5,
-        progress: 0
-    },
-    {
-        id: 7,
-        title: 'Vishing Tactics',
-        description: 'Listen to this voicemail. Would you call back?',
-        icon: faPhone,
-        difficulty: 'Intermediate',
-        duration: '15 min',
-        rating: 4.4,
-        progress: 0
-    },
-    {
-        id: 8,
-        title: 'Watering Hole Attack',
-        description: 'This website looks normal. Can you spot the hidden danger?',
-        icon: faShieldHalved,
-        difficulty: 'Advanced',
-        duration: '18 min',
-        rating: 4.6,
-        progress: 0
-    },
-    {
-        id: 9,
-        title: 'CEO Fraud Detection',
-        description: 'Urgent request from your CEO. Would you comply or verify?',
-        icon: faEnvelope,
-        difficulty: 'Advanced',
-        duration: '15 min',
-        rating: 4.9,
-        progress: 0
-    }
-];
 
     return (
         <div className="dashboard-layout" style={{ backgroundColor: '#167f94' }}>
@@ -433,7 +345,7 @@ const simulationModules = [
                                 <FontAwesomeIcon icon={faShieldHalved} style={{ color: '#F97316' }} />
                                 <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>Total Simulations</span>
                             </div>
-                            <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white' }}>{simulationModules?.length || 0}</div>
+                            <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white' }}>{statsData.totalSimulations}</div>
                         </div>
 
                         <div style={{
@@ -451,7 +363,7 @@ const simulationModules = [
                                 <FontAwesomeIcon icon={faChartLine} style={{ color: '#F97316' }} />
                                 <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>Avg. Score</span>
                             </div>
-                            <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white' }}>{userPerformance.overallScore}%</div>
+                            <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white' }}>{statsData.avgScore}%</div>
                         </div>
 
                         <div style={{
@@ -469,7 +381,7 @@ const simulationModules = [
                                 <FontAwesomeIcon icon={faClock} style={{ color: '#F97316' }} />
                                 <span style={{ fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>Time Spent</span>
                             </div>
-                            <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white' }}>2.4h</div>
+                            <div style={{ fontSize: '1.8rem', fontWeight: '700', color: 'white' }}>{formatTimeSpent(statsData.timeSpent)}</div>
                         </div>
                     </div>
 
@@ -601,7 +513,7 @@ const simulationModules = [
                         gap: '1.5rem',
                         marginBottom: '3rem'
                     }}>
-                        {simulationModules.map((sim, index) => (
+                        {filteredSimulations.map((sim, index) => (
                             <div
                                 key={sim.id}
                                 style={{
@@ -631,7 +543,7 @@ const simulationModules = [
                                 onClick={() => {/* Navigate to simulation detail */}}
                             >
                                 {/* Badges */}
-                                {index === 0 && (
+                                {sim.tags && sim.tags.includes('NEW') && (
                                     <div style={{
                                         position: 'absolute',
                                         top: '1rem',
@@ -647,7 +559,7 @@ const simulationModules = [
                                         NEW
                                     </div>
                                 )}
-                                {index === 2 && (
+                                {sim.tags && sim.tags.includes('POPULAR') && (
                                     <div style={{
                                         position: 'absolute',
                                         top: '1rem',
@@ -681,7 +593,7 @@ const simulationModules = [
                                         justifyContent: 'center'
                                     }}>
                                         <FontAwesomeIcon 
-                                            icon={sim.icon} 
+                                            icon={ICON_MAP[sim.icon] || faBrain} 
                                             style={{ 
                                                 fontSize: '1.5rem',
                                                 color: index % 2 === 0 ? '#F97316' : '#2DD4BF'

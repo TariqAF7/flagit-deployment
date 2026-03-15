@@ -16,6 +16,12 @@ export const fetchSimulationById = (id) => get(`/simulations/${id}`);
 export const submitSimulation = (id, choice, responseTime = 0, flagged = false) =>
   post(`/simulations/${id}/submit`, { choice, responseTime, flagged });
 
+/** POST /api/simulations/:id/start — increment playCount */
+export const startSimulation = (id) => post(`/simulations/${id}/start`);
+
+/** GET /api/simulations/user-stats — user stats + learning insights */
+export const fetchUserStats = () => get('/simulations/user-stats');
+
 /** GET /api/simulations/results/history */
 export const fetchHistory = () => get('/simulations/results/history');
 
