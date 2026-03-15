@@ -10,6 +10,7 @@ import SimulationDetail from './pages/SimulationDetail';
 import ResultsSuccess from './pages/ResultsSuccess';
 import ResultsRecap from './pages/ResultsRecap';
 import Analytics from './pages/Analytics';
+import HelpSupport from './pages/HelpSupport';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
@@ -43,6 +44,7 @@ function AppRoutes() {
       <Route path="/results/success" element={<RoleProtectedRoute allowedRoles={['user']}><ResultsSuccess /></RoleProtectedRoute>} />
       <Route path="/results/recap" element={<RoleProtectedRoute allowedRoles={['user']}><ResultsRecap /></RoleProtectedRoute>} />
       <Route path="/analytics" element={<RoleProtectedRoute allowedRoles={['user']}><Analytics /></RoleProtectedRoute>} />
+      <Route path="/help-support" element={<RoleProtectedRoute allowedRoles={['user']}><HelpSupport /></RoleProtectedRoute>} />
 
       {/* Admin Flow (Protected) */}
       <Route path="/admin" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminDashboard /></RoleProtectedRoute>} />

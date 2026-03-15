@@ -27,12 +27,8 @@ const Navbar = ({ toggleSidebar }) => {
     };
 
     const menuItems = [
-        { name: 'My Profile', path: '/profile', icon: 'M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2 M12 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z' },
-        { name: 'Account Settings', path: '/settings', icon: 'M12 15v2m-6 4h12a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2zm10-10V7a4 4 0 0 0-8 0v4h8z' },
-        { name: 'Team Settings', path: '/team-settings', icon: 'M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2 M9 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z M23 21v-2a4 4 0 0 0-3-3.87 M16 3.13a4 4 0 0 1 0 7.75' },
-        { name: 'Notifications', path: '/notifications', icon: 'M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9 M13.73 21a2 2 0 0 1-3.46 0' },
-        { divider: true },
-        { name: 'Help & Support', path: '/support', icon: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z M12 16v.01 M12 13a2 2 0 0 0 2-2c0-1-1-2-2-2-1 0-2 1-2 2' },
+
+        { name: 'Help & Support', path: '/help-support', icon: 'M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z M12 16v.01 M12 13a2 2 0 0 0 2-2c0-1-1-2-2-2-1 0-2 1-2 2' },
         { name: 'Logout', action: handleLogout, icon: 'M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4 M16 17l5-5-5-5 M21 12H9' }
     ];
 
