@@ -151,8 +151,8 @@ const AdminDashboard = () => {
                         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', alignContent: 'start' }}>
                             <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '1rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', position: 'relative' }}>
                                 <div style={{ fontWeight: 'bold', color: 'var(--deep-navy)', marginBottom: '1rem' }}>Total Users</div>
-                                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--deep-navy)', lineHeight: 1, marginBottom: '0.5rem' }}>{adminStats.totalUsers.toLocaleString()}</div>
-                                <div style={{ fontSize: '0.75rem', color: '#16a34a' }}><span style={{ fontWeight: 'bold' }}>+12.5%</span> from last month</div>
+                                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--deep-navy)', lineHeight: 1, marginBottom: '0.5rem' }}>{(adminStats.totalUsers ?? 0).toLocaleString()}</div>
+                                <div style={{ fontSize: '0.75rem', color: '#16a34a' }}><span style={{ fontWeight: 'bold' }}>All registered</span> platform accounts</div>
                                 <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', width: '32px', height: '32px', backgroundColor: '#eff6ff', color: '#3b82f6', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                                 </div>
@@ -160,8 +160,8 @@ const AdminDashboard = () => {
 
                             <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '1rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', position: 'relative' }}>
                                 <div style={{ fontWeight: 'bold', color: 'var(--deep-navy)', marginBottom: '1rem' }}>Active Users</div>
-                                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--deep-navy)', lineHeight: 1, marginBottom: '0.5rem' }}>{adminStats.activeUsers.toLocaleString()}</div>
-                                <div style={{ fontSize: '0.75rem', color: '#16a34a' }}><span style={{ fontWeight: 'bold' }}>87.3%</span> engagement rate</div>
+                                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--deep-navy)', lineHeight: 1, marginBottom: '0.5rem' }}>{(adminStats.activeUsers ?? 0).toLocaleString()}</div>
+                                <div style={{ fontSize: '0.75rem', color: '#16a34a' }}><span style={{ fontWeight: 'bold' }}>{adminStats.totalUsers ? Math.round(((adminStats.activeUsers ?? 0) / adminStats.totalUsers) * 100) : 0}%</span> of total users</div>
                                 <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', width: '32px', height: '32px', backgroundColor: '#dcfce7', color: '#16a34a', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
                                 </div>
@@ -169,8 +169,8 @@ const AdminDashboard = () => {
 
                             <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '1rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', position: 'relative' }}>
                                 <div style={{ fontWeight: 'bold', color: 'var(--deep-navy)', marginBottom: '1rem' }}>Avg Detection Rate</div>
-                                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--deep-navy)', lineHeight: 1, marginBottom: '0.5rem' }}>{adminStats.avgDetectionRate}%</div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--accent-orange)' }}><span style={{ fontWeight: 'bold' }}>+5.2%</span> improvement</div>
+                                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--deep-navy)', lineHeight: 1, marginBottom: '0.5rem' }}>{adminStats.avgDetectionRate ?? 0}%</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--accent-orange)' }}>Correct identifications / total simulations</div>
                                 <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', width: '32px', height: '32px', backgroundColor: '#fef3c7', color: 'var(--accent-orange)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
                                 </div>
@@ -178,8 +178,8 @@ const AdminDashboard = () => {
 
                             <div style={{ backgroundColor: 'white', padding: '1.5rem', borderRadius: '1rem', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.1)', position: 'relative' }}>
                                 <div style={{ fontWeight: 'bold', color: 'var(--deep-navy)', marginBottom: '1rem' }}>Incidents Reported</div>
-                                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--deep-navy)', lineHeight: 1, marginBottom: '0.5rem' }}>{adminStats.incidentsReported}</div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Phishing Incidents Reported</div>
+                                <div style={{ fontSize: '2.5rem', fontWeight: 'bold', color: 'var(--deep-navy)', lineHeight: 1, marginBottom: '0.5rem' }}>{adminStats.incidentsReported ?? 0}</div>
+                                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Times FlagIT button was pressed</div>
                                 <div style={{ position: 'absolute', top: '1.5rem', right: '1.5rem', width: '32px', height: '32px', backgroundColor: '#fee2e2', color: '#ef4444', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyItems: 'center', justifyContent: 'center' }}>
                                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                                 </div>

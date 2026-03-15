@@ -11,12 +11,14 @@ const {
   deleteUser,
   getSettings,
   updateSettings,
+  getDepartments,
 } = require('../controllers/admin.controller');
 
 // Dashboard stats
 router.get('/stats', auth, authorize('admin'), getStats);
 
 // User management
+router.get('/users/departments', auth, authorize('admin'), getDepartments);
 router.get('/users', auth, authorize('admin'), getUsers);
 router.post('/users', auth, authorize('admin'), createUser);
 router.get('/users/:id', auth, authorize('admin'), getUserById);

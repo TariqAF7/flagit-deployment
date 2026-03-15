@@ -5,26 +5,39 @@ const SimulationResult = require('../models/SimulationResult');
 // @route   GET /api/admin/stats
 exports.getStats = async (req, res, next) => {
   try {
+    // ── Stat Card 1: Total Users ──────────────────────────────────────────
+    // Count of ALL documents in the User collection.
     const totalUsers = await User.countDocuments();
-    const activeUsers = await User.countDocuments({ status: 'Active' });
 
-    // ── Weighted Organisational Resilience Score ──────────────────────────
-    // Formula: Score = (DetectionRate × 0.6) + (ReportingRate × 0.4)
-    //   DetectionRate : % of simulation results where the user identified the
-    //                   phishing attempt correctly (isCorrect === true).
-    //   ReportingRate : % of simulation results where the user actively pressed
-    //                   the FlagIT button to report (flagged === true).
-    const totalResults = await SimulationResult.countDocuments();
+    // ── Stat Card 2: Active Users ─────────────────────────────────────────
+    // Users whose status is anything other than 'Inactive'.
+    // This is safer than only counting { status: 'Active' } because future
+    // statuses (e.g. 'Suspended', 'Pending') would still be excluded
+    // from the Inactive group and counted correctly.
+    const activeUsers = await User.countDocuments({ status: { $ne: 'Inactive' } });
 
-    let detectionRate = 0;
-    let reportingRate = 0;
+    // ── Resilience formula shared counts ─────────────────────────────────
+    const totalResults  = await SimulationResult.countDocuments();
+
+    let detectionRate    = 0;
+    let reportingRate    = 0;
     let orgResilienceScore = 0;
+    let correctCount     = 0;
+    let flaggedCount     = 0;
 
     if (totalResults > 0) {
-      const correctCount  = await SimulationResult.countDocuments({ isCorrect: true });
-      const flaggedCount  = await SimulationResult.countDocuments({ flagged: true });
+      // ── Stat Card 3 source: Avg Detection Rate ──────────────────────────
+      // Formula: (Total Correct / Total Simulations) × 100
+      // A result is 'correct' when the user correctly identified the email
+      // as phishing (isCorrect === true).
+      correctCount  = await SimulationResult.countDocuments({ isCorrect: true });
 
-      detectionRate = Math.round((correctCount  / totalResults) * 100);
+      // ── Stat Card 4 source: Incidents Reported ───────────────────────────
+      // Count of results where the user actively pressed the FlagIT button
+      // (flagged === true), regardless of whether they were correct.
+      flaggedCount  = await SimulationResult.countDocuments({ flagged: true });
+
+      detectionRate = Math.round((correctCount / totalResults) * 100);
       reportingRate = Math.round((flaggedCount  / totalResults) * 100);
 
       orgResilienceScore = Math.round(
@@ -43,11 +56,12 @@ exports.getStats = async (req, res, next) => {
       // ─────────────────────────────────────────────────────────────
     }
 
-    // Keep avgDetectionRate for backwards compatibility with other views
-    const avgDetectionRate = detectionRate;
+    // ── Stat Card 3: Avg Detection Rate (%) ──────────────────────────────
+    const avgDetectionRate = detectionRate; // same value, explicit alias for clarity
 
-    // incidentsReported = results where user fell for the phishing attempt
-    const incidentsReported = await SimulationResult.countDocuments({ isCorrect: false });
+    // ── Stat Card 4: Incidents Reported ──────────────────────────────────
+    // = total number of times users pressed the FlagIT report button.
+    const incidentsReported = flaggedCount;
 
     res.json({
       success: true,
@@ -70,23 +84,38 @@ exports.getStats = async (req, res, next) => {
 // @route   GET /api/admin/users
 exports.getUsers = async (req, res, next) => {
   try {
-    const { search, role, department, status, page = 1, limit = 20 } = req.query;
+    const { search, role, department, status, page = 1, limit = 50 } = req.query;
 
     const query = {};
 
-    if (search) {
+    // ── Search: case-insensitive regex on name OR email ─────────────────
+    if (search && search.trim()) {
       query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
+        { name:  { $regex: search.trim(), $options: 'i' } },
+        { email: { $regex: search.trim(), $options: 'i' } },
       ];
     }
 
-    if (role) query.role = role;
-    if (department) query.department = department;
-    if (status) query.status = status;
+    // ── Role filter: frontend sends backend enum values directly ─────────
+    // Valid values: 'user' | 'admin' | 'ai_maintainer'
+    // 'all' or missing = no filter applied.
+    if (role && role !== 'all') {
+      query.role = role;
+    }
+
+    // ── Department filter ────────────────────────────────────────────────
+    if (department && department !== 'all') {
+      query.department = department;
+    }
+
+    // ── Status filter ────────────────────────────────────────────────────
+    if (status && status !== 'all') {
+      query.status = status;
+    }
 
     const total = await User.countDocuments(query);
     const users = await User.find(query)
+      .select('-password')           // never send password hash to frontend
       .sort({ createdAt: -1 })
       .skip((parseInt(page) - 1) * parseInt(limit))
       .limit(parseInt(limit));
@@ -104,6 +133,20 @@ exports.getUsers = async (req, res, next) => {
     next(error);
   }
 };
+
+// @desc    Get unique department values (for filter dropdown)
+// @route   GET /api/admin/users/departments
+exports.getDepartments = async (req, res, next) => {
+  try {
+    const departments = await User.distinct('department');
+    // Filter out empty strings and sort alphabetically
+    const cleaned = departments.filter(d => d && d.trim()).sort();
+    res.json({ success: true, data: cleaned });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 // @desc    Create a new user (admin)
 // @route   POST /api/admin/users
