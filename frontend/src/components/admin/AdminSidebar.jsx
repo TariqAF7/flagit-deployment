@@ -27,7 +27,7 @@ const AdminSidebar = ({ isOpen, close }) => {
     const menuItems = [
         { name: 'Dashboard', path: '/admin', exact: true, icon: faTachometerAlt },
         { name: 'User Management', path: '/admin/users', icon: faUsers },
-        { name: 'Training Campaigns', path: '/admin/campaigns', icon: faBullhorn },
+        { name: 'Training Simulations', path: '/admin/simulations', icon: faBullhorn },
         { name: 'Analytics & Reports', path: '/admin/reports', icon: faChartLine },
         { name: 'Settings', path: '/admin/settings', icon: faCog },
     ];

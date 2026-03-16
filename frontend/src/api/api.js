@@ -61,4 +61,7 @@ export const put = (endpoint, data) =>
 
 export const del = (endpoint) => request(endpoint, { method: 'DELETE' });
 
-export default { get, post, put, del };
+export const patch = (endpoint, data) =>
+  request(endpoint, { method: 'PATCH', body: JSON.stringify(data) });
+
+export default { get, post, put, del, patch };

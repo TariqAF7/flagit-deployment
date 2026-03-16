@@ -65,15 +65,39 @@ const simulationSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    category: {
+      type: String,
+      enum: ['Phishing', 'Normal'],
+      default: 'Phishing',
+    },
+    targetGroup: {
+      type: String,
+      default: 'All Employees',
+    },
+    schedule: {
+      type: Date,
+      default: null,
+    },
+    status: {
+      type: String,
+      enum: ['Pending', 'Active', 'Paused', 'Completed'],
+      default: 'Pending',
+    },
+    progress: {
+      type: Number,
+      default: 0,
+      min: 0,
+      max: 100,
+    },
     timeLimit: {
       type: Number,
       default: 1066, // 17 minutes 46 seconds
     },
-    campaignId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Campaign',
-      default: null,
-    },
+    // Metrics snapshot after completion
+    finalDetectionRate: { type: Number, default: 0 },
+    finalReportingRate: { type: Number, default: 0 },
+    totalParticipants: { type: Number, default: 0 },
+    completionDate: { type: Date, default: null },
   },
   {
     timestamps: true,

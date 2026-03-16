@@ -1,4 +1,4 @@
-import { get, post, put, del } from './api';
+import { get, post, put, del, patch } from './api';
 
 // ── Dashboard ────────────────────────────────────────────────
 export const fetchAdminStats = () => get('/admin/stats');
@@ -17,12 +17,14 @@ export const createAdminUser  = (data) => post('/admin/users', data);
 export const updateAdminUser  = (id, data) => put(`/admin/users/${id}`, data);
 export const deleteAdminUser  = (id) => del(`/admin/users/${id}`);
 
-// ── Campaigns ────────────────────────────────────────────────
-export const fetchCampaigns = () => get('/admin/campaigns');
-export const createCampaign = (data) => post('/admin/campaigns', data);
-export const updateCampaign = (id, data) => put(`/admin/campaigns/${id}`, data);
-export const deleteCampaign = (id) => del(`/admin/campaigns/${id}`);
-export const toggleCampaignPause = (id) => put(`/admin/campaigns/${id}/pause`);
+// ── Simulations (admin) ──────────────────────────────────────
+export const fetchSimulations       = () => get('/admin/simulations');
+export const createSimulation       = (data) => post('/admin/simulations', data);
+export const updateSimulation       = (id, data) => put(`/admin/simulations/${id}`, data);
+export const deleteSimulation       = (id) => del(`/admin/simulations/${id}`);
+export const toggleSimulationPause  = (id) => put(`/admin/simulations/${id}/pause`);
+export const patchSimulationStatus  = (id, status) => patch(`/admin/simulations/${id}/status`, { status });
+export const endSimulation          = (id) => post(`/admin/simulations/${id}/end`);
 
 // ── Reports ──────────────────────────────────────────────────
 export const fetchReportTrends = (params = {}) => {

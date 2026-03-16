@@ -19,7 +19,6 @@ dotenv.config({ path: path.resolve(__dirname, '..', '.env') });
 const User = require('../models/User');
 const Module = require('../models/Module');
 const Simulation = require('../models/Simulation');
-const Campaign = require('../models/Campaign');
 const AIModel = require('../models/AIModel');
 const Dataset = require('../models/Dataset');
 
@@ -306,92 +305,6 @@ const simulations = [
     },
   },
   {
-    title: 'Quishing Tactics',
-    description: 'Scan this QR code? Think twice. What could be hidden behind it?',
-    icon: 'Qrcode',
-    rating: 4.5,
-    difficulty: 'Intermediate',
-    tags: [],
-    playCount: 19,
-    isPhishing: true,
-    timeLimit: 720,
-    emailContent: {
-      senderName: 'Facilities Management',
-      senderEmail: 'facilities@building-mgmt-portal.com',
-      subject: 'Updated Parking Registration - QR Code Enclosed',
-      body: `<div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px;">
-<p>Dear Tenant,</p>
-<p>As part of our new digital parking system, all employees must re-register their vehicles by scanning the QR code below.</p>
-<p style="text-align: center; padding: 20px; background: #f5f5f5; border-radius: 8px;">[QR Code Image Placeholder]</p>
-<p>Please complete registration by end of this week to avoid parking violations.</p>
-<p>Thank you,<br/>Building Facilities Team</p>
-</div>`,
-      redFlags: [
-        { type: 'technical', title: 'QR Code Danger', description: 'QR codes can redirect to any URL — you cannot verify the destination before scanning.' },
-        { type: 'technical', title: 'Unknown Sender Domain', description: 'The domain "building-mgmt-portal.com" is not a recognized company domain.' },
-        { type: 'psychological', title: 'Routine Disguise', description: 'Disguises the attack as a routine administrative task.' },
-        { type: 'psychological', title: 'Mild Urgency', description: 'Imposes an end-of-week deadline.' },
-      ],
-    },
-  },
-  {
-    title: 'Vishing Tactics',
-    description: 'Listen to this voicemail. Would you call back?',
-    icon: 'Phone',
-    rating: 4.4,
-    difficulty: 'Intermediate',
-    tags: [],
-    playCount: 15,
-    isPhishing: true,
-    timeLimit: 900,
-    emailContent: {
-      senderName: 'Bank Security Department',
-      senderEmail: 'alerts@secure-banknotify.com',
-      subject: 'Voicemail: Urgent Call About Your Account',
-      body: `<div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px;">
-<p>You have a new voicemail from your bank's security department:</p>
-<div style="background: #f5f5f5; padding: 15px; border-radius: 8px; margin: 15px 0;">
-<p><em>"This is the fraud prevention department. We've detected suspicious transactions on your account ending in 4829. Your account has been temporarily frozen. Please call us back immediately at 1-800-555-0199 to verify your identity and restore access."</em></p>
-</div>
-<p><a href="#" style="background-color: #dc2626; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Listen to Full Voicemail</a></p>
-</div>`,
-      redFlags: [
-        { type: 'technical', title: 'Fake Callback Number', description: 'The phone number leads to scammers, not your real bank.' },
-        { type: 'technical', title: 'Spoofed Email Domain', description: 'The domain "secure-banknotify.com" is not a real bank domain.' },
-        { type: 'psychological', title: 'Fear', description: 'Claims your account is frozen to trigger panic.' },
-        { type: 'psychological', title: 'Urgency', description: 'Pressures you to call back "immediately".' },
-      ],
-    },
-  },
-  {
-    title: 'Watering Hole Attack',
-    description: 'This website looks normal. Can you spot the hidden danger?',
-    icon: 'Shield',
-    rating: 4.6,
-    difficulty: 'Advanced',
-    tags: [],
-    playCount: 8,
-    isPhishing: true,
-    timeLimit: 1080,
-    emailContent: {
-      senderName: 'Industry Newsletter',
-      senderEmail: 'newsletter@techinsider-daily.com',
-      subject: 'Breaking: Major Security Vulnerability Discovered',
-      body: `<div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px;">
-<p>Dear Security Professional,</p>
-<p>A critical zero-day vulnerability has been discovered affecting major enterprise systems. Read the full analysis and recommended patches on our blog:</p>
-<p><a href="#" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Read Full Analysis</a></p>
-<p style="font-size: 12px; color: #666;">This article is trending in the cybersecurity community.</p>
-</div>`,
-      redFlags: [
-        { type: 'technical', title: 'Compromised Website', description: 'The linked blog has been compromised with a drive-by download exploit.' },
-        { type: 'technical', title: 'Unknown Domain', description: 'The domain "techinsider-daily.com" is not a recognized industry publication.' },
-        { type: 'psychological', title: 'Professional Appeal', description: 'Targets security professionals with relevant-sounding content.' },
-        { type: 'psychological', title: 'Curiosity', description: 'Uses "breaking news" to entice clicking.' },
-      ],
-    },
-  },
-  {
     title: 'CEO Fraud Detection',
     description: 'Urgent request from your CEO. Would you comply or verify?',
     icon: 'Envelope',
@@ -421,40 +334,54 @@ const simulations = [
       ],
     },
   },
-];
-
-const campaigns = [
+  // Admin-facing simulations (Live/Past)
   {
-    name: 'Q4 Phishing Awareness',
+    title: 'Q4 Phishing Awareness',
     targetGroup: 'All Employees',
-    scenarioType: 'Phishing Email',
+    category: 'Phishing',
     schedule: new Date('2025-12-01'),
     status: 'Active',
     progress: 65,
+    isPhishing: true,
+    description: 'Global workforce phishing assessment for Q4.'
   },
   {
-    name: 'Executive Training',
+    title: 'Executive Social Engineering',
     targetGroup: 'C-Suite',
-    scenarioType: 'Spear Phishing',
+    category: 'Phishing',
     schedule: new Date('2025-11-15'),
-    status: 'Active',
+    status: 'Paused',
     progress: 40,
+    isPhishing: true,
+    description: 'Targeted spear phishing for senior leadership.'
   },
   {
-    name: 'New Hire Onboarding',
+    title: 'New Hire Security Training',
     targetGroup: 'New Employees',
-    scenarioType: 'Social Engineering',
+    category: 'Normal',
     schedule: new Date('2025-10-01'),
     status: 'Completed',
     progress: 100,
+    isPhishing: false,
+    description: 'Onboarding awareness session.',
+    completionDate: new Date('2025-10-31'),
+    totalParticipants: 45,
+    finalDetectionRate: 92,
+    finalReportingRate: 88
   },
   {
-    name: 'Q3 Assessment',
+    title: 'Q3 Security Assessment',
     targetGroup: 'All Employees',
-    scenarioType: 'Phishing Email',
+    category: 'Phishing',
     schedule: new Date('2025-09-01'),
     status: 'Completed',
     progress: 100,
+    isPhishing: true,
+    description: 'Baseline phishing test for the entire organization.',
+    completionDate: new Date('2025-09-30'),
+    totalParticipants: 280,
+    finalDetectionRate: 74,
+    finalReportingRate: 62
   },
 ];
 
@@ -540,7 +467,6 @@ const seedDB = async () => {
     await User.deleteMany({});
     await Module.deleteMany({});
     await Simulation.deleteMany({});
-    await Campaign.deleteMany({});
     await AIModel.deleteMany({});
     await Dataset.deleteMany({});
 
@@ -558,16 +484,6 @@ const seedDB = async () => {
     console.log('🎯 Seeding simulations...');
     const createdSimulations = await Simulation.create(simulations);
     console.log(`   ✓ ${createdSimulations.length} simulations created`);
-
-    // Seed Campaigns (link to admin user)
-    console.log('📋 Seeding campaigns...');
-    const adminUser = createdUsers.find((u) => u.role === 'admin');
-    const campaignsWithCreator = campaigns.map((c) => ({
-      ...c,
-      createdBy: adminUser._id,
-    }));
-    const createdCampaigns = await Campaign.create(campaignsWithCreator);
-    console.log(`   ✓ ${createdCampaigns.length} campaigns created`);
 
     // Seed AI Models
     console.log('🤖 Seeding AI models...');

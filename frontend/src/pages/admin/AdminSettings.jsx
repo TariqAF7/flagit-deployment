@@ -366,7 +366,7 @@ const AdminSettings = () => {
                 subtitle="Default behaviour for phishing simulations"
                 icon={<FontAwesomeIcon icon={faShieldHalved} />}
               >
-                <SettingRow label="Default Difficulty" description="Applies to any new simulation campaign that does not explicitly set a difficulty.">
+                <SettingRow label="Default Difficulty" description="Applies to any new simulation that does not explicitly set a difficulty.">
                   <SelectField
                     value={form.defaultSimulationDifficulty}
                     onChange={set('defaultSimulationDifficulty')}

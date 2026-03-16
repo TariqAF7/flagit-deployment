@@ -14,7 +14,7 @@ import HelpSupport from './pages/HelpSupport';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
-import TrainingCampaigns from './pages/admin/TrainingCampaigns';
+import TrainingSimulations from './pages/admin/TrainingCampaigns';
 import AnalyticsReports from './pages/admin/AnalyticsReports';
 import AdminSettings from './pages/admin/AdminSettings';
 import ModelManagement from './pages/maintainer/ModelManagement';
@@ -49,7 +49,7 @@ function AppRoutes() {
       {/* Admin Flow (Protected) */}
       <Route path="/admin" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminDashboard /></RoleProtectedRoute>} />
       <Route path="/admin/users" element={<RoleProtectedRoute allowedRoles={['admin']}><UserManagement /></RoleProtectedRoute>} />
-      <Route path="/admin/campaigns" element={<RoleProtectedRoute allowedRoles={['admin']}><TrainingCampaigns /></RoleProtectedRoute>} />
+      <Route path="/admin/simulations" element={<RoleProtectedRoute allowedRoles={['admin']}><TrainingSimulations /></RoleProtectedRoute>} />
       <Route path="/admin/reports" element={<RoleProtectedRoute allowedRoles={['admin']}><AnalyticsReports /></RoleProtectedRoute>} />
       <Route path="/admin/settings" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminSettings /></RoleProtectedRoute>} />
 

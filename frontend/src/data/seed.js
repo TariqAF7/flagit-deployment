@@ -78,15 +78,15 @@ export const MOCK_USERS = [
   { id: 9, name: 'Hafiz Rahman', email: 'hafiz.r@orgmail.com', role: 'End User', department: 'Sales', status: 'Inactive' }
 ];
 
-export const ACTIVE_CAMPAIGNS = [
-  { id: 1, name: 'Q4 Phishing Awareness', targetGroup: 'All Employees', scenarioType: 'Phishing Email', schedule: '2024-01-15', status: 'Active', progress: 75 },
+export const ACTIVE_SIMULATIONS = [
+  { id: 1, name: 'Q4 Phishing Awareness', targetGroup: 'All Employees', scenarioType: 'Spear Phishing', schedule: '2024-01-15', status: 'Active', progress: 75 },
   { id: 2, name: 'Executive Social Engineering', targetGroup: 'C-Suite', scenarioType: 'Social Engineering', schedule: '2024-01-10', status: 'Active', progress: 45 },
-  { id: 3, name: 'IT Department Malware Training', targetGroup: 'IT Department', scenarioType: 'Malware Detection', schedule: '2024-01-05', status: 'Active', progress: 90 }
+  { id: 3, name: 'IT Department Malware Training', targetGroup: 'IT Department', scenarioType: 'Credential Harvesting', schedule: '2024-01-05', status: 'Active', progress: 90 }
 ];
 
-export const PAST_CAMPAIGNS = [
-  { id: 4, name: 'Holiday Security Awareness', targetGroup: 'All Employees', scenarioType: 'Phishing Email', schedule: '2023-12-01', status: 'Completed', progress: 100 },
-  { id: 5, name: 'New Hire Onboarding Security', targetGroup: 'New Hires', scenarioType: 'Mixed Scenarios', schedule: '2023-11-15', status: 'Completed', progress: 100 }
+export const PAST_SIMULATIONS = [
+  { id: 4, name: 'Holiday Security Awareness', targetGroup: 'All Employees', scenarioType: 'Spear Phishing', schedule: '2023-12-01', status: 'Completed', progress: 100 },
+  { id: 5, name: 'New Hire Onboarding Security', targetGroup: 'New Hires', scenarioType: 'Normal Awareness', schedule: '2023-11-15', status: 'Completed', progress: 100 }
 ];
 
 export const REPORT_TRENDS = [

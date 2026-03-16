@@ -596,7 +596,7 @@ const AdminDashboard = () => {
                         </div>
 
                         <div 
-                            onClick={() => navigate('/admin/campaigns')} 
+                            onClick={() => navigate('/admin/simulations')} 
                             style={{ 
                                 backgroundColor: '#132B44',
                                 borderRadius: '1rem',
@@ -643,7 +643,7 @@ const AdminDashboard = () => {
                                 fontWeight: '600', 
                                 color: 'white', 
                                 marginBottom: '0.75rem' 
-                            }}>Training Campaigns</h3>
+                            }}>Training Simulations</h3>
                             <p style={{ 
                                 fontSize: '0.85rem', 
                                 color: 'rgba(255,255,255,0.6)', 
@@ -651,7 +651,7 @@ const AdminDashboard = () => {
                                 margin: 0,
                                 flex: 1
                             }}>
-                                Create and deploy phishing simulation campaigns and security awareness training
+                                Create and deploy phishing simulations and security awareness training
                             </p>
                         </div>
 

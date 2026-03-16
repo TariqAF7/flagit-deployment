@@ -37,7 +37,7 @@ app.use('/api/users', require('./routes/user.routes'));
 app.use('/api/modules', require('./routes/module.routes'));
 app.use('/api/simulations', require('./routes/simulation.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
-app.use('/api/admin/campaigns', require('./routes/campaign.routes'));
+app.use('/api/admin/simulations', require('./routes/adminSimulation.routes'));
 app.use('/api/admin/reports', require('./routes/report.routes'));
 app.use('/api/maintainer', require('./routes/maintainer.routes'));
 

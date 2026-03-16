@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { INITIAL_MODULES, INITIAL_SIMULATIONS, MOCK_USER, ADMIN_STATS, MOCK_USERS, ACTIVE_CAMPAIGNS, PAST_CAMPAIGNS, REPORT_TRENDS, AI_MODELS, AI_DATASETS } from '../data/seed';
+import { INITIAL_MODULES, INITIAL_SIMULATIONS, MOCK_USER, ADMIN_STATS, MOCK_USERS, ACTIVE_SIMULATIONS, PAST_SIMULATIONS, REPORT_TRENDS, AI_MODELS, AI_DATASETS } from '../data/seed';
 import { loginUser, registerUser } from '../api/auth';
 import { fetchModules } from '../api/modules';
 import { fetchSimulations, submitSimulation, fetchHistory, fetchLastResult } from '../api/simulations';
@@ -60,9 +60,9 @@ export const AppStateProvider = ({ children }) => {
 
     // ── Admin States ──────────────────────────────────────────
     const [adminUsers, setAdminUsers] = useState(() => safeLoad('flagit_adminUsers', MOCK_USERS));
-    const [adminActiveCampaigns, setAdminActiveCampaigns] = useState(() => safeLoad('flagit_adminActiveCampaigns', ACTIVE_CAMPAIGNS));
+    const [adminActiveSimulations, setAdminActiveSimulations] = useState(() => safeLoad('flagit_adminActiveSimulations', ACTIVE_SIMULATIONS));
     const [adminStats, setAdminStats] = useState(ADMIN_STATS);
-    const [adminPastCampaigns, setAdminPastCampaigns] = useState(PAST_CAMPAIGNS);
+    const [adminPastSimulations, setAdminPastSimulations] = useState(PAST_SIMULATIONS);
     const [reportTrends, setReportTrends] = useState(REPORT_TRENDS);
 
     // ── AI Maintainer States ──────────────────────────────────
@@ -76,11 +76,11 @@ export const AppStateProvider = ({ children }) => {
         localStorage.setItem('flagit_simulations', JSON.stringify(simulations));
         localStorage.setItem('flagit_history', JSON.stringify(resultsHistory));
         localStorage.setItem('flagit_adminUsers', JSON.stringify(adminUsers));
-        localStorage.setItem('flagit_adminActiveCampaigns', JSON.stringify(adminActiveCampaigns));
+        localStorage.setItem('flagit_adminActiveSimulations', JSON.stringify(adminActiveSimulations));
         localStorage.setItem('flagit_aiModels', JSON.stringify(aiModels));
         localStorage.setItem('flagit_aiDatasets', JSON.stringify(aiDatasets));
         localStorage.setItem('flagit_aiSamples', JSON.stringify(aiSamples));
-    }, [modules, simulations, resultsHistory, adminUsers, adminActiveCampaigns, aiModels, aiDatasets, aiSamples]);
+    }, [modules, simulations, resultsHistory, adminUsers, adminActiveSimulations, aiModels, aiDatasets, aiSamples]);
 
     // ── Hydrate data after login ──────────────────────────────
     const hydrateUserData = useCallback(async (userRole) => {
@@ -302,9 +302,9 @@ export const AppStateProvider = ({ children }) => {
             reportSimulation, getLastResult,
             // Admin
             adminUsers, setAdminUsers,
-            adminActiveCampaigns, setAdminActiveCampaigns,
+            adminActiveSimulations, setAdminActiveSimulations,
             adminStats, setAdminStats,
-            adminPastCampaigns, setAdminPastCampaigns,
+            adminPastSimulations, setAdminPastSimulations,
             reportTrends, setReportTrends,
             // AI Maintainer
             aiModels, setAiModels,
