@@ -55,7 +55,7 @@ const getResilienceMessage = (score) => {
     } else if (score >= 40) {
         return {
             title: "Getting There!",
-            message: "You're learning to spot threats. Complete more training modules to improve.",
+            message: "You're learning to spot threats. Complete more training simulations to improve.",
             icon: faBullseye,
             iconColor: "#2DD4BF",
             badge: "🎯 In Progress",
@@ -216,7 +216,7 @@ const Dashboard = () => {
                                 icon={<FontAwesomeIcon icon={faShieldHalved} />}
                             />
                             <StatCard
-                                title="Modules Finished"
+                                title="Avg. Score"
                                 value={stats.modulesFinished}
                                 icon={<FontAwesomeIcon icon={faChartLine} />}
                             />
@@ -260,7 +260,7 @@ const Dashboard = () => {
                                     letterSpacing: '-0.02em'
                                 }}>
                                     <FontAwesomeIcon icon={faBrain} style={{ color: '#F97316', marginRight: '0.75rem' }} />
-                                    Training Modules
+                                    Simulations
                                 </h2>
                                 <p style={{ 
                                     color: 'rgba(255,255,255,0.6)', 
@@ -270,7 +270,7 @@ const Dashboard = () => {
                                     gap: '0.5rem'
                                 }}>
                                     <FontAwesomeIcon icon={faGraduationCap} style={{ color: '#F97316' }} />
-                                    Enhance your security knowledge with our curated modules
+                                    Enhance your security knowledge with our curated simulations
                                 </p>
                             </div>
 
@@ -282,7 +282,7 @@ const Dashboard = () => {
                                 borderRadius: '2rem',
                                 backdropFilter: 'blur(10px)'
                             }}>
-                                {['All Modules', 'Newly Added', 'Popular', 'Recommended'].map((tab, index) => (
+                                {['All Simulations', 'Newly Added', 'Popular', 'Recommended'].map((tab, index) => (
                                     <button
                                         key={tab}
                                         style={{
@@ -353,7 +353,7 @@ const Dashboard = () => {
                                             textTransform: 'uppercase',
                                             letterSpacing: '0.5px'
                                         }}>
-                                            Featured Module
+                                            Featured Simulation
                                         </span>
                                         <span style={{
                                             color: 'rgba(255,255,255,0.7)',
@@ -589,7 +589,7 @@ const Dashboard = () => {
                                     e.target.style.borderColor = 'rgba(249, 115, 22, 0.3)';
                                 }}
                             >
-                                View All Modules
+                                View All Simulations
                                 <FontAwesomeIcon icon={faArrowRight} />
                             </button>
                         </div>

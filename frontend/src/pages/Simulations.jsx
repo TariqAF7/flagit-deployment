@@ -12,6 +12,7 @@ import {
     faGraduationCap, 
     faClock, 
     faArrowRight,
+    faArrowLeft,
     faShieldHalved,
     faChartLine,
     faTrophy,
@@ -52,6 +53,10 @@ const Simulations = () => {
     const [userStats, setUserStats] = useState(null);
     const [simulationData, setSimulationData] = useState([]);
     const [loading, setLoading] = useState(true);
+    
+    // Pagination state
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 9;
 
     // Fetch simulations + user stats on mount
     useEffect(() => {
@@ -93,7 +98,12 @@ const Simulations = () => {
         loadData();
     }, []);
 
-    // Filtering logic
+    // Reset to page 1 when filters change
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filter, timeRange]);
+
+    // Filtering logic - COMPLETELY UNCHANGED
     const getFilteredSimulations = () => {
         let filtered = [...simulationData];
         const now = new Date();
@@ -113,6 +123,7 @@ const Simulations = () => {
             const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
             filtered = filtered.filter(s => s.createdAt && new Date(s.createdAt) >= dayAgo);
         } else if (filter === 'popular') {
+            // Sort by playCount and take top 3 - ORIGINAL BEHAVIOR
             filtered = [...filtered].sort((a, b) => (b.playCount || 0) - (a.playCount || 0)).slice(0, 3);
         } else if (filter === 'recommended') {
             const attemptedIds = new Set(resultsHistory.map(r => r.simulationId));
@@ -124,6 +135,12 @@ const Simulations = () => {
     };
 
     const filteredSimulations = getFilteredSimulations();
+    
+    // Pagination calculations - only applies when there are more than 9 items
+    const totalPages = Math.ceil(filteredSimulations.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentSimulations = filteredSimulations.slice(startIndex, endIndex);
 
     // Derive stats from API response or defaults
     const statsData = {
@@ -198,6 +215,15 @@ const Simulations = () => {
     };
 
     const performanceMessages = getPerformanceMessages();
+
+    // Pagination handlers
+    const goToPreviousPage = () => {
+        setCurrentPage(prev => Math.max(prev - 1, 1));
+    };
+
+    const goToNextPage = () => {
+        setCurrentPage(prev => Math.min(prev + 1, totalPages));
+    };
 
     return (
         <div className="dashboard-layout" style={{ backgroundColor: '#167f94' }}>
@@ -533,14 +559,14 @@ const Simulations = () => {
                         ))}
                     </div>
 
-                    {/* Simulations Grid - Navy Glass Cards */}
+                    {/* Simulations Grid - 3x3 with Pagination */}
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(3, 1fr)',
                         gap: '1.5rem',
-                        marginBottom: '3rem'
+                        marginBottom: '2rem'
                     }}>
-                        {filteredSimulations.map((sim, index) => (
+                        {currentSimulations.map((sim, index) => (
                             <div
                                 key={sim.id}
                                 style={{
@@ -650,7 +676,7 @@ const Simulations = () => {
                                     </div>
                                 </div>
 
-                                {/* Description - Training focused */}
+                                {/* Description */}
                                 <p style={{
                                     color: 'rgba(255,255,255,0.7)',
                                     fontSize: '0.85rem',
@@ -768,41 +794,147 @@ const Simulations = () => {
                         ))}
                     </div>
 
-                    {/* View All Link */}
-                    <div style={{
-                        textAlign: 'center',
-                        marginTop: '2rem',
-                        marginBottom: '2rem'
-                    }}>
-                        <button
-                            onClick={() => {/* Handle view all */}}
-                            style={{
-                                backgroundColor: 'transparent',
-                                color: 'white',
-                                border: '2px solid rgba(249, 115, 22, 0.3)',
-                                padding: '0.75rem 2.5rem',
-                                borderRadius: '2rem',
-                                fontSize: '0.95rem',
-                                fontWeight: '500',
-                                cursor: 'pointer',
-                                display: 'inline-flex',
+                    {/* Pagination Controls - Only show if more than 9 items */}
+                    {filteredSimulations.length > 9 && (
+                        <>
+                            <div style={{
+                                display: 'flex',
+                                justifyContent: 'center',
                                 alignItems: 'center',
-                                gap: '0.75rem',
-                                transition: 'all 0.2s'
-                            }}
-                            onMouseEnter={(e) => {
-                                e.target.style.backgroundColor = 'rgba(249, 115, 22, 0.1)';
-                                e.target.style.borderColor = '#F97316';
-                            }}
-                            onMouseLeave={(e) => {
-                                e.target.style.backgroundColor = 'transparent';
-                                e.target.style.borderColor = 'rgba(249, 115, 22, 0.3)';
-                            }}
-                        >
-                            View All Scenarios
-                            <FontAwesomeIcon icon={faArrowRight} />
-                        </button>
-                    </div>
+                                gap: '1.5rem',
+                                marginTop: '2rem',
+                                marginBottom: '1rem'
+                            }}>
+                                <button
+                                    onClick={goToPreviousPage}
+                                    disabled={currentPage === 1}
+                                    style={{
+                                        backgroundColor: 'transparent',
+                                        color: currentPage === 1 ? 'rgba(255,255,255,0.3)' : 'white',
+                                        border: `1px solid ${currentPage === 1 ? 'rgba(255,255,255,0.1)' : 'rgba(249, 115, 22, 0.3)'}`,
+                                        padding: '0.6rem 1.2rem',
+                                        borderRadius: '2rem',
+                                        fontSize: '0.9rem',
+                                        fontWeight: '500',
+                                        cursor: currentPage === 1 ? 'not-allowed' : 'pointer',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        transition: 'all 0.2s',
+                                        visibility: currentPage === 1 ? 'hidden' : 'visible'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        if (currentPage !== 1) {
+                                            e.target.style.backgroundColor = 'rgba(249, 115, 22, 0.1)';
+                                            e.target.style.borderColor = '#F97316';
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (currentPage !== 1) {
+                                            e.target.style.backgroundColor = 'transparent';
+                                            e.target.style.borderColor = 'rgba(249, 115, 22, 0.3)';
+                                        }
+                                    }}
+                                >
+                                    <FontAwesomeIcon icon={faArrowLeft} style={{ fontSize: '0.8rem' }} />
+                                    Previous
+                                </button>
+                                
+                                <span style={{
+                                    color: 'rgba(255,255,255,0.7)',
+                                    fontSize: '0.95rem',
+                                    backgroundColor: 'rgba(255,255,255,0.05)',
+                                    padding: '0.5rem 1rem',
+                                    borderRadius: '2rem'
+                                }}>
+                                    Page {currentPage} of {totalPages}
+                                </span>
+                                
+                                <button
+                                    onClick={goToNextPage}
+                                    disabled={currentPage === totalPages}
+                                    style={{
+                                        backgroundColor: 'transparent',
+                                        color: currentPage === totalPages ? 'rgba(255,255,255,0.3)' : 'white',
+                                        border: `1px solid ${currentPage === totalPages ? 'rgba(255,255,255,0.1)' : 'rgba(249, 115, 22, 0.3)'}`,
+                                        padding: '0.6rem 1.2rem',
+                                        borderRadius: '2rem',
+                                        fontSize: '0.9rem',
+                                        fontWeight: '500',
+                                        cursor: currentPage === totalPages ? 'not-allowed' : 'pointer',
+                                        display: 'inline-flex',
+                                        alignItems: 'center',
+                                        gap: '0.5rem',
+                                        transition: 'all 0.2s',
+                                        visibility: currentPage === totalPages ? 'hidden' : 'visible'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        if (currentPage !== totalPages) {
+                                            e.target.style.backgroundColor = 'rgba(249, 115, 22, 0.1)';
+                                            e.target.style.borderColor = '#F97316';
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        if (currentPage !== totalPages) {
+                                            e.target.style.backgroundColor = 'transparent';
+                                            e.target.style.borderColor = 'rgba(249, 115, 22, 0.3)';
+                                        }
+                                    }}
+                                >
+                                    Next
+                                    <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: '0.8rem' }} />
+                                </button>
+                            </div>
+                            
+                            {/* Results counter */}
+                            <div style={{
+                                textAlign: 'center',
+                                color: 'rgba(255,255,255,0.4)',
+                                fontSize: '0.8rem',
+                                marginBottom: '2rem'
+                            }}>
+                                Showing {startIndex + 1}-{Math.min(endIndex, filteredSimulations.length)} of {filteredSimulations.length} simulations
+                            </div>
+                        </>
+                    )}
+
+                    {/* View All Link - Only show when not on 'All' filter or when there are more than 9 items */}
+                    {filter === 'all' && filteredSimulations.length <= 9 && (
+                        <div style={{
+                            textAlign: 'center',
+                            marginTop: '2rem',
+                            marginBottom: '2rem'
+                        }}>
+                            <button
+                                onClick={() => {/* Handle view all */}}
+                                style={{
+                                    backgroundColor: 'transparent',
+                                    color: 'white',
+                                    border: '2px solid rgba(249, 115, 22, 0.3)',
+                                    padding: '0.75rem 2.5rem',
+                                    borderRadius: '2rem',
+                                    fontSize: '0.95rem',
+                                    fontWeight: '500',
+                                    cursor: 'pointer',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.75rem',
+                                    transition: 'all 0.2s'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.target.style.backgroundColor = 'rgba(249, 115, 22, 0.1)';
+                                    e.target.style.borderColor = '#F97316';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.target.style.backgroundColor = 'transparent';
+                                    e.target.style.borderColor = 'rgba(249, 115, 22, 0.3)';
+                                }}
+                            >
+                                View All Scenarios
+                                <FontAwesomeIcon icon={faArrowRight} />
+                            </button>
+                        </div>
+                    )}
                 </main>
             </div>
 

@@ -5,10 +5,32 @@ import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
 import FlagCard from '../components/FlagCard';
 import { useAppStore } from '../store/useAppStore';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { 
+    faExclamationTriangle,
+    faGhost,
+    faShieldHalved,
+    faArrowLeft,
+    faRotateRight,
+    faChartLine,
+    faFlag,
+    faLightbulb,
+    faChevronDown,
+    faChevronUp,
+    faXmark,
+    faHome,
+    faArrowRight,
+    faClipboardList
+} from '@fortawesome/free-solid-svg-icons';
 
 const ResultsRecap = () => {
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [expandedSections, setExpandedSections] = useState({
+        technical: true,
+        psychological: true
+    });
+    
     const { getLastResult, currentSimulation } = useAppStore();
     const lastResult = getLastResult();
     const simSlug = currentSimulation?.slug || '';
@@ -17,81 +39,455 @@ const ResultsRecap = () => {
     const technicalFlags = redFlags.filter(f => f.type === 'technical');
     const psychologicalFlags = redFlags.filter(f => f.type === 'psychological');
 
+    const toggleSection = (section) => {
+        setExpandedSections(prev => ({
+            ...prev,
+            [section]: !prev[section]
+        }));
+    };
+
     return (
-        <div className="dashboard-layout" style={{ backgroundColor: '#fcfcfc' }}>
+        <div className="dashboard-layout" style={{ backgroundColor: '#167f94', minHeight: '100vh' }}>
             <Navbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
 
             <div className="dashboard-content">
                 <Sidebar isOpen={sidebarOpen} close={() => setSidebarOpen(false)} />
 
-                <main className="main-content" style={{ maxWidth: '1000px', margin: '0 auto', width: '100%' }}>
-
-                    <div className="card text-center flex-col justify-center items-center" style={{
-                        border: '2px solid #ef4444',
-                        backgroundColor: '#fef2f2',
-                        padding: '2.5rem',
-                        marginBottom: '2rem',
-                        position: 'relative'
+                <main className="main-content" style={{ 
+                    maxWidth: '1200px', 
+                    margin: '0 auto', 
+                    width: '100%',
+                    padding: '2rem'
+                }}>
+                    
+                    {/* Centered Header with gradient lines and icon */}
+                    <div style={{ 
+                        textAlign: 'center',
+                        marginBottom: '2.5rem'
                     }}>
-                        <div style={{ position: 'absolute', top: '1rem', left: '1rem', display: 'flex', gap: '0.5rem', flexDirection: 'column' }}>
-                            <button className="btn btn-primary" onClick={() => navigate('/dashboard')} style={{ backgroundColor: '#2563eb', padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.25rem' }}><rect x="3" y="3" width="7" height="9"></rect><rect x="14" y="3" width="7" height="5"></rect><rect x="14" y="12" width="7" height="9"></rect><rect x="3" y="16" width="7" height="5"></rect></svg>
-                                Dashboard
-                            </button>
-                            <button className="btn btn-primary" onClick={() => navigate(simSlug ? `/simulations/${simSlug}` : '/simulations')} style={{ backgroundColor: '#3b82f6', padding: '0.5rem 1rem', fontSize: '0.875rem' }}>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginRight: '0.25rem' }}><polyline points="1 4 1 10 7 10"></polyline><polyline points="23 20 23 14 17 14"></polyline><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path></svg>
-                                Try Again!
-                            </button>
+                        <div style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '1rem',
+                            marginBottom: '0.5rem'
+                        }}>
+                            <div style={{
+                                width: '4px',
+                                height: '32px',
+                                background: 'linear-gradient(180deg, #F97316, #2DD4BF)',
+                                borderRadius: '2px'
+                            }} />
+                            <FontAwesomeIcon icon={faClipboardList} style={{ color: '#F97316', fontSize: '2rem' }} />
+                            <h1 style={{ 
+                                fontSize: '2.2rem', 
+                                fontWeight: '700', 
+                                color: 'white',
+                                margin: 0,
+                                letterSpacing: '-0.02em'
+                            }}>
+                                Results Recap
+                            </h1>
+                            <div style={{
+                                width: '4px',
+                                height: '32px',
+                                background: 'linear-gradient(180deg, #2DD4BF, #F97316)',
+                                borderRadius: '2px'
+                            }} />
                         </div>
-
-                        <div style={{ backgroundColor: '#dc2626', color: 'white', borderRadius: '50%', width: '64px', height: '64px', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto' }}>
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-                        </div>
-                        <h1 style={{ color: '#dc2626', fontSize: '2rem', fontWeight: 'bold', margin: '0 0 0.5rem 0', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                            Not Quite! Let us Recap
-                        </h1>
-                        <p style={{ color: '#991b1b', fontSize: '0.875rem', opacity: 0.9 }}>
-                            {lastResult ? `Last Attempt: ${currentSimulation?.title || 'Simulation'} — Marked as ${lastResult.choice === 'phish' ? 'Phishing' : 'Legit'}` : ''}
+                        <p style={{ 
+                            color: 'rgba(255,255,255,0.7)', 
+                            fontSize: '1rem',
+                            margin: 0
+                        }}>
+                            Review what went wrong and learn from your mistakes
                         </p>
                     </div>
 
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', alignItems: 'start' }}>
-
-                        {technicalFlags.length > 0 && (
-                        <div style={{ backgroundColor: 'white', borderRadius: '0.5rem', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                            <div style={{ backgroundColor: '#dc2626', color: 'white', padding: '1rem 1.5rem', fontWeight: 'bold', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'space-between' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 8 12 12 14 14"></polyline></svg>
-                                    Technical Red Flags
-                                </div>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    {/* Main Result Card */}
+                    <div style={{
+                        backgroundColor: '#132B44',
+                        borderRadius: '1.5rem',
+                        padding: '2.5rem',
+                        marginBottom: '2.5rem',
+                        borderTop: '1px solid #F97316',
+                        borderBottom: '1px solid #F97316',
+                        borderLeft: '4px solid #F97316',
+                        borderRight: 'none',
+                        boxShadow: '0 20px 30px -10px rgba(0,0,0,0.3)',
+                        position: 'relative',
+                        overflow: 'hidden',
+                        textAlign: 'center'
+                    }}>
+                        {/* Background decoration */}
+                        <div style={{
+                            position: 'absolute',
+                            top: '-20%',
+                            right: '-5%',
+                            width: '300px',
+                            height: '300px',
+                            borderRadius: '50%',
+                            background: 'radial-gradient(circle, rgba(239,68,68,0.1) 0%, transparent 70%)',
+                            zIndex: 0
+                        }} />
+                        
+                        <div style={{ position: 'relative', zIndex: 1 }}>
+                            {/* Icon */}
+                            <div style={{
+                                backgroundColor: '#ef4444',
+                                color: 'white',
+                                borderRadius: '50%',
+                                width: '80px',
+                                height: '80px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                margin: '0 auto 1.5rem auto',
+                                boxShadow: '0 10px 20px -5px rgba(239,68,68,0.3)'
+                            }}>
+                                <FontAwesomeIcon icon={faExclamationTriangle} style={{ fontSize: '2.5rem' }} />
                             </div>
-                            <div style={{ padding: '1.5rem' }}>
-                                {technicalFlags.map((flag, i) => (
-                                    <FlagCard key={i} type="technical" title={flag.title} description={flag.description} />
-                                ))}
+                            
+                            <h1 style={{ 
+                                color: '#ef4444', 
+                                fontSize: '2.5rem', 
+                                fontWeight: '700', 
+                                margin: '0 0 0.5rem 0',
+                                letterSpacing: '-0.02em'
+                            }}>
+                                Not Quite!
+                            </h1>
+                            
+                            <p style={{ 
+                                color: 'rgba(255,255,255,0.7)', 
+                                fontSize: '1.1rem',
+                                maxWidth: '500px',
+                                margin: '0 auto 1rem auto'
+                            }}>
+                                {currentSimulation?.title || 'Simulation'} — Marked as {lastResult?.choice === 'phish' ? 'Phishing' : 'Legitimate'}
+                            </p>
+                            
+                            {/* Score indicator */}
+                            <div style={{
+                                display: 'inline-block',
+                                backgroundColor: 'rgba(239,68,68,0.15)',
+                                padding: '0.5rem 1.5rem',
+                                borderRadius: '2rem',
+                                marginTop: '0.5rem'
+                            }}>
+                                <span style={{ color: '#ef4444', fontSize: '0.9rem', fontWeight: '600' }}>
+                                    Learning Opportunity • Review the flags below
+                                </span>
                             </div>
                         </div>
-                        )}
-
-                        {psychologicalFlags.length > 0 && (
-                        <div style={{ backgroundColor: 'white', borderRadius: '0.5rem', overflow: 'hidden', boxShadow: '0 1px 3px rgba(0,0,0,0.1)' }}>
-                            <div style={{ backgroundColor: '#ea580c', color: 'white', padding: '1rem 1.5rem', fontWeight: 'bold', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', justifyContent: 'space-between' }}>
-                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                                    Psychological Manipulation
-                                </div>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                            </div>
-                            <div style={{ padding: '1.5rem' }}>
-                                {psychologicalFlags.map((flag, i) => (
-                                    <FlagCard key={i} type="psychological" title={flag.title} description={flag.description} />
-                                ))}
-                            </div>
-                        </div>
-                        )}
-
                     </div>
+
+                    {/* Flags Sections */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+                        
+                        {/* Technical Red Flags Section */}
+                        {technicalFlags.length > 0 && (
+                            <div style={{
+                                backgroundColor: '#132B44',
+                                borderRadius: '1rem',
+                                overflow: 'hidden',
+                                borderTop: '1px solid #F97316',
+                                borderBottom: '1px solid #F97316',
+                                borderLeft: '4px solid #ef4444',
+                                borderRight: 'none',
+                                boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)'
+                            }}>
+                                {/* Section Header - Clickable */}
+                                <div 
+                                    onClick={() => toggleSection('technical')}
+                                    style={{
+                                        backgroundColor: '#1a3a4f',
+                                        padding: '1.25rem 1.5rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        cursor: 'pointer',
+                                        borderBottom: expandedSections.technical ? '1px solid rgba(255,255,255,0.05)' : 'none'
+                                    }}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                        <div style={{
+                                            width: '4px',
+                                            height: '24px',
+                                            background: 'linear-gradient(180deg, #ef4444, #f87171)',
+                                            borderRadius: '2px'
+                                        }} />
+                                        <FontAwesomeIcon icon={faFlag} style={{ color: '#ef4444', fontSize: '1.1rem' }} />
+                                        <h2 style={{ 
+                                            fontSize: '1.2rem', 
+                                            fontWeight: '600', 
+                                            color: 'white',
+                                            margin: 0
+                                        }}>
+                                            Technical Red Flags
+                                        </h2>
+                                        <span style={{
+                                            backgroundColor: '#ef4444',
+                                            color: 'white',
+                                            padding: '0.15rem 0.5rem',
+                                            borderRadius: '1rem',
+                                            fontSize: '0.7rem',
+                                            fontWeight: '600',
+                                            marginLeft: '0.5rem'
+                                        }}>
+                                            {technicalFlags.length}
+                                        </span>
+                                    </div>
+                                    <FontAwesomeIcon 
+                                        icon={expandedSections.technical ? faChevronUp : faChevronDown} 
+                                        style={{ color: '#ef4444', fontSize: '1rem' }}
+                                    />
+                                </div>
+
+                                {/* Section Content */}
+                                {expandedSections.technical && (
+                                    <div style={{ padding: '1.5rem' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                            {technicalFlags.map((flag, i) => (
+                                                <FlagCard key={i} type="technical" title={flag.title} description={flag.description} />
+                                            ))}
+                                        </div>
+                                        
+                                        {/* Learning tip */}
+                                        <div style={{
+                                            marginTop: '1.5rem',
+                                            padding: '1rem',
+                                            backgroundColor: 'rgba(239,68,68,0.1)',
+                                            borderRadius: '0.75rem',
+                                            border: '1px solid rgba(239,68,68,0.2)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.75rem'
+                                        }}>
+                                            <FontAwesomeIcon icon={faLightbulb} style={{ color: '#ef4444' }} />
+                                            <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}>
+                                                Technical indicators are objective markers like suspicious links, mismatched domains, or spoofed headers.
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {/* Psychological Manipulation Section */}
+                        {psychologicalFlags.length > 0 && (
+                            <div style={{
+                                backgroundColor: '#132B44',
+                                borderRadius: '1rem',
+                                overflow: 'hidden',
+                                borderTop: '1px solid #F97316',
+                                borderBottom: '1px solid #F97316',
+                                borderLeft: '4px solid #F97316',
+                                borderRight: 'none',
+                                boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)'
+                            }}>
+                                {/* Section Header - Clickable */}
+                                <div 
+                                    onClick={() => toggleSection('psychological')}
+                                    style={{
+                                        backgroundColor: '#1a3a4f',
+                                        padding: '1.25rem 1.5rem',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'space-between',
+                                        cursor: 'pointer',
+                                        borderBottom: expandedSections.psychological ? '1px solid rgba(255,255,255,0.05)' : 'none'
+                                    }}
+                                >
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                        <div style={{
+                                            width: '4px',
+                                            height: '24px',
+                                            background: 'linear-gradient(180deg, #F97316, #fbbf24)',
+                                            borderRadius: '2px'
+                                        }} />
+                                        <FontAwesomeIcon icon={faGhost} style={{ color: '#F97316', fontSize: '1.1rem' }} />
+                                        <h2 style={{ 
+                                            fontSize: '1.2rem', 
+                                            fontWeight: '600', 
+                                            color: 'white',
+                                            margin: 0
+                                        }}>
+                                            Psychological Manipulation
+                                        </h2>
+                                        <span style={{
+                                            backgroundColor: '#F97316',
+                                            color: 'white',
+                                            padding: '0.15rem 0.5rem',
+                                            borderRadius: '1rem',
+                                            fontSize: '0.7rem',
+                                            fontWeight: '600',
+                                            marginLeft: '0.5rem'
+                                        }}>
+                                            {psychologicalFlags.length}
+                                        </span>
+                                    </div>
+                                    <FontAwesomeIcon 
+                                        icon={expandedSections.psychological ? faChevronUp : faChevronDown} 
+                                        style={{ color: '#F97316', fontSize: '1rem' }}
+                                    />
+                                </div>
+
+                                {/* Section Content */}
+                                {expandedSections.psychological && (
+                                    <div style={{ padding: '1.5rem' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                                            {psychologicalFlags.map((flag, i) => (
+                                                <FlagCard key={i} type="psychological" title={flag.title} description={flag.description} />
+                                            ))}
+                                        </div>
+                                        
+                                        {/* Learning tip */}
+                                        <div style={{
+                                            marginTop: '1.5rem',
+                                            padding: '1rem',
+                                            backgroundColor: 'rgba(249,115,22,0.1)',
+                                            borderRadius: '0.75rem',
+                                            border: '1px solid rgba(249,115,22,0.2)',
+                                            display: 'flex',
+                                            alignItems: 'center',
+                                            gap: '0.75rem'
+                                        }}>
+                                            <FontAwesomeIcon icon={faLightbulb} style={{ color: '#F97316' }} />
+                                            <span style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.9rem' }}>
+                                                Psychological tactics exploit human emotions like urgency, fear, or curiosity to bypass logical thinking.
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Bottom Actions - Four buttons */}
+                    <div style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '1rem',
+                        marginTop: '2.5rem',
+                        flexWrap: 'wrap'
+                    }}>
+                        <button
+                            onClick={() => navigate('/dashboard')}
+                            style={{
+                                backgroundColor: 'transparent',
+                                color: 'white',
+                                border: '1px solid rgba(255,255,255,0.2)',
+                                padding: '0.75rem 2rem',
+                                borderRadius: '2rem',
+                                fontSize: '0.95rem',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = 'rgba(255,255,255,0.05)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = 'transparent';
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faHome} />
+                            Dashboard
+                        </button>
+                        
+                        <button
+                            onClick={() => navigate('/analytics')}
+                            style={{
+                                backgroundColor: 'transparent',
+                                color: 'white',
+                                border: '1px solid rgba(249,115,22,0.3)',
+                                padding: '0.75rem 2rem',
+                                borderRadius: '2rem',
+                                fontSize: '0.95rem',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = 'rgba(249,115,22,0.1)';
+                                e.target.style.borderColor = '#F97316';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = 'transparent';
+                                e.target.style.borderColor = 'rgba(249,115,22,0.3)';
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faChartLine} />
+                            Analytics
+                        </button>
+                        
+                        <button
+                            onClick={() => navigate(simSlug ? `/simulations/${simSlug}` : '/simulations')}
+                            style={{
+                                backgroundColor: '#F97316',
+                                color: 'white',
+                                border: 'none',
+                                padding: '0.75rem 2rem',
+                                borderRadius: '2rem',
+                                fontSize: '0.95rem',
+                                fontWeight: '600',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = '#fb923c';
+                                e.target.style.transform = 'translateY(-2px)';
+                                e.target.style.boxShadow = '0 10px 20px -5px rgba(249,115,22,0.4)';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = '#F97316';
+                                e.target.style.transform = 'translateY(0)';
+                                e.target.style.boxShadow = 'none';
+                            }}
+                        >
+                            <FontAwesomeIcon icon={faRotateRight} />
+                            Try Again
+                        </button>
+                        
+                        <button
+                            onClick={() => {/* Next Page - to be handled by backend */}}
+                            style={{
+                                backgroundColor: 'transparent',
+                                color: 'white',
+                                border: '1px solid #2DD4BF',
+                                padding: '0.75rem 2rem',
+                                borderRadius: '2rem',
+                                fontSize: '0.95rem',
+                                fontWeight: '500',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '0.5rem',
+                                transition: 'all 0.2s'
+                            }}
+                            onMouseEnter={(e) => {
+                                e.target.style.backgroundColor = 'rgba(45,212,191,0.1)';
+                                e.target.style.borderColor = '#2DD4BF';
+                            }}
+                            onMouseLeave={(e) => {
+                                e.target.style.backgroundColor = 'transparent';
+                                e.target.style.borderColor = '#2DD4BF';
+                            }}
+                        >
+                            Next Page
+                            <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: '0.8rem' }} />
+                        </button>
+                    </div>
+
                 </main>
             </div>
 
