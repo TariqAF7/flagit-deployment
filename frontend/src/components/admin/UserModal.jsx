@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
-const DEPARTMENTS = ['Engineering', 'Finance', 'HR', 'IT', 'Marketing', 'Operations', 'Sales'];
+const DEPARTMENTS = ['Engineering', 'Finance', 'HR', 'IT', 'Marketing', 'Operations', 'Sales', 'Student'];
 
 const ROLE_OPTIONS = [
   { label: 'User',          value: 'user' },
   { label: 'Admin',         value: 'admin' },
-  { label: 'AI Maintainer', value: 'ai_maintainer' },
 ];
 
 const DEFAULT_FORM = {

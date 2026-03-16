@@ -15,7 +15,8 @@ export const fetchAdminUsers = (params = {}) => {
 export const fetchAdminDepartments = () => get('/admin/users/departments');
 export const createAdminUser  = (data) => post('/admin/users', data);
 export const updateAdminUser  = (id, data) => put(`/admin/users/${id}`, data);
-export const deleteAdminUser  = (id) => del(`/admin/users/${id}`);
+export const deleteAdminUser      = (id) => del(`/admin/users/${id}`);
+export const hardDeleteAdminUser  = (id) => del(`/admin/users/${id}/hard`);
 
 // ── Simulations (admin) ──────────────────────────────────────
 export const fetchSimulations       = () => get('/admin/simulations');

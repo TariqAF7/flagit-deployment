@@ -9,6 +9,7 @@ const {
   getUserById,
   updateUser,
   deleteUser,
+  hardDeleteUser,
   getSettings,
   updateSettings,
   getDepartments,
@@ -23,6 +24,7 @@ router.get('/users', auth, authorize('admin'), getUsers);
 router.post('/users', auth, authorize('admin'), createUser);
 router.get('/users/:id', auth, authorize('admin'), getUserById);
 router.put('/users/:id', auth, authorize('admin'), updateUser);
+router.delete('/users/:id/hard', auth, authorize('admin'), hardDeleteUser);
 router.delete('/users/:id', auth, authorize('admin'), deleteUser);
 
 // Settings
