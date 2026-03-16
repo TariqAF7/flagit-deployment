@@ -6,7 +6,7 @@ import ProgressRing from '../../components/ProgressRing';
 import { fetchAdminStats } from '../../api/admin';
 
 const AdminDashboard = () => {
-    const { adminStats, setAdminStats, logout } = useAppStore();
+    const { adminStats, setAdminStats, logout, user } = useAppStore();
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -149,7 +149,7 @@ const AdminDashboard = () => {
                             whiteSpace: 'nowrap'
                         }}>
                             <div style={{ fontWeight: '600', color: 'white', display: 'inline-block' }}>
-                                Welcome back, <span style={{ fontWeight: '700' }}>Sarah!</span>
+                                Welcome back, <span style={{ fontWeight: '700' }}>{user?.name || 'Admin'}!</span>
                             </div>
                             <div style={{ color: 'rgba(255,255,255,0.6)', fontSize: '0.75rem', marginTop: '0.2rem' }}>Administrator</div>
                         </div>
@@ -549,7 +549,9 @@ const AdminDashboard = () => {
                                 transition: 'all 0.2s',
                                 height: '100%',
                                 display: 'flex',
-                                flexDirection: 'column'
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                textAlign: 'center'
                             }}
                             onMouseEnter={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-4px)';
@@ -610,7 +612,9 @@ const AdminDashboard = () => {
                                 transition: 'all 0.2s',
                                 height: '100%',
                                 display: 'flex',
-                                flexDirection: 'column'
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                textAlign: 'center'
                             }}
                             onMouseEnter={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-4px)';
@@ -670,7 +674,9 @@ const AdminDashboard = () => {
                                 transition: 'all 0.2s',
                                 height: '100%',
                                 display: 'flex',
-                                flexDirection: 'column'
+                                flexDirection: 'column',
+                                alignItems: 'center',
+                                textAlign: 'center'
                             }}
                             onMouseEnter={(e) => {
                                 e.currentTarget.style.transform = 'translateY(-4px)';
