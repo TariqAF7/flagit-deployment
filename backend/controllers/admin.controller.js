@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
 const SimulationResult = require('../models/SimulationResult');
 const Settings = require('../models/Settings');
 
@@ -194,38 +195,104 @@ exports.getUserById = async (req, res, next) => {
 // @route   PUT /api/admin/users/:id
 exports.updateUser = async (req, res, next) => {
   try {
-    const { name, email, role, department, status } = req.body;
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { name, email, role, department, status },
-      { new: true, runValidators: true }
-    );
+    const { name, email, password, role, department, status } = req.body;
+    const user = await User.findById(req.params.id).select('+password');
 
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
-    res.json({ success: true, data: { user } });
+    // ── Admin fail-safe: prevent deactivating the last active admin ──────
+    if (
+      user.role === 'admin' &&
+      (status === 'Inactive' || (role && role !== 'admin'))
+    ) {
+      const activeAdminCount = await User.countDocuments({ role: 'admin', status: 'Active' });
+      if (activeAdminCount <= 1) {
+        return res.status(403).json({
+          success: false,
+          message: 'Cannot deactivate or change the role of the last active Admin.',
+        });
+      }
+    }
+
+    // Apply field updates
+    if (name)       user.name       = name;
+    if (email)      user.email      = email;
+    if (role)       user.role       = role;
+    if (department !== undefined) user.department = department;
+    if (status)     user.status     = status;
+
+    // If a new password was provided, hash it before saving
+    if (password && password.trim()) {
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+    }
+
+    await user.save({ validateModifiedOnly: true });
+
+    // Strip password from response
+    const userObj = user.toObject();
+    delete userObj.password;
+
+    res.json({ success: true, data: { user: userObj } });
   } catch (error) {
     next(error);
   }
 };
 
-// @desc    Delete/deactivate user
+// @desc    Delete/deactivate user (soft delete)
 // @route   DELETE /api/admin/users/:id
 exports.deleteUser = async (req, res, next) => {
   try {
-    const user = await User.findByIdAndUpdate(
-      req.params.id,
-      { status: 'Inactive' },
-      { new: true }
-    );
-
+    const user = await User.findById(req.params.id);
     if (!user) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }
 
+    // ── Admin fail-safe ──────────────────────────────────────────────────
+    if (user.role === 'admin' && user.status === 'Active') {
+      const activeAdminCount = await User.countDocuments({ role: 'admin', status: 'Active' });
+      if (activeAdminCount <= 1) {
+        return res.status(403).json({
+          success: false,
+          message: 'Cannot deactivate the last active Admin.',
+        });
+      }
+    }
+
+    user.status = 'Inactive';
+    await user.save({ validateModifiedOnly: true });
+
     res.json({ success: true, message: 'User deactivated', data: { user } });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// @desc    Permanently delete user
+// @route   DELETE /api/admin/users/:id/hard
+exports.hardDeleteUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // ── Admin fail-safe ──────────────────────────────────────────────────
+    if (user.role === 'admin') {
+      const activeAdminCount = await User.countDocuments({ role: 'admin' });
+      if (activeAdminCount <= 1) {
+        return res.status(403).json({
+          success: false,
+          message: 'Cannot delete the last Admin account.',
+        });
+      }
+    }
+
+    await User.findByIdAndDelete(req.params.id);
+
+    res.json({ success: true, message: 'User permanently deleted' });
   } catch (error) {
     next(error);
   }

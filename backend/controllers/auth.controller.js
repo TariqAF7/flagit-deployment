@@ -66,6 +66,14 @@ exports.login = async (req, res, next) => {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
+    // ── Block inactive accounts ─────────────────────────────────────────
+    if (user.status === 'Inactive') {
+      return res.status(403).json({
+        success: false,
+        message: 'Your account is deactivated. Please contact an admin.',
+      });
+    }
+
     const token = user.generateToken();
 
     res.json({

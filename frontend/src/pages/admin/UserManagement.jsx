@@ -9,6 +9,7 @@ import {
   createAdminUser,
   updateAdminUser,
   deleteAdminUser,
+  hardDeleteAdminUser,
 } from '../../api/admin';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -16,14 +17,14 @@ import {
   faFilter,
   faSearch,
   faPlus,
-  faEdit
+  faEdit,
+  faTrash
 } from '@fortawesome/free-solid-svg-icons';
 
 // ── Role display helpers ─────────────────────────────────────────────────────
 const ROLE_LABEL = {
   user:          'User',
   admin:         'Admin',
-  ai_maintainer: 'AI Maintainer',
 };
 
 const ROLE_BADGE_STYLE = {
@@ -34,10 +35,6 @@ const ROLE_BADGE_STYLE = {
   admin: {
     backgroundColor: '#5f3a1e',
     color: '#fbbf24',
-  },
-  ai_maintainer: {
-    backgroundColor: '#1e5f3a',
-    color: '#4ade80',
   },
 };
 
@@ -133,6 +130,7 @@ const UserManagement = () => {
   const [deptFilter,    setDeptFilter]    = useState('all');
   const [statusFilter,  setStatusFilter]  = useState('all');
   const [departments,   setDepartments]   = useState([]);
+  const [lastUpdated,   setLastUpdated]   = useState(new Date());
 
   // ── Pagination ───────────────────────────────────────────────
   const [total, setTotal] = useState(0);
@@ -147,6 +145,15 @@ const UserManagement = () => {
   const showToast = (message, type = 'success') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 4000);
+  };
+
+  // ── Format time helper ──────────────────────────────────────
+  const formatTime = (date) => {
+    const d = new Date(date);
+    const today = new Date();
+    const isToday = d.toDateString() === today.toDateString();
+    const timeStr = d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
+    return isToday ? `Today, ${timeStr}` : `${d.toLocaleDateString()}, ${timeStr}`;
   };
 
   // ── Fetch departments once for dropdown ──────────────────────
@@ -220,10 +227,29 @@ const UserManagement = () => {
         showToast(`${payload.name} created successfully.`);
       }
       setIsModalOpen(false);
+      setLastUpdated(new Date());
       loadUsers();
     } catch (err) {
       const msg = err?.message || 'Something went wrong.';
       showToast(msg.includes('already registered') ? 'Email is already in use.' : msg, 'error');
+    }
+  };
+
+  // ── Delete handler ───────────────────────────────────────────
+  const handleDelete = async (user) => {
+    const confirmed = window.confirm(
+      `Are you sure you want to permanently delete "${user.name}"?\nThis action cannot be undone.`
+    );
+    if (!confirmed) return;
+
+    try {
+      await hardDeleteAdminUser(user.id);
+      showToast(`${user.name} has been permanently deleted.`);
+      setLastUpdated(new Date());
+      loadUsers();
+    } catch (err) {
+      const msg = err?.message || 'Failed to delete user.';
+      showToast(msg, 'error');
     }
   };
 
@@ -320,7 +346,7 @@ const UserManagement = () => {
               textAlign: 'right'
             }}>
               <div style={{ fontWeight: '600', color: 'white' }}>Last Updated</div>
-              <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>Today, 3:42 PM</div>
+              <div style={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.75rem' }}>{formatTime(lastUpdated)}</div>
             </div>
           </div>
 
@@ -380,7 +406,6 @@ const UserManagement = () => {
                   <option value="all" style={{ backgroundColor: '#132B44' }}>All Roles</option>
                   <option value="user" style={{ backgroundColor: '#132B44' }}>User</option>
                   <option value="admin" style={{ backgroundColor: '#132B44' }}>Admin</option>
-                  <option value="ai_maintainer" style={{ backgroundColor: '#132B44' }}>AI Maintainer</option>
                 </select>
 
                 {/* Department filter */}
@@ -482,7 +507,8 @@ const UserManagement = () => {
                             padding: '0.4rem', 
                             borderRadius: '0.4rem', 
                             display: 'inline-flex',
-                            transition: 'all 0.2s'
+                            transition: 'all 0.2s',
+                            marginRight: '0.4rem'
                           }}
                           onMouseEnter={(e) => {
                             e.currentTarget.style.backgroundColor = 'rgba(249,115,22,0.3)';
@@ -492,6 +518,28 @@ const UserManagement = () => {
                           }}
                         >
                           <FontAwesomeIcon icon={faEdit} style={{ fontSize: '0.9rem' }} />
+                        </button>
+                        <button
+                          onClick={() => handleDelete(user)}
+                          title="Delete user"
+                          style={{ 
+                            border: 'none', 
+                            background: 'rgba(239,68,68,0.15)', 
+                            color: '#ef4444', 
+                            cursor: 'pointer', 
+                            padding: '0.4rem', 
+                            borderRadius: '0.4rem', 
+                            display: 'inline-flex',
+                            transition: 'all 0.2s'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.3)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.backgroundColor = 'rgba(239,68,68,0.15)';
+                          }}
+                        >
+                          <FontAwesomeIcon icon={faTrash} style={{ fontSize: '0.9rem' }} />
                         </button>
                       </td>
                     </tr>
