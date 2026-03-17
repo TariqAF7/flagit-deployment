@@ -31,7 +31,7 @@ const simulations = [
       senderName: 'IT Help Desk',
       senderEmail: 'helpdesk@company-support-portal.com',
       subject: 'ACTION REQUIRED: Verify Your Identity to Avoid Account Suspension',
-      body: '<div style="font-family: Arial, sans-serif; max-width: 600px;"><div style="background-color: #1a365d; padding: 20px; color: white; text-align: center;"><h1>IT Help Desk - Account Verification</h1></div><div style="padding: 20px;"><p>Dear Employee,</p><p>We have detected unusual activity on your corporate account. As part of our security protocol, you must verify your identity within <strong>12 hours</strong> or your account will be temporarily suspended.</p><p>Please click the link below to verify your credentials:</p><p><a href="#" style="background-color: #e53e3e; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Verify Now</a></p><p style="font-size: 12px; color: #666;">This is an automated message. Do not reply directly.</p></div></div>',
+      body: '<div style="font-family: Arial, sans-serif; max-width: 600px;"><div style="background-color: #1a365d; padding: 20px; color: white; text-align: center;"><h1>IT Help Desk - Account Verification</h1></div><div style="padding: 20px;"><p>Dear Employee,</p><p>We have detected unusual activity on your corporate account. As part of our security protocol, you must verify your identity within <strong>12 hours</strong> or your account will be temporarily suspended.</p><p>Please click the link below to verify your credentials:</p><p><a href="#" style="background-color: #e53e3e; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 16px 0;">Verify Now</a></p><p style="font-size: 12px; color: #666;">This is an automated message. Do not reply directly.</p></div></div>',
       redFlags: [
         { type: 'technical', title: 'Suspicious Domain', description: 'The sender domain "company-support-portal.com" is not the real corporate domain.' },
         { type: 'psychological', title: 'Urgency & Time Pressure', description: 'Creates false urgency with a 12-hour deadline.' },
@@ -55,7 +55,7 @@ const simulations = [
       senderName: 'Microsoft Security Team',
       senderEmail: 'security-alerts@microsft-security.com',
       subject: 'URGENT: Unusual Sign-in Activity Detected on Your Account',
-      body: '<div style="font-family: Arial, sans-serif; max-width: 600px;"><div style="background-color: #0078d4; padding: 20px; color: white; text-align: center;"><h1>Microsoft Account Security Alert</h1></div><div style="padding: 20px;"><p>Dear User,</p><p>We detected an unusual sign-in attempt on your Microsoft account from:</p><ul><li><strong>Location:</strong> Moscow, Russia</li><li><strong>Device:</strong> Unknown Windows PC</li></ul><p>If this wasn\'t you, your account may be compromised. <strong>IMMEDIATE ACTION REQUIRED</strong> — verify your identity within 24 hours or your account will be suspended.</p><p><a href="#" style="background-color: #0078d4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Verify Your Identity Now</a></p></div></div>',
+      body: '<div style="font-family: Arial, sans-serif; max-width: 600px;"><div style="background-color: #0078d4; padding: 20px; color: white; text-align: center;"><h1>Microsoft Account Security Alert</h1></div><div style="padding: 20px;"><p>Dear User,</p><p>We detected an unusual sign-in attempt on your Microsoft account from:</p><ul><li><strong>Location:</strong> Moscow, Russia</li><li><strong>Device:</strong> Unknown Windows PC</li></ul><p>If this wasn\'t you, your account may be compromised. <strong>IMMEDIATE ACTION REQUIRED</strong> — verify your identity within 24 hours or your account will be suspended.</p><p><a href="#" style="background-color: #0078d4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 16px 0;">Verify Your Identity Now</a></p></div></div>',
       redFlags: [
         { type: 'technical', title: 'Suspicious Domain', description: 'The sender domain "microsft-security.com" is missing the \'o\' in Microsoft.' },
         { type: 'technical', title: 'Suspicious Links', description: 'The verification link points to a non-Microsoft domain.' },
@@ -79,7 +79,7 @@ const simulations = [
       senderName: 'Google Workspace',
       senderEmail: 'workspace-noreply@google-apps-auth.com',
       subject: 'Sign in to Continue to Google Drive',
-      body: '<div style="font-family: Arial, sans-serif; max-width: 600px;"><div style="background-color: #4285f4; padding: 20px; color: white; text-align: center;"><h1>Google Workspace</h1></div><div style="padding: 20px;"><p>Hi,</p><p>Someone shared a document with you on Google Drive. To view the file, please sign in with your Google account.</p><p><a href="#" style="background-color: #4285f4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Open in Google Drive</a></p></div></div>',
+      body: '<div style="font-family: Arial, sans-serif; max-width: 600px;"><div style="background-color: #4285f4; padding: 20px; color: white; text-align: center;"><h1>Google Workspace</h1></div><div style="padding: 20px;"><p>Hi,</p><p>Someone shared a document with you on Google Drive. To view the file, please sign in with your Google account.</p><p><a href="#" style="background-color: #4285f4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 16px 0;">Open in Google Drive</a></p></div></div>',
       redFlags: [
         { type: 'technical', title: 'Fake Login Window', description: 'The sign-in popup is actually rendered inside the page (Browser-in-the-Browser attack).' },
         { type: 'technical', title: 'Spoofed Domain', description: 'The domain "google-apps-auth.com" is not owned by Google.' },
@@ -102,7 +102,7 @@ const simulations = [
       senderName: 'PayPal Customer Service',
       senderEmail: 'service@paypa1-resolution.com',
       subject: 'Your PayPal Account Has Been Limited',
-      body: '<div style="font-family: Arial, sans-serif; max-width: 600px;"><div style="background-color: #003087; padding: 20px; color: white; text-align: center;"><h1>PayPal</h1></div><div style="padding: 20px;"><p>Dear Customer,</p><p>We\'ve noticed some unusual activity on your PayPal account. Your account access has been limited until you verify your information.</p><p><a href="#" style="background-color: #0070ba; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Restore Account Access</a></p></div></div>',
+      body: '<div style="font-family: Arial, sans-serif; max-width: 600px;"><div style="background-color: #003087; padding: 20px; color: white; text-align: center;"><h1>PayPal</h1></div><div style="padding: 20px;"><p>Dear Customer,</p><p>We\'ve noticed some unusual activity on your PayPal account. Your account access has been limited until you verify your information.</p><p><a href="#" style="background-color: #0070ba; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 16px 0;">Restore Account Access</a></p></div></div>',
       redFlags: [
         { type: 'technical', title: 'Lookalike Domain', description: 'The domain "paypa1-resolution.com" uses the number "1" instead of the letter "l".' },
         { type: 'psychological', title: 'Fear', description: 'Threatens permanent account restriction.' },
@@ -195,7 +195,7 @@ const simulations = [
       senderName: 'Industry Newsletter',
       senderEmail: 'newsletter@techinsider-daily.com',
       subject: 'Breaking: Major Security Vulnerability Discovered',
-      body: '<div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px;"><p>Dear Security Professional,</p><p>A critical zero-day vulnerability has been discovered. Read the full analysis on our blog:</p><p><a href="#" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Read Full Analysis</a></p></div>',
+      body: '<div style="font-family: Arial, sans-serif; max-width: 600px; padding: 20px;"><p>Dear Security Professional,</p><p>A critical zero-day vulnerability has been discovered. Read the full analysis on our blog:</p><p><a href="#" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 16px 0;">Read Full Analysis</a></p></div>',
       redFlags: [
         { type: 'technical', title: 'Compromised Website', description: 'The linked blog has been compromised with a drive-by download exploit.' },
         { type: 'psychological', title: 'Professional Appeal', description: 'Targets security professionals with relevant-sounding content.' },

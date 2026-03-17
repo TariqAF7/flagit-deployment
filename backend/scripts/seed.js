@@ -153,7 +153,7 @@ const simulations = [
 <p>Dear Employee,</p>
 <p>We have detected unusual activity on your corporate account. As part of our security protocol, you must verify your identity within <strong>12 hours</strong> or your account will be temporarily suspended.</p>
 <p>Please click the link below to verify your credentials:</p>
-<p><a href="#" style="background-color: #e53e3e; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Verify Now</a></p>
+<p><a href="#" style="background-color: #e53e3e; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 16px 0;">Verify Now</a></p>
 <p style="font-size: 12px; color: #666;">This is an automated message. Do not reply directly.</p>
 </div>
 </div>`,
@@ -192,7 +192,7 @@ const simulations = [
 <li><strong>Time:</strong> ${new Date().toISOString()}</li>
 </ul>
 <p>If this wasn't you, your account may be compromised. <strong>IMMEDIATE ACTION REQUIRED</strong> — verify your identity within 24 hours or your account will be suspended.</p>
-<p><a href="#" style="background-color: #0078d4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Verify Your Identity Now</a></p>
+<p><a href="#" style="background-color: #0078d4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 16px 0;">Verify Your Identity Now</a></p>
 <p style="font-size: 12px; color: #666;">If you do not verify within 24 hours, access to Office 365, OneDrive, and Teams will be revoked.</p>
 </div>
 </div>`,
@@ -227,7 +227,7 @@ const simulations = [
 <div style="padding: 20px;">
 <p>Hi,</p>
 <p>Someone shared a document with you on Google Drive. To view the file, please sign in with your Google account.</p>
-<p><a href="#" style="background-color: #4285f4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Open in Google Drive</a></p>
+<p><a href="#" style="background-color: #4285f4; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 16px 0;">Open in Google Drive</a></p>
 <p style="font-size: 12px; color: #666;">This link will open a secure sign-in window.</p>
 </div>
 </div>`,
@@ -260,7 +260,7 @@ const simulations = [
 <p>Dear Customer,</p>
 <p>We've noticed some unusual activity on your PayPal account. Your account access has been limited until you verify your information.</p>
 <p>Click below to restore full access:</p>
-<p><a href="#" style="background-color: #0070ba; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px;">Restore Account Access</a></p>
+<p><a href="#" style="background-color: #0070ba; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block; margin: 16px 0;">Restore Account Access</a></p>
 <p style="font-size: 12px; color: #666;">If you don't verify within 48 hours, your account will be permanently restricted.</p>
 </div>
 </div>`,
