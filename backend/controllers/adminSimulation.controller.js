@@ -86,6 +86,7 @@ exports.create = async (req, res, next) => {
       name, title, targetGroup, scenarioType,
       schedule, status, category, description,
       difficulty, isPhishing,
+      subject, senderName, senderEmail, bodyContent,
     } = req.body;
 
     const resolvedCategory = category || (scenarioType === 'Normal Awareness' ? 'Normal' : 'Phishing');
@@ -100,6 +101,12 @@ exports.create = async (req, res, next) => {
       isPhishing: resolvedCategory === 'Phishing',
       difficulty: difficulty || 'Intermediate',
       tags: scenarioType ? [scenarioType] : [],
+      emailContent: {
+        subject: subject || '',
+        senderName: senderName || '',
+        senderEmail: senderEmail || '',
+        body: bodyContent || '',
+      },
     });
 
     res.status(201).json({ success: true, data: { simulation } });

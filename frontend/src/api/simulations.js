@@ -1,4 +1,4 @@
-import { get, post } from './api';
+import { get, post, patch } from './api';
 
 /** GET /api/simulations — list all simulations (no email content) */
 export const fetchSimulations = () => get('/simulations');
@@ -18,6 +18,14 @@ export const fetchSimulationBySlug = (slug) => get(`/simulations/slug/${slug}`);
  */
 export const submitSimulation = (id, choice, responseTime = 0, flagged = false) =>
   post(`/simulations/${id}/submit`, { choice, responseTime, flagged });
+
+/**
+ * PATCH /api/simulations/:id/report
+ * @param {string}          id
+ * @param {'phish'|'legit'} choice
+ */
+export const reportSimulation = (id, choice) =>
+  patch(`/simulations/${id}/report`, { choice });
 
 /** POST /api/simulations/:id/start — increment playCount */
 export const startSimulation = (id) => post(`/simulations/${id}/start`);

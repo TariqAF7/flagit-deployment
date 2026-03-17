@@ -107,6 +107,46 @@ exports.submit = async (req, res, next) => {
   }
 };
 
+// @desc    Submit user choice for a simulation via PATCH
+// @route   PATCH /api/simulations/:id/report
+exports.report = async (req, res, next) => {
+  try {
+    const { choice } = req.body;
+    const simulation = await Simulation.findById(req.params.id);
+
+    if (!simulation) {
+      return res.status(404).json({ success: false, message: 'Simulation not found' });
+    }
+
+    if (!['phish', 'legit'].includes(choice)) {
+      return res.status(400).json({ success: false, message: 'Choice must be "phish" or "legit"' });
+    }
+
+    const isCorrect = simulation.isPhishing ? choice === 'phish' : choice === 'legit';
+
+    const result = await SimulationResult.create({
+      userId: req.user._id,
+      simulationId: simulation._id,
+      choice,
+      isCorrect,
+      flagged: choice === 'phish', // If they reported it as phish, they flagged it
+    });
+
+    res.json({
+      success: true,
+      data: {
+        isCorrect,
+        isPhishing: simulation.isPhishing,
+      },
+      message: isCorrect
+        ? 'Great job! You identified a potential threat.'
+        : 'Actually, this was a simulated scam. Here’s what you missed...',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 // @desc    Get user's simulation results history
 // @route   GET /api/simulations/results/history
 exports.getHistory = async (req, res, next) => {

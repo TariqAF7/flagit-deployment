@@ -3,8 +3,11 @@ import React, { useState, useEffect } from 'react';
 const SimulationModal = ({ isOpen, onClose, onSave, simulation }) => {
     const [formData, setFormData] = useState({
         name: '',
+        subject: '',
+        senderName: '',
+        senderEmail: '',
+        bodyContent: '',
         targetGroup: 'All Employees',
-        scenarioType: 'Spear Phishing',
         category: 'Phishing',
         description: '',
         schedule: '',
@@ -19,8 +22,11 @@ const SimulationModal = ({ isOpen, onClose, onSave, simulation }) => {
             const dt = simulation.schedule ? new Date(simulation.schedule) : null;
             setFormData({
                 name: simulation.name || simulation.title || '',
+                subject: simulation.subject || '',
+                senderName: simulation.senderName || '',
+                senderEmail: simulation.senderEmail || '',
+                bodyContent: simulation.bodyContent || simulation.content || '',
                 targetGroup: simulation.targetGroup || 'All Employees',
-                scenarioType: simulation.scenarioType || simulation.tags?.[0] || 'Spear Phishing',
                 category: simulation.category || 'Phishing',
                 description: simulation.description || '',
                 schedule: dt ? dt.toISOString().split('T')[0] : '',
@@ -31,8 +37,11 @@ const SimulationModal = ({ isOpen, onClose, onSave, simulation }) => {
         } else {
             setFormData({
                 name: '',
+                subject: '',
+                senderName: '',
+                senderEmail: '',
+                bodyContent: '',
                 targetGroup: 'All Employees',
-                scenarioType: 'Spear Phishing',
                 category: 'Phishing',
                 description: '',
                 schedule: '',
@@ -181,37 +190,65 @@ const SimulationModal = ({ isOpen, onClose, onSave, simulation }) => {
                         />
                     </div>
 
-                    {/* Two-col: Target Group + Scenario Type */}
+                    {/* Manual Entry Fields for Simulation Appearance */}
+                    <div style={{ marginBottom: '1.15rem' }}>
+                        <label style={labelStyle}>Header (Subject Line)</label>
+                        <input
+                            type="text"
+                            style={inputStyle}
+                            placeholder="e.g. Action Required: Security Alert"
+                            value={formData.subject}
+                            onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                        />
+                    </div>
+
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.15rem' }}>
                         <div>
-                            <label style={labelStyle}>Target Group</label>
-                            <select
+                            <label style={labelStyle}>Username (Sender Name)</label>
+                            <input
+                                type="text"
                                 style={inputStyle}
-                                value={formData.targetGroup}
-                                onChange={(e) => setFormData({ ...formData, targetGroup: e.target.value })}
-                            >
-                                <option>All Employees</option>
-                                <option>IT Department</option>
-                                <option>Finance</option>
-                                <option>HR</option>
-                                <option>C-Suite</option>
-                                <option>New Hires</option>
-                            </select>
+                                placeholder="e.g. IT Helpdesk"
+                                value={formData.senderName}
+                                onChange={(e) => setFormData({ ...formData, senderName: e.target.value })}
+                            />
                         </div>
                         <div>
-                            <label style={labelStyle}>Scenario Engine</label>
-                            <select
+                            <label style={labelStyle}>Sender Email</label>
+                            <input
+                                type="email"
                                 style={inputStyle}
-                                value={formData.scenarioType}
-                                onChange={(e) => setFormData({ ...formData, scenarioType: e.target.value })}
-                            >
-                                <option>Spear Phishing</option>
-                                <option>Social Engineering</option>
-                                <option>Credential Harvesting</option>
-                                <option>Invoice Fraud</option>
-                                <option>Normal Awareness</option>
-                            </select>
+                                placeholder="e.g. support@scam-alert.com"
+                                value={formData.senderEmail}
+                                onChange={(e) => setFormData({ ...formData, senderEmail: e.target.value })}
+                            />
                         </div>
+                    </div>
+
+                    <div style={{ marginBottom: '1.15rem' }}>
+                        <label style={labelStyle}>Body Content</label>
+                        <textarea
+                            style={{ ...inputStyle, minHeight: '180px', resize: 'vertical', fontFamily: 'inherit' }}
+                            placeholder="Type the main message content for the simulation here..."
+                            value={formData.bodyContent}
+                            onChange={(e) => setFormData({ ...formData, bodyContent: e.target.value })}
+                        />
+                    </div>
+
+                    <div style={{ marginBottom: '1.15rem' }}>
+                        <label style={labelStyle}>Target Group</label>
+                        <select
+                            style={inputStyle}
+                            value={formData.targetGroup}
+                            onChange={(e) => setFormData({ ...formData, targetGroup: e.target.value })}
+                        >
+                            <option>All Employees</option>
+                            <option>IT Department</option>
+                            <option>Finance</option>
+                            <option>HR</option>
+                            <option>C-Suite</option>
+                            <option>New Hires</option>
+                        </select>
                     </div>
 
                     {/* Two-col: Date + Time */}

@@ -12,6 +12,7 @@ import ResultsRecap from './pages/ResultsRecap';
 import Analytics from './pages/Analytics';
 import HelpSupport from './pages/HelpSupport';
 import TestSimulations from './pages/TestSimulations';
+import SimulationViewer from './pages/SimulationViewer';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
@@ -41,6 +42,7 @@ function AppRoutes() {
       <Route path="/dashboard" element={<RoleProtectedRoute allowedRoles={['user']}><Dashboard /></RoleProtectedRoute>} />
       <Route path="/simulations" element={<RoleProtectedRoute allowedRoles={['user']}><Simulations /></RoleProtectedRoute>} />
       <Route path="/simulations/:slug" element={<RoleProtectedRoute allowedRoles={['user']}><SimulationDetail /></RoleProtectedRoute>} />
+      <Route path="/simulations/:id/view" element={<RoleProtectedRoute allowedRoles={['user']}><SimulationViewer /></RoleProtectedRoute>} />
       <Route path="/results/success" element={<RoleProtectedRoute allowedRoles={['user']}><ResultsSuccess /></RoleProtectedRoute>} />
       <Route path="/results/recap" element={<RoleProtectedRoute allowedRoles={['user']}><ResultsRecap /></RoleProtectedRoute>} />
       <Route path="/analytics" element={<RoleProtectedRoute allowedRoles={['user']}><Analytics /></RoleProtectedRoute>} />
