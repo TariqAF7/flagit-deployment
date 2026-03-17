@@ -28,6 +28,7 @@ const CHART_H = H - PAD_T - PAD_B;
 
 const SvgLineChart = ({ data = [] }) => {
   const [tooltip, setTooltip] = useState(null); // { x, y, point }
+  const [isPinned, setIsPinned] = useState(false);
 
   if (!data || data.length === 0) {
     return (
@@ -65,8 +66,10 @@ const SvgLineChart = ({ data = [] }) => {
       <div style={{ overflowX: 'auto', position: 'relative' }}>
         <svg
           viewBox={`0 0 ${W} ${H}`}
-          style={{ width: '100%', minWidth: '500px', height: 'auto', display: 'block' }}
-          onMouseLeave={() => setTooltip(null)}
+          style={{ width: '100%', height: 'auto', display: 'block' }}
+          onMouseLeave={() => {
+            if (!isPinned) setTooltip(null);
+          }}
         >
           <defs>
             {SERIES.map(s => (
@@ -143,13 +146,28 @@ const SvgLineChart = ({ data = [] }) => {
                 width={CHART_W / data.length}
                 height={CHART_H}
                 fill="transparent"
+                style={{ cursor: 'pointer' }}
                 onMouseEnter={(e) => {
+                  if (isPinned) return;
                   const svgRect = e.currentTarget.closest('svg').getBoundingClientRect();
                   setTooltip({
                     x: e.clientX - svgRect.left,
-                    y: e.clientY - svgRect.top,
+                    y: Math.max(0, e.clientY - svgRect.top - 20),
                     point: d,
                   });
+                }}
+                onClick={() => {
+                   if (isPinned && tooltip?.point === d) {
+                       setIsPinned(false); // second click un-pins
+                   } else {
+                       setIsPinned(true);  // pin it
+                       const svgRect = document.querySelector('svg').getBoundingClientRect();
+                       setTooltip({
+                           x: xOf(i),
+                           y: PAD_T + CHART_H / 2,
+                           point: d,
+                       });
+                   }
                 }}
               />
               {/* Data dots */}
@@ -184,8 +202,9 @@ const SvgLineChart = ({ data = [] }) => {
             zIndex: 10,
             minWidth: '150px',
           }}>
-            <div style={{ fontWeight: '700', marginBottom: '0.35rem', borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: '0.3rem' }}>
+            <div style={{ fontWeight: '700', marginBottom: '0.35rem', borderBottom: '1px solid rgba(255,255,255,0.2)', paddingBottom: '0.3rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               {tooltip.point.label}
+              {isPinned && <span style={{ fontSize: '0.65rem', color: '#F97316', marginLeft: '0.5rem' }}>🔒</span>}
             </div>
             {SERIES.map(s => (
               <div key={s.key} style={{ display: 'flex', justifyContent: 'space-between', gap: '1rem', marginTop: '0.2rem' }}>

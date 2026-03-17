@@ -12,12 +12,12 @@ import ResultsRecap from './pages/ResultsRecap';
 import Analytics from './pages/Analytics';
 import HelpSupport from './pages/HelpSupport';
 import TestSimulations from './pages/TestSimulations';
+import SimulationViewer from './pages/SimulationViewer';
 
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import TrainingSimulations from './pages/admin/TrainingCampaigns';
 import AnalyticsReports from './pages/admin/AnalyticsReports';
-import AdminSettings from './pages/admin/AdminSettings';
 import ModelManagement from './pages/maintainer/ModelManagement';
 import DatasetManagement from './pages/maintainer/DatasetManagement';
 import SampleGenerator from './pages/maintainer/SampleGenerator';
@@ -42,6 +42,7 @@ function AppRoutes() {
       <Route path="/dashboard" element={<RoleProtectedRoute allowedRoles={['user']}><Dashboard /></RoleProtectedRoute>} />
       <Route path="/simulations" element={<RoleProtectedRoute allowedRoles={['user']}><Simulations /></RoleProtectedRoute>} />
       <Route path="/simulations/:slug" element={<RoleProtectedRoute allowedRoles={['user']}><SimulationDetail /></RoleProtectedRoute>} />
+      <Route path="/simulations/:id/view" element={<RoleProtectedRoute allowedRoles={['user']}><SimulationViewer /></RoleProtectedRoute>} />
       <Route path="/results/success" element={<RoleProtectedRoute allowedRoles={['user']}><ResultsSuccess /></RoleProtectedRoute>} />
       <Route path="/results/recap" element={<RoleProtectedRoute allowedRoles={['user']}><ResultsRecap /></RoleProtectedRoute>} />
       <Route path="/analytics" element={<RoleProtectedRoute allowedRoles={['user']}><Analytics /></RoleProtectedRoute>} />
@@ -53,7 +54,6 @@ function AppRoutes() {
       <Route path="/admin/users" element={<RoleProtectedRoute allowedRoles={['admin']}><UserManagement /></RoleProtectedRoute>} />
       <Route path="/admin/simulations" element={<RoleProtectedRoute allowedRoles={['admin']}><TrainingSimulations /></RoleProtectedRoute>} />
       <Route path="/admin/reports" element={<RoleProtectedRoute allowedRoles={['admin']}><AnalyticsReports /></RoleProtectedRoute>} />
-      <Route path="/admin/settings" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminSettings /></RoleProtectedRoute>} />
 
       {/* Maintainer Flow (Protected) */}
       {/* The base /maintainer route is now handled by RootRedirect, and specific sub-routes are defined below */}

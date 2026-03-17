@@ -7,6 +7,7 @@ const {
   getById,
   getBySlug,
   submit,
+  report,
   getHistory,
   getLastResult,
   startSimulation,
@@ -21,5 +22,6 @@ router.get('/slug/:slug', auth, authorize('user'), getBySlug);
 router.get('/:id', auth, authorize('user'), getById);
 router.post('/:id/start', auth, authorize('user'), startSimulation);
 router.post('/:id/submit', auth, authorize('user'), submit);
+router.patch('/:id/report', auth, authorize('user'), report);
 
 module.exports = router;
