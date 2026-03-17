@@ -5,8 +5,6 @@ import AdminTopBar from '../../components/admin/AdminTopBar';
 import SvgLineChart from '../../components/admin/SvgLineChart';
 import {
   fetchReportTrends,
-  fetchReportHeatmap,
-  fetchReportEffectiveness,
   fetchReportPdfData,
   fetchAdminDepartments,
 } from '../../api/admin';
@@ -37,21 +35,7 @@ const TIMEFRAMES = [
   { value: 'last_year',    label: 'Last 12 Months' },
 ];
 
-// ── Risk colour scale (green → red) ─────────────────────────────────────────
-const RISK_COLOR = {
-  Critical: { bar: '#ef4444', badge: '#ef444420', text: '#ef4444' },
-  High:     { bar: '#f97316', badge: '#f9731620', text: '#f97316' },
-  Moderate: { bar: '#eab308', badge: '#eab30820', text: '#eab308' },
-  Low:      { bar: '#22c55e', badge: '#22c55e20', text: '#22c55e' },
-};
 
-// Interpolate vulnerability rate 0-100 → green (#22c55e) → red (#ef4444)
-const vulnColor = (rate) => {
-  const r = Math.round(34  + (rate / 100) * (239 - 34));
-  const g = Math.round(197 - (rate / 100) * (197 - 68));
-  const b = Math.round(94  - (rate / 100) * (94  - 68));
-  return `rgb(${r},${g},${b})`;
-};
 
 // ── Small reusable components ────────────────────────────────────────────────
 const StatCard = ({ label, value, sub, color, icon }) => (
@@ -93,264 +77,7 @@ const Spinner = () => (
   </div>
 );
 
-// ── Heatmap Tab ──────────────────────────────────────────────────────────────
-const HeatmapTab = ({ data, loading, fallback }) => {
-  if (loading) return <div style={{ padding: '4rem', textAlign: 'center' }}><Spinner /></div>;
-  if (!data || data.length === 0) return (
-    <div style={{ padding: '4rem', textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>
-      <FontAwesomeIcon icon={faUsers} style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.4 }} />
-      <p style={{ margin: 0, fontWeight: '600', color: 'white' }}>No heatmap data available.</p>
-    </div>
-  );
 
-  const maxRate = Math.max(...data.map(d => d.vulnerabilityRate), 1);
-
-  return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '0.5rem' }}>
-        <div>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: '600', margin: '0 0 0.2rem', color: 'white' }}>Department Vulnerability Ranking</h3>
-          <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
-            Ranked most-to-least vulnerable · Click Rate = (Phishing Link Clicks / Total Simulations) × 100
-            {fallback && ' · Sample data'}
-          </p>
-        </div>
-        {/* Legend */}
-        <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', backgroundColor: '#132B44', padding: '0.5rem 1rem', borderRadius: '2rem', border: '1px solid rgba(255,255,255,0.1)' }}>
-          {Object.entries(RISK_COLOR).map(([level, c]) => (
-            <div key={level} style={{ display: 'flex', alignItems: 'center', gap: '0.3rem', fontSize: '0.75rem', color: 'rgba(255,255,255,0.8)' }}>
-              <div style={{ width: 10, height: 10, borderRadius: '2px', backgroundColor: c.bar }} />
-              {level}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        {data.map((row, i) => {
-          const rc = RISK_COLOR[row.riskLevel] || RISK_COLOR.Low;
-          const barW = (row.vulnerabilityRate / maxRate) * 100;
-          return (
-            <div key={row.department} style={{ 
-              display: 'grid', 
-              gridTemplateColumns: '140px 1fr 90px 100px', 
-              alignItems: 'center', 
-              gap: '1rem', 
-              padding: '0.85rem 1rem', 
-              borderRadius: '0.75rem', 
-              backgroundColor: 'rgba(255,255,255,0.02)',
-              border: '1px solid rgba(255,255,255,0.05)',
-              transition: 'all 0.2s'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.03)';
-              e.currentTarget.style.borderColor = 'rgba(249,115,22,0.3)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'rgba(255,255,255,0.02)';
-              e.currentTarget.style.borderColor = 'rgba(255,255,255,0.05)';
-            }}>
-              {/* Rank + name */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                <span style={{ 
-                  width: 24, 
-                  height: 24, 
-                  borderRadius: '50%', 
-                  backgroundColor: rc.bar, 
-                  color: 'white', 
-                  fontSize: '0.7rem', 
-                  fontWeight: '700', 
-                  display: 'flex', 
-                  alignItems: 'center', 
-                  justifyContent: 'center' 
-                }}>{i + 1}</span>
-                <span style={{ fontWeight: '600', fontSize: '0.85rem', color: 'white' }}>{row.department}</span>
-              </div>
-
-              {/* Bar */}
-              <div style={{ position: 'relative', height: 10, backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '99px' }}>
-                <div style={{
-                  position: 'absolute', left: 0, top: 0, height: '100%',
-                  width: `${barW}%`,
-                  borderRadius: '99px',
-                  backgroundColor: vulnColor(row.vulnerabilityRate),
-                  transition: 'width 0.8s ease',
-                }} />
-              </div>
-
-              {/* Rate */}
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '1.2rem', fontWeight: '700', color: rc.bar }}>{row.vulnerabilityRate}%</div>
-                <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)' }}>click rate</div>
-              </div>
-
-              {/* Badge */}
-              <div style={{ textAlign: 'center' }}>
-                <span style={{ 
-                  backgroundColor: rc.badge, 
-                  color: rc.text, 
-                  padding: '0.2rem 0.8rem', 
-                  borderRadius: '2rem', 
-                  fontSize: '0.7rem', 
-                  fontWeight: '600' 
-                }}>
-                  {row.riskLevel}
-                </span>
-                <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.2rem' }}>{row.clicks}/{row.total}</div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-};
-
-// ── Effectiveness Tab ────────────────────────────────────────────────────────
-const EffectivenessTab = ({ data, loading, fallback }) => {
-  if (loading) return <div style={{ padding: '4rem', textAlign: 'center' }}><Spinner /></div>;
-  if (!data) return (
-    <div style={{ padding: '4rem', textAlign: 'center', color: 'rgba(255,255,255,0.5)' }}>
-      <FontAwesomeIcon icon={faChartLine} style={{ fontSize: '3rem', marginBottom: '1rem', opacity: 0.4 }} />
-      <p style={{ margin: 0, fontWeight: '600', color: 'white' }}>No effectiveness data available.</p>
-    </div>
-  );
-
-  const { trained, untrained, impact } = data;
-  const maxRate = Math.max(trained.avgClickRate, untrained.avgClickRate, 1);
-
-  const BAR_H = 180; // max bar height in px
-
-  const GroupBar = ({ group, color, accentColor }) => {
-    const barH = Math.round((group.avgClickRate / maxRate) * BAR_H);
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, gap: '0.75rem' }}>
-        {/* Rate label above bar */}
-        <div style={{ fontSize: '2.2rem', fontWeight: '700', color: accentColor }}>{group.avgClickRate}%</div>
-        <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)' }}>avg click rate</div>
-
-        {/* Bar */}
-        <div style={{ width: '100%', maxWidth: 120, height: BAR_H, backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '0.5rem', position: 'relative', display: 'flex', alignItems: 'flex-end', overflow: 'hidden' }}>
-          <div style={{
-            width: '100%', height: barH,
-            backgroundColor: color,
-            borderRadius: '0.5rem 0.5rem 0 0',
-            transition: 'height 0.8s ease',
-          }} />
-        </div>
-
-        {/* Label */}
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontWeight: '700', fontSize: '0.9rem', color: 'white' }}>{group.label}</div>
-          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.2rem' }}>
-            {group.totalUsers != null ? `${group.totalUsers} user${group.totalUsers !== 1 ? 's' : ''}` : ''}
-            {group.totalResults != null ? ` · ${group.totalResults} attempts` : ''}
-          </div>
-          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.4rem', maxWidth: 200 }}>{group.description}</div>
-        </div>
-      </div>
-    );
-  };
-
-  return (
-    <div>
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '2rem', textAlign: 'center' }}>
-        <div>
-          <h3 style={{ fontSize: '1.1rem', fontWeight: '600', margin: '0 0 0.2rem', color: 'white' }}>Training Effectiveness</h3>
-          <p style={{ margin: 0, fontSize: '0.8rem', color: 'rgba(255,255,255,0.6)' }}>
-            Comparing phishing click rates between trained and untrained user groups
-            {fallback && ' · Sample data'}
-          </p>
-        </div>
-        {/* Impact badge */}
-        {impact > 0 && (
-          <div style={{ 
-            backgroundColor: '#1e5f3a', 
-            border: '1px solid #4ade80', 
-            borderRadius: '0.75rem', 
-            padding: '0.75rem 1.5rem', 
-            textAlign: 'center' 
-          }}>
-            <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#4ade80', lineHeight: 1 }}>−{impact}pp</div>
-            <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.7)', marginTop: '0.2rem' }}>click rate reduction</div>
-            <div style={{ fontSize: '0.65rem', color: 'rgba(255,255,255,0.5)', marginTop: '0.1rem' }}>from training</div>
-          </div>
-        )}
-      </div>
-
-      {/* Bar chart comparison */}
-      <div style={{ 
-        backgroundColor: 'rgba(255,255,255,0.02)', 
-        borderRadius: '1rem', 
-        padding: '2rem',
-        border: '1px solid rgba(255,255,255,0.05)'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '4rem', alignItems: 'flex-end', flexWrap: 'wrap' }}>
-          <GroupBar group={untrained} color="#ef4444" accentColor="#ef4444" />
-
-          {/* VS divider */}
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.5rem', paddingBottom: '4rem' }}>
-            <div style={{ width: 2, height: 40, backgroundColor: 'rgba(255,255,255,0.1)' }} />
-            <div style={{ 
-              width: 40, 
-              height: 40, 
-              borderRadius: '50%', 
-              backgroundColor: 'rgba(255,255,255,0.05)', 
-              display: 'flex', 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              fontSize: '0.8rem', 
-              fontWeight: '700', 
-              color: 'rgba(255,255,255,0.5)' 
-            }}>VS</div>
-            <div style={{ width: 2, height: 40, backgroundColor: 'rgba(255,255,255,0.1)' }} />
-          </div>
-
-          <GroupBar group={trained} color="#22c55e" accentColor="#4ade80" />
-        </div>
-      </div>
-
-      {/* Key insight row */}
-      <div style={{ 
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', 
-        gap: '1rem', 
-        marginTop: '1.5rem' 
-      }}>
-        <div style={{ 
-          backgroundColor: '#5f2a2a',
-          borderRadius: '0.75rem', 
-          padding: '1rem', 
-          textAlign: 'center',
-          border: '1px solid #ef4444'
-        }}>
-          <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#ef4444' }}>{untrained.avgClickRate}%</div>
-          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.25rem' }}>Click rate — untrained users</div>
-        </div>
-        <div style={{ 
-          backgroundColor: '#1e5f3a',
-          borderRadius: '0.75rem', 
-          padding: '1rem', 
-          textAlign: 'center',
-          border: '1px solid #4ade80'
-        }}>
-          <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#4ade80' }}>{trained.avgClickRate}%</div>
-          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.25rem' }}>Click rate — trained users</div>
-        </div>
-        <div style={{ 
-          backgroundColor: '#1e3a5f',
-          borderRadius: '0.75rem', 
-          padding: '1rem', 
-          textAlign: 'center',
-          border: '1px solid #60a5fa'
-        }}>
-          <div style={{ fontSize: '1.8rem', fontWeight: '700', color: '#60a5fa' }}>{impact > 0 ? `−${impact}pp` : '—'}</div>
-          <div style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.6)', marginTop: '0.25rem' }}>Percentage-point improvement</div>
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // ── Export helpers (unchanged) ───────────────────────────────────────────────
 const ensureJsPDF = () => new Promise((resolve) => {
@@ -361,10 +88,18 @@ const ensureJsPDF = () => new Promise((resolve) => {
   document.head.appendChild(s);
 });
 
+const ensureHtml2Canvas = () => new Promise((resolve) => {
+  if (window.html2canvas) return resolve(window.html2canvas);
+  const s = document.createElement('script');
+  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
+  s.onload = () => resolve(window.html2canvas);
+  document.head.appendChild(s);
+});
+
 const buildPdf = async (data) => {
   const JsPDF = await ensureJsPDF();
   const doc = new JsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-  const { summary, heatmap, generatedAt, reportTitle, organization } = data;
+  const { summary, heatmap, generatedAt, reportTitle, organization, filters, chartImg } = data;
 
   const teal  = [13, 148, 136];
   const navy  = [30, 58, 95];
@@ -376,36 +111,33 @@ const buildPdf = async (data) => {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(16);
   doc.setTextColor(255, 255, 255);
-  doc.text(reportTitle, 14, 13);
+  doc.text(reportTitle || 'Analytics Report', 14, 13);
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
-  doc.text(`${organization}  ·  Generated ${new Date(generatedAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'long', year: 'numeric' })}`, 14, 22);
+  doc.text(`${organization || 'Organization'}  ·  Generated ${new Date().toLocaleDateString('en-GB')}`, 14, 22);
 
-  // Resilience score highlight
+  // Filters
   let y = 42;
   doc.setFontSize(11);
   doc.setTextColor(...navy);
   doc.setFont('helvetica', 'bold');
-  doc.text('Organizational Resilience Score', 14, y);
-  doc.setFontSize(28);
-  doc.setTextColor(...teal);
-  doc.text(`${summary.orgResilienceScore}`, 14, y + 14);
-  doc.setFontSize(10);
+  doc.text('Applied Filters', 14, y);
+  doc.setFontSize(9);
   doc.setTextColor(...grey);
   doc.setFont('helvetica', 'normal');
-  doc.text(`Detection Rate: ${summary.detectionRate}%    Reporting Rate: ${summary.reportingRate}%`, 14, y + 22);
+  doc.text(`Timeframe: ${filters?.timeframe || 'N/A'}    |    Dept: ${filters?.department || 'N/A'}    |    Sim Type: ${filters?.simType || 'N/A'}`, 14, y + 8);
 
   // Summary table
-  y = 82;
+  y += 20;
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
   doc.setTextColor(...navy);
-  doc.text('Platform Summary', 14, y);
+  doc.text('Period Summary', 14, y);
   y += 6;
   const rows = [
-    ['Total Users',        summary.totalUsers],
-    ['Active Users',       summary.activeUsers],
-    ['Total Simulations',  summary.totalSimulations],
+    ['Total Incidents',    summary.totalIncidents],
+    ['Detected',           summary.detectedIncidents],
+    ['Reported',           summary.reportedIncidents],
     ['Detection Rate',     `${summary.detectionRate}%`],
     ['Reporting Rate',     `${summary.reportingRate}%`],
   ];
@@ -421,26 +153,17 @@ const buildPdf = async (data) => {
     y += 7;
   });
 
-  // Heatmap table
-  y += 10;
-  doc.setFont('helvetica', 'bold');
-  doc.setFontSize(11);
-  doc.setTextColor(...navy);
-  doc.text('Department Vulnerability Heatmap', 14, y);
-  y += 6;
-  (heatmap.length ? heatmap : [{ department: 'No data', total: 0, clicks: 0, vulnerabilityRate: 0 }]).forEach((row, i) => {
-    if (i % 2 === 0) { doc.setFillColor(248, 250, 252); doc.rect(14, y, 182, 7, 'F'); }
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(9);
-    doc.setTextColor(...grey);
-    doc.text(row.department, 20, y + 5);
-    doc.text(`${row.clicks} / ${row.total}`, 100, y + 5);
-    const rateColor = row.vulnerabilityRate >= 70 ? [220, 38, 38] : row.vulnerabilityRate >= 50 ? [234, 88, 12] : row.vulnerabilityRate >= 30 ? [202, 138, 4] : [22, 163, 74];
-    doc.setTextColor(...rateColor);
-    doc.setFont('helvetica', 'bold');
-    doc.text(`${row.vulnerabilityRate}%`, 160, y + 5);
-    y += 7;
-  });
+  // Graph Snapshot
+  if (chartImg) {
+      y += 10;
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(11);
+      doc.setTextColor(...navy);
+      doc.text('Trends Graph View', 14, y);
+      y += 6;
+      doc.addImage(chartImg, 'PNG', 14, y, 182, 70);
+      y += 75;
+  }
 
   // Footer
   doc.setFont('helvetica', 'normal');
@@ -448,14 +171,13 @@ const buildPdf = async (data) => {
   doc.setTextColor(...grey);
   doc.text('FlagIT Security Awareness Platform  —  Confidential', 14, 287);
 
-  doc.save(`flagit-executive-summary-${new Date().toISOString().split('T')[0]}.pdf`);
+  doc.save(`flagit-analytics-${new Date().toISOString().split('T')[0]}.pdf`);
 };
 
 // ── Main Page ────────────────────────────────────────────────────────────────
 const AnalyticsReports = () => {
   const { reportTrends, setReportTrends } = useAppStore();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab,   setActiveTab]   = useState('Trends');
   const [toast,       setToast]       = useState('');
 
   // Export state
@@ -467,18 +189,9 @@ const AnalyticsReports = () => {
   const [simType,     setSimType]     = useState('all');
   const [departments, setDepartments] = useState([]);
 
-
   // Per-tab data & loading
   const [trendsLoading,  setTrendsLoading]  = useState(false);
   const [trendsFallback, setTrendsFallback] = useState(false);
-
-  const [heatmapData,    setHeatmapData]    = useState(null);
-  const [heatmapLoading, setHeatmapLoading] = useState(false);
-  const [heatmapFallback,setHeatmapFallback]= useState(false);
-
-  const [effectData,     setEffectData]     = useState(null);
-  const [effectLoading,  setEffectLoading]  = useState(false);
-  const [effectFallback, setEffectFallback] = useState(false);
 
   // Fetch departments for filter dropdown
   useEffect(() => {
@@ -504,43 +217,7 @@ const AnalyticsReports = () => {
   useEffect(() => { loadTrends(timeframe, department, simType); }, []); // eslint-disable-line
   useEffect(() => { loadTrends(timeframe, department, simType); }, [timeframe, department, simType]); // eslint-disable-line
 
-  // ── Heatmap fetch (on tab switch) ─────────────────────────────
-  const loadHeatmap = useCallback(async () => {
-    if (heatmapData) return; // already fetched
-    setHeatmapLoading(true);
-    try {
-      const data = await fetchReportHeatmap();
-      setHeatmapData(Array.isArray(data) ? data : []);
-      setHeatmapFallback(false);
-    } catch {
-      setHeatmapFallback(true);
-      setHeatmapData([]);
-    } finally {
-      setHeatmapLoading(false);
-    }
-  }, [heatmapData]);
 
-  // ── Effectiveness fetch (on tab switch) ───────────────────────
-  const loadEffectiveness = useCallback(async () => {
-    if (effectData) return;
-    setEffectLoading(true);
-    try {
-      const data = await fetchReportEffectiveness();
-      setEffectData(data && typeof data === 'object' ? data : null);
-      setEffectFallback(false);
-    } catch {
-      setEffectFallback(true);
-      setEffectData(null);
-    } finally {
-      setEffectLoading(false);
-    }
-  }, [effectData]);
-
-  const handleTabChange = (tab) => {
-    setActiveTab(tab);
-    if (tab === 'User Heatmap')            loadHeatmap();
-    if (tab === 'Training Effectiveness')  loadEffectiveness();
-  };
 
   // ── Derived totals ────────────────────────────────────────────
   const totals = (reportTrends || []).reduce(
@@ -557,8 +234,37 @@ const AnalyticsReports = () => {
   const handleExport = async () => {
     setExporting(true);
     try {
+      const chartEl = document.getElementById('pdf-chart-container');
+      let chartImg = null;
+      if (chartEl) {
+        const Html2Canvas = await ensureHtml2Canvas();
+        const canvas = await Html2Canvas(chartEl, { 
+          backgroundColor: '#132B44',
+          scale: 2
+        });
+        chartImg = canvas.toDataURL('image/png');
+      }
+
       const pdfData = await fetchReportPdfData();
-      await buildPdf(pdfData);
+      
+      const buildData = {
+        ...pdfData,
+        summary: {
+            totalIncidents: totals.total,
+            detectedIncidents: totals.detected,
+            reportedIncidents: totals.reported,
+            detectionRate: detRate,
+            reportingRate: repRate,
+        },
+        filters: {
+            timeframe: TIMEFRAMES.find(t => t.value === timeframe)?.label || timeframe,
+            department: department === 'all' ? 'All Departments' : department,
+            simType: simType === 'all' ? 'All Types' : SIM_TYPES.find(t => t.value === simType)?.label,
+        },
+        chartImg,
+      };
+
+      await buildPdf(buildData);
       setToast('PDF generated successfully.');
     } catch (err) {
       setToast('Export failed: ' + (err.message || 'unknown error.'));
@@ -788,110 +494,63 @@ const AnalyticsReports = () => {
             boxShadow: '0 8px 20px -6px rgba(0, 0, 0, 0.4)'
           }}>
 
-            {/* Tab bar */}
-            <div style={{ 
-              display: 'flex', 
-              gap: '0.5rem', 
-              borderBottom: '1px solid rgba(255,255,255,0.1)', 
-              marginBottom: '2rem', 
-              paddingBottom: '0.5rem', 
-              overflowX: 'auto' 
-            }}>
-              {['Trends', 'User Heatmap', 'Training Effectiveness'].map(tab => (
-                <button
-                  key={tab}
-                  onClick={() => handleTabChange(tab)}
-                  style={{ 
-                    border: 'none', 
-                    background: tab === activeTab ? '#F97316' : 'transparent', 
-                    color: tab === activeTab ? 'white' : 'rgba(255,255,255,0.6)', 
-                    padding: '0.5rem 1.25rem', 
-                    borderRadius: '2rem', 
-                    fontSize: '0.85rem', 
-                    fontWeight: '600', 
-                    cursor: 'pointer', 
-                    whiteSpace: 'nowrap', 
-                    transition: 'all 0.2s' 
-                  }}
-                  onMouseEnter={(e) => {
-                    if (tab !== activeTab) {
-                      e.target.style.backgroundColor = 'rgba(255,255,255,0.05)';
-                      e.target.style.color = 'white';
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (tab !== activeTab) {
-                      e.target.style.backgroundColor = 'transparent';
-                      e.target.style.color = 'rgba(255,255,255,0.6)';
-                    }
-                  }}
-                >
-                  {tab}
-                </button>
-              ))}
-            </div>
-
-                        {/* ── Trends Tab ── */}
-            {activeTab === 'Trends' && (
-              <div>
-                <div style={{ 
-                  display: 'flex', 
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  marginBottom: '1.5rem', 
-                  textAlign: 'center'
+            {/* ── Trends Data ── */}
+            <div>
+              <div style={{ 
+                display: 'flex', 
+                flexDirection: 'column',
+                alignItems: 'center',
+                marginBottom: '1.5rem', 
+                textAlign: 'center'
+              }}>
+                <h3 style={{ 
+                  fontSize: '1.1rem', 
+                  fontWeight: '600', 
+                  margin: '0 0 0.2rem', 
+                  color: 'white', 
+                  textAlign: 'center' 
                 }}>
-                  <h3 style={{ 
-                    fontSize: '1.1rem', 
-                    fontWeight: '600', 
-                    margin: '0 0 0.2rem', 
-                    color: 'white', 
-                    textAlign: 'center' 
-                  }}>
-                    Phishing Incidents Over Time
-                  </h3>
-                  <p style={{ 
-                    margin: '0 0 0.5rem', 
-                    fontSize: '0.8rem', 
-                    color: 'rgba(255,255,255,0.6)', 
-                    textAlign: 'center' 
-                  }}>
-                    {TIMEFRAMES.find(t => t.value === timeframe)?.label}
-                    {department !== 'all' ? ` · ${department}` : ''}
-                    {simType !== 'all' ? ` · ${SIM_TYPES.find(t => t.value === simType)?.label}` : ''}
-                  </p>
-                  {trendsLoading && <Spinner />}
-                </div>
-
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.75rem' }}>
-                  <StatCard label="Total Incidents"    value={totals.total.toLocaleString()}    sub="Simulation events in period"    color="#F97316"
-                    icon={<FontAwesomeIcon icon={faExclamationTriangle} />} />
-                  <StatCard label="Detected"           value={totals.detected.toLocaleString()} sub={`${detRate}% detection rate`}    color="#22c55e"
-                    icon={<FontAwesomeIcon icon={faShieldHalved} />} />
-                  <StatCard label="Reported (FlagIT)"  value={totals.reported.toLocaleString()} sub={`${repRate}% reporting rate`}    color="#3b82f6"
-                    icon={<FontAwesomeIcon icon={faFlag} />} />
-                </div>
-
-                <div style={{ 
-                  backgroundColor: 'rgba(255,255,255,0.02)', 
-                  borderRadius: '0.75rem', 
-                  padding: '1.5rem',
-                  border: '1px solid rgba(255,255,255,0.05)'
+                  Phishing Incidents Over Time
+                </h3>
+                <p style={{ 
+                  margin: '0 0 0.5rem', 
+                  fontSize: '0.8rem', 
+                  color: 'rgba(255,255,255,0.6)', 
+                  textAlign: 'center' 
                 }}>
-                  <SvgLineChart data={reportTrends} />
-                </div>
+                  {TIMEFRAMES.find(t => t.value === timeframe)?.label}
+                  {department !== 'all' ? ` · ${department}` : ''}
+                  {simType !== 'all' ? ` · ${SIM_TYPES.find(t => t.value === simType)?.label}` : ''}
+                </p>
+                {trendsLoading && <Spinner />}
               </div>
-            )}
 
-            {/* ── Heatmap Tab ── */}
-            {activeTab === 'User Heatmap' && (
-              <HeatmapTab data={heatmapData} loading={heatmapLoading} fallback={heatmapFallback} />
-            )}
+              {trendsFallback ? (
+                  <div style={{ padding: '3rem', textAlign: 'center', color: '#94a3b8', fontSize: '0.875rem' }}>
+                    No data available for this period.
+                  </div>
+              ) : (
+                <>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '1.75rem' }}>
+                    <StatCard label="Total Incidents"    value={totals.total.toLocaleString()}    sub="Simulation events in period"    color="#F97316"
+                      icon={<FontAwesomeIcon icon={faExclamationTriangle} />} />
+                    <StatCard label="Detected"           value={totals.detected.toLocaleString()} sub={`${detRate}% detection rate`}    color="#22c55e"
+                      icon={<FontAwesomeIcon icon={faShieldHalved} />} />
+                    <StatCard label="Reported (FlagIT)"  value={totals.reported.toLocaleString()} sub={`${repRate}% reporting rate`}    color="#3b82f6"
+                      icon={<FontAwesomeIcon icon={faFlag} />} />
+                  </div>
 
-            {/* ── Effectiveness Tab ── */}
-            {activeTab === 'Training Effectiveness' && (
-              <EffectivenessTab data={effectData} loading={effectLoading} fallback={effectFallback} />
-            )}
+                  <div id="pdf-chart-container" style={{ 
+                    backgroundColor: 'rgba(255,255,255,0.02)', 
+                    borderRadius: '0.75rem', 
+                    padding: '1.5rem',
+                    border: '1px solid rgba(255,255,255,0.05)'
+                  }}>
+                    <SvgLineChart data={reportTrends} />
+                  </div>
+                </>
+              )}
+            </div>
           </div>
 
         </main>

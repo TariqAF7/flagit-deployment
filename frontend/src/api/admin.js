@@ -32,11 +32,5 @@ export const fetchReportTrends = (params = {}) => {
   const qs = new URLSearchParams(params).toString();
   return get(`/admin/reports/trends${qs ? '?' + qs : ''}`);
 };
-export const fetchReportHeatmap       = () => get('/admin/reports/heatmap');
-export const fetchReportEffectiveness = () => get('/admin/reports/effectiveness');
 export const fetchReportPdfData       = () => get('/admin/reports/export/pdf-data');
-
-// ── Settings ──────────────────────────────────────────────────
-export const fetchAdminSettings  = ()       => get('/admin/settings');
-export const updateAdminSettings = (data)   => put('/admin/settings', data);
 

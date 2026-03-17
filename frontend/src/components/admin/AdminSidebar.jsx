@@ -29,7 +29,6 @@ const AdminSidebar = ({ isOpen, close }) => {
         { name: 'User Management', path: '/admin/users', icon: faUsers },
         { name: 'Training Simulations', path: '/admin/simulations', icon: faBullhorn },
         { name: 'Analytics & Reports', path: '/admin/reports', icon: faChartLine },
-        { name: 'Settings', path: '/admin/settings', icon: faCog },
     ];
 
     const isActiveCheck = (itemPath, exact) => {

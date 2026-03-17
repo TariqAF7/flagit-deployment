@@ -17,7 +17,6 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import TrainingSimulations from './pages/admin/TrainingCampaigns';
 import AnalyticsReports from './pages/admin/AnalyticsReports';
-import AdminSettings from './pages/admin/AdminSettings';
 import ModelManagement from './pages/maintainer/ModelManagement';
 import DatasetManagement from './pages/maintainer/DatasetManagement';
 import SampleGenerator from './pages/maintainer/SampleGenerator';
@@ -53,7 +52,6 @@ function AppRoutes() {
       <Route path="/admin/users" element={<RoleProtectedRoute allowedRoles={['admin']}><UserManagement /></RoleProtectedRoute>} />
       <Route path="/admin/simulations" element={<RoleProtectedRoute allowedRoles={['admin']}><TrainingSimulations /></RoleProtectedRoute>} />
       <Route path="/admin/reports" element={<RoleProtectedRoute allowedRoles={['admin']}><AnalyticsReports /></RoleProtectedRoute>} />
-      <Route path="/admin/settings" element={<RoleProtectedRoute allowedRoles={['admin']}><AdminSettings /></RoleProtectedRoute>} />
 
       {/* Maintainer Flow (Protected) */}
       {/* The base /maintainer route is now handled by RootRedirect, and specific sub-routes are defined below */}
