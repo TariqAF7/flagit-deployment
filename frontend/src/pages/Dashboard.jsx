@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import ProgressRing from '../components/ProgressRing';
 import StatCard from '../components/StatCard';
@@ -7,6 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
+import { fetchSimulations, fetchUserStats } from '../api/simulations';
+import { filterSimulations } from '../utils/simulationFilters';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
@@ -76,9 +78,100 @@ const getResilienceMessage = (score) => {
 };
 
 const Dashboard = () => {
-    const { resilienceScore, stats, modules } = useAppStore();
+    const { resilienceScore, stats, modules, resultsHistory } = useAppStore();
     const navigate = useNavigate();
     const [sidebarOpen, setSidebarOpen] = useState(false);
+    const [userStats, setUserStats] = useState(null);
+    const [simulationData, setSimulationData] = useState([]);
+    const [dashboardFilter, setDashboardFilter] = useState('all');
+
+    const dashboardFilterMap = [
+        { label: 'All Simulations', value: 'all' },
+        { label: 'Newly Added', value: 'new' },
+        { label: 'Popular', value: 'popular' },
+        { label: 'Recommended', value: 'recommended' }
+    ];
+
+    const fallbackRequiredSimulations = [
+        {
+            title: 'Psychological Tactics',
+            description: 'Analyze this email and decide: Is it a legitimate request or a manipulation attempt?',
+            slug: 'psychological-tactics'
+        },
+        {
+            title: 'Vishing Tactics',
+            description: 'Listen to this voicemail. Would you call back?',
+            slug: 'vishing-tactics'
+        },
+        {
+            title: 'BiTB Awareness',
+            description: 'Examine this browser window. Can you spot anything unusual?',
+            slug: 'bitb-awareness'
+        }
+    ];
+
+    const toSlug = (text = '') =>
+        text
+            .toLowerCase()
+            .trim()
+            .replace(/[^a-z0-9\s-]/g, '')
+            .replace(/\s+/g, '-')
+            .replace(/-+/g, '-');
+
+    const resolveRequiredSimulation = (slug) => {
+        const fromApi = simulationData.find((sim) => sim.slug === slug);
+        if (fromApi) {
+            return fromApi;
+        }
+        return fallbackRequiredSimulations.find((sim) => sim.slug === slug);
+    };
+
+    const requiredCards = [
+        resolveRequiredSimulation('psychological-tactics'),
+        resolveRequiredSimulation('vishing-tactics'),
+        resolveRequiredSimulation('bitb-awareness')
+    ].filter(Boolean);
+
+    const unchangedFourthCard = modules[3]
+        ? {
+              ...modules[3],
+              slug:
+                  simulationData.find((sim) => sim.title === modules[3].title)?.slug ||
+                  toSlug(modules[3].title)
+          }
+        : null;
+
+    const dashboardCards = [...requiredCards, unchangedFourthCard].filter(Boolean).slice(0, 4);
+
+    const filteredDashboardCards = filterSimulations({
+        simulationData: dashboardCards,
+        filter: dashboardFilter,
+        timeRange: 'all',
+        resultsHistory
+    });
+
+    useEffect(() => {
+        const loadDashboardData = async () => {
+            try {
+                const [statsResp, simsResp] = await Promise.all([
+                    fetchUserStats(),
+                    fetchSimulations()
+                ]);
+
+                if (statsResp) {
+                    setUserStats(statsResp);
+                }
+
+                if (Array.isArray(simsResp)) {
+                    setSimulationData(simsResp);
+                }
+            } catch (err) {
+                console.warn('Failed to load dashboard data:', err.message);
+            }
+        };
+
+        loadDashboardData();
+    }, []);
     
     const resilienceMessage = getResilienceMessage(resilienceScore);
 
@@ -217,7 +310,7 @@ const Dashboard = () => {
                             />
                             <StatCard
                                 title="Avg. Score"
-                                value={stats.modulesFinished}
+                                value={`${userStats?.avgScore ?? 0}%`}
                                 icon={<FontAwesomeIcon icon={faChartLine} />}
                             />
                         </div>
@@ -282,36 +375,40 @@ const Dashboard = () => {
                                 borderRadius: '2rem',
                                 backdropFilter: 'blur(10px)'
                             }}>
-                                {['All Simulations', 'Newly Added', 'Popular', 'Recommended'].map((tab, index) => (
-                                    <button
-                                        key={tab}
-                                        style={{
-                                            padding: '0.5rem 1.25rem',
-                                            borderRadius: '2rem',
-                                            fontSize: '0.875rem',
-                                            fontWeight: '600',
-                                            backgroundColor: index === 0 ? '#F97316' : 'transparent',
-                                            color: index === 0 ? 'white' : 'rgba(255,255,255,0.7)',
-                                            border: 'none',
-                                            cursor: 'pointer',
-                                            transition: 'all 0.2s'
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            if (index !== 0) {
-                                                e.target.style.backgroundColor = 'rgba(255,255,255,0.1)';
-                                                e.target.style.color = 'white';
-                                            }
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            if (index !== 0) {
-                                                e.target.style.backgroundColor = 'transparent';
-                                                e.target.style.color = 'rgba(255,255,255,0.7)';
-                                            }
-                                        }}
-                                    >
-                                        {tab}
-                                    </button>
-                                ))}
+                                {dashboardFilterMap.map((tab) => {
+                                    const isActive = dashboardFilter === tab.value;
+                                    return (
+                                        <button
+                                            key={tab.label}
+                                            onClick={() => setDashboardFilter(tab.value)}
+                                            style={{
+                                                padding: '0.5rem 1.25rem',
+                                                borderRadius: '2rem',
+                                                fontSize: '0.875rem',
+                                                fontWeight: '600',
+                                                backgroundColor: isActive ? '#F97316' : 'transparent',
+                                                color: isActive ? 'white' : 'rgba(255,255,255,0.7)',
+                                                border: 'none',
+                                                cursor: 'pointer',
+                                                transition: 'all 0.2s'
+                                            }}
+                                            onMouseEnter={(e) => {
+                                                if (!isActive) {
+                                                    e.target.style.backgroundColor = 'rgba(255,255,255,0.1)';
+                                                    e.target.style.color = 'white';
+                                                }
+                                            }}
+                                            onMouseLeave={(e) => {
+                                                if (!isActive) {
+                                                    e.target.style.backgroundColor = 'transparent';
+                                                    e.target.style.color = 'rgba(255,255,255,0.7)';
+                                                }
+                                            }}
+                                        >
+                                            {tab.label}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
 
@@ -425,9 +522,9 @@ const Dashboard = () => {
                             gap: '1.5rem',
                             marginBottom: '3rem'
                         }}>
-                            {modules.map((mod, index) => (
+                            {filteredDashboardCards.map((mod, index) => (
                                 <div
-                                    key={mod.id}
+                                    key={mod.id || mod.slug || mod.title}
                                     style={{
                                         backgroundColor: 'rgba(255,255,255,0.03)',
                                         borderRadius: '1rem',
@@ -445,7 +542,7 @@ const Dashboard = () => {
                                         e.currentTarget.style.transform = 'translateY(0)';
                                         e.currentTarget.style.boxShadow = 'none';
                                     }}
-                                    onClick={() => navigate(`/simulations/${mod.id}`)}
+                                    onClick={() => navigate(`/simulations/${mod.slug}`)}
                                 >
                                     {index === 0 && (
                                         <div style={{
@@ -551,7 +648,7 @@ const Dashboard = () => {
                                                 alignItems: 'center',
                                                 gap: '0.25rem'
                                             }}>
-                                                Continue
+                                                Start Training
                                                 <FontAwesomeIcon icon={faArrowRight} style={{ fontSize: '0.75rem' }} />
                                             </span>
                                         </div>

@@ -6,6 +6,7 @@ import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 import Footer from '../components/Footer';
 import { fetchSimulations, fetchUserStats } from '../api/simulations';
+import { filterSimulations } from '../utils/simulationFilters';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { 
     faBrain, 
@@ -103,38 +104,12 @@ const Simulations = () => {
         setCurrentPage(1);
     }, [filter, timeRange]);
 
-    // Filtering logic - COMPLETELY UNCHANGED
-    const getFilteredSimulations = () => {
-        let filtered = [...simulationData];
-        const now = new Date();
-
-        // Secondary filter: time range
-        if (timeRange === '2weeks') {
-            const cutoff = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
-            filtered = filtered.filter(s => !s.createdAt || new Date(s.createdAt) >= cutoff);
-        } else if (timeRange === 'month') {
-            const cutoff = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-            filtered = filtered.filter(s => !s.createdAt || new Date(s.createdAt) >= cutoff);
-        }
-        // 'all' = no time filter
-
-        // Primary filter
-        if (filter === 'new') {
-            const dayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-            filtered = filtered.filter(s => s.createdAt && new Date(s.createdAt) >= dayAgo);
-        } else if (filter === 'popular') {
-            // Sort by playCount and take top 3 - ORIGINAL BEHAVIOR
-            filtered = [...filtered].sort((a, b) => (b.playCount || 0) - (a.playCount || 0)).slice(0, 3);
-        } else if (filter === 'recommended') {
-            const attemptedIds = new Set(resultsHistory.map(r => r.simulationId));
-            filtered = filtered.filter(s => !attemptedIds.has(s.id));
-        }
-        // 'all' = show everything
-
-        return filtered;
-    };
-
-    const filteredSimulations = getFilteredSimulations();
+    const filteredSimulations = filterSimulations({
+        simulationData,
+        filter,
+        timeRange,
+        resultsHistory
+    });
     
     // Pagination calculations - only applies when there are more than 9 items
     const totalPages = Math.ceil(filteredSimulations.length / itemsPerPage);
