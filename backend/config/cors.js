@@ -1,13 +1,15 @@
 const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173')
   .split(',')
-  .map(url => url.trim());
+  .map(url => url.trim().replace(/\/+$/, '')); // strip trailing slashes
 
 const corsOptions = {
   origin: function (origin, callback) {
+    const normalizedOrigin = origin ? origin.replace(/\/+$/, '') : null;
     // Allow requests with no origin (curl, Postman, server-to-server)
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!normalizedOrigin || allowedOrigins.includes(normalizedOrigin)) {
       callback(null, true);
     } else {
+      console.error(`CORS blocked origin: "${normalizedOrigin}" | Allowed: ${JSON.stringify(allowedOrigins)}`);
       callback(new Error('Not allowed by CORS'));
     }
   },
@@ -20,3 +22,4 @@ const corsOptions = {
 };
 
 module.exports = corsOptions;
+
